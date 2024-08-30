@@ -4,7 +4,7 @@ import Home from "./views/Home";
 import SignUp from "./views/SignUp";
 import Container from "./components/common/Container";
 import Verify from "./views/Verify";
-import NewUser from "./views/newUser";
+import NewUser from "./views/NewUser";
 
 interface Props {}
 

@@ -1,8 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from ".";
 
-interface Profile {}
+interface Profile {
+  id: string;
+  name?: string;
+  email: string;
+  role: "user" | "author";
+  avatar?: string;
+  signedUp: Boolean;
+  authorId?: string;
+  books?: string[];
+}
 
-interface AuthState {
+export interface AuthState {
   profile: Profile | null;
   status: "busy" | "authenticated" | "unauthenticated";
 }
@@ -23,5 +33,10 @@ const slice = createSlice({
 });
 
 export const { updateProfile } = slice.actions;
+
+export const getAuthState = createSelector(
+  (state: RootState) => state,
+  (state) => state.auth
+);
 
 export default slice.reducer;
