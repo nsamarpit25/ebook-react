@@ -9,8 +9,7 @@ interface Props {}
 const Verify: FC<Props> = () => {
   const [searchParams] = useSearchParams();
   const profileInfoString = searchParams.get("profile");
-  const dispatch = useDispatch()
-
+  const dispatch = useDispatch();
 
   if (profileInfoString) {
     try {
@@ -18,10 +17,8 @@ const Verify: FC<Props> = () => {
       if (!profile.signedUp) {
         return <Navigate to={"/new-user"} />;
       }
-    
-      dispatch(updateProfile(profile))
 
-
+      dispatch(updateProfile(profile));
 
       return <Navigate to="/" />;
     } catch (error) {
