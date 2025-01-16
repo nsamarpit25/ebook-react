@@ -1,13 +1,14 @@
 import { FC } from "react";
 import useAuth from "../hooks/useAuth";
 import { Avatar, Button } from "@nextui-org/react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { BsPencilSquare } from "react-icons/bs";
 
 interface Props {}
 
 const Profile: FC<Props> = () => {
   const { profile } = useAuth();
+  const navigate = useNavigate();
 
   if (!profile) return <Navigate to="/sign-up" />;
 
@@ -30,7 +31,7 @@ const Profile: FC<Props> = () => {
           </p>
         </div>
 
-        <Button className="ml-auto" variant="flat" isIconOnly>
+        <Button className="ml-auto" variant="flat" isIconOnly onClick={() => navigate("/update-profile")}>
           <BsPencilSquare size={20} />
         </Button>
       </div>
