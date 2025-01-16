@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from ".";
 
-interface Profile {
+export interface Profile {
   id: string;
   name?: string;
   email: string;
@@ -18,7 +18,7 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-  status: "unauthenticated",
+  status: "busy",
   profile: null,
 };
 

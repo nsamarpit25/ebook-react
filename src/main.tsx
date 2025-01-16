@@ -6,7 +6,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/index.ts";
-import AuthProvider from "./contexy/AuthProvider.tsx";
+import AuthProvider from "./context/AuthProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

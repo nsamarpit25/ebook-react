@@ -1,6 +1,7 @@
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
 import client from "../api/client";
+import { ParseError } from "../utils/helper";
 
 interface Props {}
 
@@ -52,7 +53,9 @@ const NewUser: FC<Props> = () => {
       const { data } = await client.put("/auth/profile", formData);
       console.log(JSON.stringify(data, null, 2));
     } catch (error) {
-      console.log(error);
+      ParseError(error);
+
+      // console.log(error);
       //   if (error && error.respons) setErrorMessage(error?.response.data.errors.name[0]);
     } finally {
       setBusy(false);

@@ -18,7 +18,7 @@ const Verify: FC<Props> = () => {
         return <Navigate to={"/new-user"} />;
       }
 
-      dispatch(updateProfile(profile));
+      dispatch(updateProfile(profile)); 
 
       return <Navigate to="/" />;
     } catch (error) {

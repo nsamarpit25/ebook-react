@@ -8,8 +8,12 @@ import {
 } from "@nextui-org/react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
+import { Profile } from "../../store/auth";
 
-interface Props {}
+interface Props {
+  profile: Profile;
+  signOut: () => void;
+}
 
 interface LinkProps {
   title: string;
@@ -24,12 +28,16 @@ const DropdownLink: FC<LinkProps> = ({ title, to }) => {
   );
 };
 
-const ProfileMenu: FC<Props> = () => {
-  const name = "John Doe";
-  const email = "john@email.com";
-  const role = "user";
-  const avatar = "";
-  const signOut = () => {};
+const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
+  const { name, email, role, avatar } = profile;
+
+  // console.log(name)
+
+  // const name = "John Doe";
+  // const email = "john@email.com";
+  // const role = "user";
+  // const avatar = "";
+  
 
   return (
     <div className="flex items-center gap-4">

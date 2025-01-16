@@ -14,6 +14,8 @@ import ProfileOptions from "../profile/ProfileOptions";
 interface Props {}
 
 const Navbar: FC<Props> = () => {
+  
+
   return (
     <NextUINav>
       <NavbarBrand>
@@ -32,7 +34,7 @@ const Navbar: FC<Props> = () => {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <ProfileOptions />
+            <ProfileOptions />
         </NavbarItem>
       </NavbarContent>
     </NextUINav>
