@@ -1,7 +1,6 @@
 import { Avatar, Button, Input } from "@nextui-org/react";
 import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
 import { ParseError } from "../../utils/helper";
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
   avatar?: string;
   onSubmit(data: FormData): Promise<void>;
   title: string;
-  btnTiitle: string;
+  btnTitle: string;
 }
 
 type UserInfo = {
@@ -17,13 +16,12 @@ type UserInfo = {
   avatar?: File;
 };
 
-const NewUserForm: FC<Props> = ({ name, avatar, onSubmit, title, btnTiitle }) => {
+const NewUserForm: FC<Props> = ({ name, avatar, onSubmit, title, btnTitle }) => {
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "" });
   const [localAvatar, setLocalAvatar] = useState("");
   const [invalidFormState, setInvalidFormState] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value, files } = e.target;
@@ -108,7 +106,7 @@ const NewUserForm: FC<Props> = ({ name, avatar, onSubmit, title, btnTiitle }) =>
           />
 
           <Button type="submit" className="w-full" isLoading={busy}>
-            {btnTiitle}
+            {btnTitle}
           </Button>
         </form>
       </div>

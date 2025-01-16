@@ -3,6 +3,7 @@ import { FC } from "react";
 import { useDispatch } from "react-redux";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { updateProfile } from "../store/auth";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 interface Props {}
 
@@ -26,9 +27,7 @@ const Verify: FC<Props> = () => {
     }
   }
   return (
-    <div className="flex justify-center items-center p-10">
-      <Spinner label="Verifying...." color="warning" />
-    </div>
+   <LoadingSpinner />
   );
 };
 

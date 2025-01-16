@@ -55,7 +55,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
       });
   }, [dispatch]);
 
-  if (status === "busy") return <div>Loading...</div>;
+  // if (status === "busy") return <div>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ profile, status, signOut }}>

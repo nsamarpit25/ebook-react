@@ -19,7 +19,7 @@ const UpdateProfile: FC<Props> = () => {
     navigate('/profile')
   };
 
-  return <NewUserForm onSubmit={handleSubmit} name={profile?.name} avatar={profile?.avatar} title="Update Profile" btnTiitle="Update Profile"></NewUserForm>;
+  return <NewUserForm onSubmit={handleSubmit} name={profile?.name} avatar={profile?.avatar} title="Update Profile" btnTitle="Update Profile"></NewUserForm>;
 };
 
 export default UpdateProfile;

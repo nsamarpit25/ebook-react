@@ -21,7 +21,7 @@ const NewUser: FC<Props> = () => {
     <NewUserForm
       onSubmit={handleSubmit}
       title="You are almost there, Please fill out the form below"
-      btnTiitle="Sign Me Up"
+      btnTitle="Sign Me Up"
     ></NewUserForm>
   );
 };
