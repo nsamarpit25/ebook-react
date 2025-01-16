@@ -2,6 +2,7 @@ import { Avatar, Button, Input } from "@nextui-org/react";
 import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
 import client from "../api/client";
 import { ParseError } from "../utils/helper";
+import { useNavigate } from "react-router-dom";
 
 interface Props {}
 
@@ -16,6 +17,7 @@ const NewUser: FC<Props> = () => {
   const [invalidFormState, setInvalidFormState] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value, files } = e.target;
@@ -51,12 +53,9 @@ const NewUser: FC<Props> = () => {
     setBusy(true);
     try {
       const { data } = await client.put("/auth/profile", formData);
-      console.log(JSON.stringify(data, null, 2));
+      navigate("/");
     } catch (error) {
       ParseError(error);
-
-      // console.log(error);
-      //   if (error && error.respons) setErrorMessage(error?.response.data.errors.name[0]);
     } finally {
       setBusy(false);
     }

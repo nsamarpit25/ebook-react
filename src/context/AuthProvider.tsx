@@ -47,12 +47,16 @@ const AuthProvider: FC<Props> = ({ children }) => {
       .then(({ data }) => {
         dispatch(updateProfile(data.profile));
         dispatch(updateAuthStatus("authenticated"));
+        // console.log(profile)
       })
       .catch(() => {
         dispatch(updateProfile(null));
         dispatch(updateAuthStatus("unauthenticated"));
       });
   }, [dispatch]);
+
+  if (status === "busy") return <div>Loading...</div>;
+
   return (
     <AuthContext.Provider value={{ profile, status, signOut }}>
       {children}
