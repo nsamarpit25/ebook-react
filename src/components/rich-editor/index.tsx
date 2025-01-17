@@ -1,16 +1,17 @@
-import { FC, useEffect } from "react";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import { Placeholder } from "@tiptap/extension-placeholder";
 import clsx from "clsx";
+import { FC, ReactNode, useEffect } from "react";
 import Tools from "./Tools";
+import ErrorList from "../ErrorList";
 
 interface Props {
   value?: string;
   onChange?(html: string): void;
   editable?: boolean;
   isInvalid?: boolean;
-  errorMessage?: string;
+  errorMessage?: ReactNode;
   placeholder?: string;
 }
 
@@ -31,12 +32,15 @@ const extensions = [
   }),
 ];
 
+let loaded = false;
+
 const RichEditor: FC<Props> = ({
   placeholder,
   isInvalid,
   errorMessage,
   value,
   editable,
+  onChange
 }) => {
   const editor = useEditor({
     extensions: [
@@ -45,15 +49,20 @@ const RichEditor: FC<Props> = ({
         placeholder: placeholder,
       }),
     ],
+    onUpdate({editor}){
+      onChange && onChange(editor.getHTML());
+    }
   });
 
   useEffect(() => {
+    if (loaded) return 
     if (editor && !editable) {
       editor.setEditable(false);
     }
 
     if (editor && value) {
       editor.commands.setContent(value);
+      loaded = true;
     }
   }, [editor, value]);
 
@@ -63,9 +72,7 @@ const RichEditor: FC<Props> = ({
     >
       <Tools editor={editor} visible={editable} />
       <EditorContent editor={editor} content={value} />
-      {errorMessage ? (
-        <p className="text-xs text-red-400">{errorMessage}</p>
-      ) : null}
+      {errorMessage}
     </div>
   );
 };

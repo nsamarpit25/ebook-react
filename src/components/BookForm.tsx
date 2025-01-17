@@ -11,15 +11,20 @@ import PosterSelector from "./PosterSelector";
 import RichEditor from "./rich-editor";
 import { parseDate } from "@internationalized/date";
 import { z } from "zod";
+import ErrorList from "./ErrorList";
+import clsx from "clsx";
+import { ParseError } from "../utils/helper";
+import toast from "react-hot-toast";
 
 interface Props {
   title: string;
   submitBtnTitle: string;
   initialState?: unknown;
+  onSubmit(data: FormData): Promise<void>;
 }
 
 interface DefaultForm {
-  file?: File;
+  file?: File | null;
   cover?: File;
   title: string;
   description: string;
@@ -68,7 +73,7 @@ const commonBookSchema = {
   publicationName: z
     .string({ required_error: "Invalid publication name!" })
     .trim()
-    .min(3, "Description is too short!"),
+    .min(3, "Publication Name is too short!"),
   uploadMethod: z.enum(["aws", "local"], {
     message: "Upload method is missing!",
   }),
@@ -102,10 +107,14 @@ const newBookSchema = z.object({
   fileInfo: fileInfoSchema,
 });
 
-const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
+const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
   const [bookInfo, setBookInfo] = useState<DefaultForm>(defaultBookInfo);
   const [cover, setCover] = useState("");
   const [isForUpdate, setIsForUpdate] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [errors, setErrors] = useState<{
+    [key: string]: string[] | undefined;
+  }>();
 
   const handleTextChange: ChangeEventHandler<HTMLInputElement> = ({
     target,
@@ -124,60 +133,108 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
 
     const file = files[0];
 
-    if (name === "cover" && file?.size) {
-      setCover(URL.createObjectURL(file));
-    } else {
-      setCover("");
+    if (name === "cover") {
+      try {
+        setCover(URL.createObjectURL(file));
+      } catch (error) {
+        setCover("");
+      }
     }
 
     setBookInfo({ ...bookInfo, [name]: file });
   };
 
-  const handleBookPublish = () => {
-    const formData = new FormData();
+  const handleBookPublish = async () => {
+    setBusy(true);
+    try {
+      const formData = new FormData();
 
-    const { file, cover } = bookInfo;
+      const { file, cover } = bookInfo;
 
-    // Validate book file (must be epub type)
-    if (file?.type !== "application/epub+zip") {
-      return console.log("Please select a valid (.epub) file.");
+      // Validate book file (must be epub type)
+      if (file?.type !== "application/epub+zip") {
+        return setErrors({
+          ...errors,
+          file: ["Please select a valid (.epub) file."],
+        });
+      } else {
+        setErrors({
+          ...errors,
+          file: undefined,
+        });
+      }
+
+      // Validate cover file
+      if (cover && !cover.type.startsWith("image/")) {
+        return setErrors({
+          ...errors,
+          cover: ["Please select a valid poster file."],
+        });
+      } else {
+        setErrors({
+          ...errors,
+          cover: undefined,
+        });
+      }
+
+      if (cover) {
+        formData.append("cover", cover);
+      }
+
+      // validate data for book creation
+      const bookToSend: BookToSubmit = {
+        title: bookInfo.title,
+        description: bookInfo.description,
+        genre: bookInfo.genre,
+        language: bookInfo.language,
+        publicationName: bookInfo.publicationName,
+        uploadMethod: "local",
+        publishedAt: bookInfo.publishedAt,
+        price: {
+          mrp: Number(bookInfo.mrp),
+          sale: Number(bookInfo.sale),
+        },
+        fileInfo: {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        },
+      };
+
+      const result = newBookSchema.safeParse(bookToSend);
+      if (!result.success) {
+        return setErrors(result.error.flatten().fieldErrors);
+        // setErrors(result.error.flatten().fieldErrors);
+      }
+
+      if (result.data.uploadMethod === "local") {
+        formData.append("book", file);
+      }
+
+      for (let key in bookToSend) {
+        type keyType = keyof typeof bookToSend;
+        const value = bookToSend[key as keyType];
+
+        if (typeof value === "string") {
+          formData.append(key, value);
+        }
+
+        if (typeof value === "object") {
+          formData.append(key, JSON.stringify(value));
+        }
+      }
+
+      await onSubmit(formData);
+      setBookInfo({...defaultBookInfo, file: null});
+      setCover("");
+      toast.success("Congratulations!! Your book have been published.", { position: "top-right", duration: 5000 });
+
+      // console.log(result.data);
+    } catch (error) {
+      ParseError(error);
+    } finally {
+      setBusy(false);
     }
-
-    // Validate cover file
-    if (cover && !cover.type.startsWith("image/")) {
-      return console.log("Please select a poster.");
-    }
-
-    if (cover) {
-      formData.append("cover", cover);
-    }
-
-    // validate data for book creation
-    const bookToSend: BookToSubmit = {
-      title: bookInfo.title,
-      description: bookInfo.description,
-      genre: bookInfo.genre,
-      language: bookInfo.language,
-      publicationName: bookInfo.publicationName,
-      uploadMethod: "aws",
-      publishedAt: bookInfo.publishedAt,
-      price: {
-        mrp: Number(bookInfo.mrp),
-        sale: Number(bookInfo.sale),
-      },
-      fileInfo: {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      },
-    };
-
-    const result = newBookSchema.safeParse(bookToSend);
-    if (!result.success) {
-      return console.error(result.error.flatten().fieldErrors);
-    }
-
-    console.log(result.data);
   };
 
   const handleBookUpdate = () => {};
@@ -193,23 +250,26 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
     <form onSubmit={handleSubmit} className="p-10 space-y-6">
       <h1 className="pb-6 font-semibold text-2xl w-full">{title}</h1>
 
-      <label htmlFor="file">
-        <span>Select File: </span>
-        <input
-          accept="application/epub+zip"
-          type="file"
-          name="file"
-          id="file"
-          onChange={handleFileChange}
-        />
-      </label>
+      <div>
+        <label htmlFor="file" className={clsx(errors?.file && "text-red-400")}>
+          <span>Select File: </span>
+          <input
+            accept="application/epub+zip"
+            type="file"
+            name="file"
+            id="file"
+            onChange={handleFileChange}
+          />
+        </label>
+        <ErrorList errors={errors?.file} />
+      </div>
 
       <PosterSelector
         src={cover}
         name="cover"
-        // isInvalid
+        isInvalid={errors?.cover ? true : false}
         fileName={bookInfo.cover?.name}
-        // errorMessage="This is the very long long file name.png"
+        errorMessage={<ErrorList errors={errors?.cover} />}
         onChange={handleFileChange}
       />
 
@@ -221,12 +281,14 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
         placeholder="Think & Grow Rich"
         value={bookInfo.title}
         onChange={handleTextChange}
+        isInvalid={errors?.title ? true : false}
+        errorMessage={<ErrorList errors={errors?.title} />}
       />
 
       <RichEditor
         placeholder="About Book..."
-        // isInvalid
-        // errorMessage="Something is wrong"
+        isInvalid={errors?.description ? true : false}
+        errorMessage={<ErrorList errors={errors?.description} />}
         value={bookInfo.description}
         editable
         onChange={(description) => setBookInfo({ ...bookInfo, description })}
@@ -240,6 +302,8 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
         placeholder="Penguin Book"
         value={bookInfo.publicationName}
         onChange={handleTextChange}
+        isInvalid={errors?.publicationName ? true : false}
+        errorMessage={<ErrorList errors={errors?.publicationName} />}
       />
 
       <DatePicker
@@ -250,12 +314,17 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
         label="Publish Date"
         showMonthAndYearPickers
         isRequired
+        isInvalid={errors?.publishedAt ? true : false}
+        errorMessage={<ErrorList errors={errors?.publishedAt} />}
       />
 
       <Autocomplete
+        isRequired
         label="Language"
         placeholder="Select a Language"
         defaultSelectedKey={bookInfo.language}
+        isInvalid={errors?.language ? true : false}
+        errorMessage={<ErrorList errors={errors?.language} />}
         onSelectionChange={(key = "") => {
           setBookInfo({ ...bookInfo, language: key as string });
         }}
@@ -270,12 +339,15 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
       </Autocomplete>
 
       <Autocomplete
+        isInvalid={errors?.genre ? true : false}
+        errorMessage={<ErrorList errors={errors?.genre} />}
         label="Genre"
         placeholder="Select a Genre"
         defaultSelectedKey={bookInfo.genre}
         onSelectionChange={(key = "") => {
           setBookInfo({ ...bookInfo, genre: key as string });
         }}
+        isRequired
       >
         {genres.map((item) => {
           return (
@@ -285,43 +357,56 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle }) => {
           );
         })}
       </Autocomplete>
+      <div>
+        <div className="bg-default-100 rounded-md py-2 px-3">
+          <p
+            className={clsx(
+              "text-xs pl-3",
+              errors?.price ? "text-red-400" : ""
+            )}
+          >
+            Price*
+          </p>
 
-      <div className="bg-default-100 rounded-md py-2 px-3">
-        <p className="text-xs pl-3">Price*</p>
-
-        <div className="flex space-x-6 mt-2">
-          <Input
-            name="mrp"
-            type="number"
-            label="MRP"
-            isRequired
-            placeholder="0.00"
-            value={bookInfo.mrp}
-            onChange={handleTextChange}
-            startContent={
-              <div className="pointer-events-none flex items-center">
-                <span className="text-default-400 text-small">$</span>
-              </div>
-            }
-          />
-          <Input
-            name="sale"
-            type="number"
-            label="Sale Price"
-            isRequired
-            placeholder="0.00"
-            value={bookInfo.sale}
-            onChange={handleTextChange}
-            startContent={
-              <div className="pointer-events-none flex items-center">
-                <span className="text-default-400 text-small">$</span>
-              </div>
-            }
-          />
+          <div className="flex space-x-6 mt-2">
+            <Input
+              name="mrp"
+              type="number"
+              label="MRP"
+              isRequired
+              placeholder="0.00"
+              value={bookInfo.mrp}
+              onChange={handleTextChange}
+              isInvalid={errors?.price ? true : false}
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">$</span>
+                </div>
+              }
+            />
+            <Input
+              name="sale"
+              type="number"
+              label="Sale Price"
+              isRequired
+              placeholder="0.00"
+              value={bookInfo.sale}
+              onChange={handleTextChange}
+              isInvalid={errors?.price ? true : false}
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small">$</span>
+                </div>
+              }
+            />
+          </div>
+        </div>
+        <div className="p-2">
+          <ErrorList errors={errors?.price} />
         </div>
       </div>
 
-      <Button type="submit" className="w-full">
+      <Button isLoading={busy} type="submit" className="w-full">
         {submitBtnTitle}
       </Button>
     </form>
