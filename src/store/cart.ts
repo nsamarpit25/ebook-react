@@ -55,9 +55,5 @@ const slice = createSlice({
 
 export const { updateCartState, updateCartItems, updateCartId } = slice.actions;
 
-export const getAuthState = createSelector(
-  (state: RootState) => state,
-  (state) => state.cart
-);
 
 export default slice.reducer;
