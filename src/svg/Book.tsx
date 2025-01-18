@@ -1,10 +1,10 @@
-import { FC } from "react";
+import  React, { FC } from "react";
 
 interface Props {
   className?: string;
 }
 
-const Book: FC<Props> = ({ className }): JSX.Element => {
+const Book: FC<Props> = ({ className }): React.ReactNode => {
   return (
     <svg
       width="250"

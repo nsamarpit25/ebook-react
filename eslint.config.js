@@ -21,12 +21,13 @@ export default [
       "@typescript-eslint": tseslint,
     },
     rules: {
+      // "@typescript-eslint/no-empty-interface": "off",
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
       ],
-      "@typescript-eslint/no-empty-interface": "warn", // Correct TypeScript rule
+      "@typescript-eslint/no-empty-interface": "off", // Correct TypeScript rule
       "no-unused-vars": "warn",
     },
   },

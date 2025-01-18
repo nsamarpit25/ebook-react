@@ -1,11 +1,9 @@
-import { FC, useContext } from "react";
-import { AuthContext } from "../context/AuthProvider";
-import useAuth from "../hooks/useAuth";
+import { FC } from "react";
 
-interface Props {}
+// interface Props {}
 
-const Home: FC<Props> = () => {
-  const authStatus = useAuth();
+const Home: FC = () => {
+  // const authStatus = useAuth();
   // console.log(authStatus);
   return <div>Home</div>;
 };

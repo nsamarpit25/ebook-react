@@ -5,13 +5,19 @@ import {
   DatePicker,
   Input,
 } from "@nextui-org/react";
-import { ChangeEventHandler, FC, FormEventHandler, useEffect, useState } from "react";
+import {
+  ChangeEventHandler,
+  FC,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import { genreList, genres, languageList, languages } from "../utils/data";
 import PosterSelector from "./PosterSelector";
 import RichEditor from "./rich-editor";
 import { parseDate } from "@internationalized/date";
 import { z } from "zod";
-import ErrorList from "./ErrorList";
+import ErrorList from "./common/ErrorList";
 import clsx from "clsx";
 import { ParseError } from "../utils/helper";
 import toast from "react-hot-toast";
@@ -33,6 +39,7 @@ interface Props {
   title: string;
   submitBtnTitle: string;
   initialState?: InitialBookToUpdate;
+  // eslint-disable-next-line
   onSubmit(data: FormData): Promise<void>;
 }
 
@@ -159,7 +166,8 @@ const BookForm: FC<Props> = ({
     if (name === "cover") {
       try {
         setCover(URL.createObjectURL(file));
-      } catch (error) {
+      } catch (e) {
+        console.error(e);
         setCover("");
       }
     }
@@ -313,10 +321,9 @@ const BookForm: FC<Props> = ({
           mrp: Number(bookInfo.mrp),
           sale: Number(bookInfo.sale),
         },
-        
       };
 
-      if(file) {
+      if (file) {
         bookToSend.fileInfo = {
           name: file.name,
           size: file.size,
@@ -362,7 +369,6 @@ const BookForm: FC<Props> = ({
     }
   };
 
-
   const handleSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault();
 
@@ -383,7 +389,7 @@ const BookForm: FC<Props> = ({
         cover,
       } = initialState;
 
-      if(cover) setCover(cover);
+      if (cover) setCover(cover);
 
       setBookInfo({
         title,

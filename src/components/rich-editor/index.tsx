@@ -7,6 +7,7 @@ import Tools from "./Tools";
 
 interface Props {
   value?: string;
+  // eslint-disable-next-line
   onChange?(html: string): void;
   editable?: boolean;
   isInvalid?: boolean;
@@ -39,7 +40,7 @@ const RichEditor: FC<Props> = ({
   errorMessage,
   value,
   editable,
-  onChange
+  onChange,
 }) => {
   const editor = useEditor({
     extensions: [
@@ -48,13 +49,13 @@ const RichEditor: FC<Props> = ({
         placeholder: placeholder,
       }),
     ],
-    onUpdate({editor}){
+    onUpdate({ editor }) {
       onChange && onChange(editor.getHTML());
-    }
+    },
   });
 
   useEffect(() => {
-    if (loaded) return 
+    if (loaded) return;
     if (editor && !editable) {
       editor.setEditable(false);
     }

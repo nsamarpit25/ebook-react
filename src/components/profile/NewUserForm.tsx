@@ -6,6 +6,7 @@ import { ParseError } from "../../utils/helper";
 interface Props {
   name?: string;
   avatar?: string;
+  // eslint-disable-next-line
   onSubmit(data: FormData): Promise<void>;
   title: string;
   btnTitle: string;
@@ -16,7 +17,13 @@ type UserInfo = {
   avatar?: File;
 };
 
-const NewUserForm: FC<Props> = ({ name, avatar, onSubmit, title, btnTitle }) => {
+const NewUserForm: FC<Props> = ({
+  name,
+  avatar,
+  onSubmit,
+  title,
+  btnTitle,
+}) => {
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "" });
   const [localAvatar, setLocalAvatar] = useState("");
   const [invalidFormState, setInvalidFormState] = useState(false);
@@ -58,8 +65,8 @@ const NewUserForm: FC<Props> = ({ name, avatar, onSubmit, title, btnTitle }) => 
     try {
       //   const { data } = await client.put("/auth/profile", formData);
       await onSubmit(formData);
-    //   data.profile
-    //   navigate("/");
+      //   data.profile
+      //   navigate("/");
     } catch (error) {
       ParseError(error);
     } finally {
@@ -70,9 +77,7 @@ const NewUserForm: FC<Props> = ({ name, avatar, onSubmit, title, btnTitle }) => 
   return (
     <div className="flex-1 flex justify-center items-center">
       <div className="w-96 border-2 p-5 rounded-md flex flex-col justify-center items-center ">
-        <h1 className="text-center text-xl font-semibold">
-          {title}
-        </h1>
+        <h1 className="text-center text-xl font-semibold">{title}</h1>
         <form className="w-full space-y-6 mt-6" onSubmit={handleSubmit}>
           <label
             htmlFor="avatar"
