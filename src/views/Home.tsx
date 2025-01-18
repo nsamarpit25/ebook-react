@@ -1,11 +1,15 @@
 import { FC } from "react";
+import HeroSection from "../components/HeroSection";
+
 
 // interface Props {}
 
 const Home: FC = () => {
-  // const authStatus = useAuth();
-  // console.log(authStatus);
-  return <div>Home</div>;
+  return (
+    <div>
+      <HeroSection />
+    </div>
+  );
 };
 
 export default Home;
