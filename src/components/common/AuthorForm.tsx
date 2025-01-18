@@ -50,6 +50,8 @@ const AuthorForm: FC<Props> = ({ initialState, btnTitle, onSubmit }) => {
   const [errors, setErrors] = useState<{
     [key: string]: string[] | undefined;
   }>();
+  // const [isAuthor, setIsAuthor] = useState(false);
+
   const { profile } = useAuth();
 
   const addLinkFields = () => {
@@ -123,7 +125,7 @@ const AuthorForm: FC<Props> = ({ initialState, btnTitle, onSubmit }) => {
           setAbout(value);
           if (about.length > 100) {
             setErrors({ ...errors, about: undefined });
-            console.log(about);
+            // console.log(about);
           }
         }}
         value={about}

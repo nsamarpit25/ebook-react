@@ -13,6 +13,9 @@ import Private from "./routes/Private";
 import NewBookForm from "./views/NewBookForm";
 import UpdateBookForm from "./views/UpdateBookForm";
 import NewAuthorForm from "./views/NewAuthorForm";
+import UpdateAuthor from "./views/UpdateAuthor";
+import Author from "./routes/Author";
+import NotFound from "./views/NotFound";
 
 // interface Props {}
 
@@ -22,14 +25,19 @@ const App: FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/not-found" element={<NotFound />} />
 
         <Route element={<Private />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
           <Route path="/new-user" element={<NewUser />} />
           <Route path="/author-registration" element={<NewAuthorForm />} />
-          <Route path="/create-new-book" element={<NewBookForm />} />
-          <Route path="/update-book/:slug" element={<UpdateBookForm />} />
+
+          <Route element={<Author />}>
+            <Route path="/update-author" element={<UpdateAuthor />} />
+            <Route path="/create-new-book" element={<NewBookForm />} />
+            <Route path="/update-book/:slug" element={<UpdateBookForm />} />
+          </Route>
         </Route>
 
         <Route element={<Guest />}>

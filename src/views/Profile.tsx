@@ -34,8 +34,14 @@ const Profile: FC<Props> = () => {
               </span>
             </p>
             {profile.role === "user" ? (
-              <Link className="text-xs underline" to="/author-registration">Become an Author</Link>
-            ) : null}
+              <Link className="text-xs underline" to="/author-registration">
+                Become an Author
+              </Link>
+            ) : (
+              <Link className="text-xs underline" to="/update-author">
+                Update Profile
+              </Link>
+            )}
           </div>
         </div>
 

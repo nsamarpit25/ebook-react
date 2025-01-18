@@ -1,21 +1,29 @@
 import { FC } from "react";
 import client from "../api/client";
 import NewUserForm from "../components/profile/NewUserForm";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "../store/auth";
+import useAuth from "../hooks/useAuth";
 
 interface Props {}
 
 const NewUser: FC<Props> = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {profile} = useAuth();
 
   const handleSubmit = async (formData: FormData) => {
-    const { data } = await client.put("/auth/profile", formData);
-    dispatch(updateProfile(data.profile));
-    navigate("/");
+    try {
+      const { data } = await client.put("/auth/profile", formData);
+      dispatch(updateProfile(data.profile));
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  if(profile?.signedUp) return <Navigate to="/" />
 
   return (
     <NewUserForm
