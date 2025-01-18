@@ -7,7 +7,6 @@ import Tools from "./Tools";
 
 interface Props {
   value?: string;
-  // eslint-disable-next-line
   onChange?(html: string): void;
   editable?: boolean;
   isInvalid?: boolean;

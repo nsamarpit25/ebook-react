@@ -6,7 +6,6 @@ import { ParseError } from "../../utils/helper";
 interface Props {
   name?: string;
   avatar?: string;
-  // eslint-disable-next-line
   onSubmit(data: FormData): Promise<void>;
   title: string;
   btnTitle: string;

@@ -1,7 +1,6 @@
 import { Switch } from "@nextui-org/react";
 import { FC, useCallback, useEffect, useState } from "react";
 import { IoMoon, IoSunnyOutline } from "react-icons/io5";
-import { set } from "zod";
 
 interface Props {}
 
