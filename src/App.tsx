@@ -16,6 +16,7 @@ import NewAuthorForm from "./views/NewAuthorForm";
 import UpdateAuthor from "./views/UpdateAuthor";
 import Author from "./routes/Author";
 import NotFound from "./views/NotFound";
+import SingleBook from "./views/SingleBook";
 
 // interface Props {}
 
@@ -26,6 +27,7 @@ const App: FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/not-found" element={<NotFound />} />
+        <Route path="/book/:slug" element={<SingleBook />} />
 
         <Route element={<Private />}>
           <Route path="/profile" element={<Profile />} />

@@ -6,6 +6,7 @@ import { FC, ReactNode, useEffect } from "react";
 import Tools from "./Tools";
 
 interface Props {
+  className?: string;
   value?: string;
   onChange?(html: string): void;
   editable?: boolean;
@@ -39,6 +40,7 @@ const RichEditor: FC<Props> = ({
   errorMessage,
   value,
   editable,
+  className,
   onChange,
 }) => {
   const editor = useEditor({
@@ -70,7 +72,7 @@ const RichEditor: FC<Props> = ({
       className={clsx(isInvalid && "ring-2 ring-red-400 p-2 rounded-medium")}
     >
       <Tools editor={editor} visible={editable} />
-      <EditorContent editor={editor} content={value} />
+      <EditorContent editor={editor} content={value} className={className} />
       {errorMessage}
     </div>
   );
