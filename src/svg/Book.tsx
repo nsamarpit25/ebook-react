@@ -2,6 +2,7 @@ import  React, { FC } from "react";
 
 interface Props {
   className?: string;
+  
 }
 
 const Book: FC<Props> = ({ className }): React.ReactNode => {
