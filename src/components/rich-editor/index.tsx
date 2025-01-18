@@ -4,7 +4,6 @@ import { StarterKit } from "@tiptap/starter-kit";
 import clsx from "clsx";
 import { FC, ReactNode, useEffect } from "react";
 import Tools from "./Tools";
-import ErrorList from "../ErrorList";
 
 interface Props {
   value?: string;
@@ -64,7 +63,7 @@ const RichEditor: FC<Props> = ({
       editor.commands.setContent(value);
       loaded = true;
     }
-  }, [editor, value]);
+  }, [editor, value, editable]);
 
   return (
     <div

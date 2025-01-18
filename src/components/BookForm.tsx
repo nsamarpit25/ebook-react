@@ -5,7 +5,7 @@ import {
   DatePicker,
   Input,
 } from "@nextui-org/react";
-import { ChangeEventHandler, FC, FormEventHandler, useState } from "react";
+import { ChangeEventHandler, FC, FormEventHandler, useEffect, useState } from "react";
 import { genreList, genres, languageList, languages } from "../utils/data";
 import PosterSelector from "./PosterSelector";
 import RichEditor from "./rich-editor";
@@ -16,10 +16,23 @@ import clsx from "clsx";
 import { ParseError } from "../utils/helper";
 import toast from "react-hot-toast";
 
+export interface InitialBookToUpdate {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  genre: string;
+  language: string;
+  cover?: string;
+  price: { mrp: string; sale: string };
+  publicationName: string;
+  publishedAt: string;
+}
+
 interface Props {
   title: string;
   submitBtnTitle: string;
-  initialState?: unknown;
+  initialState?: InitialBookToUpdate;
   onSubmit(data: FormData): Promise<void>;
 }
 
@@ -52,13 +65,14 @@ interface BookToSubmit {
   uploadMethod: "aws" | "local";
   language: string;
   publishedAt?: string;
+  slug?: string;
   publicationName: string;
   genre: string;
   price: {
     mrp: number;
     sale: number;
   };
-  fileInfo: {
+  fileInfo?: {
     type: string;
     name: string;
     size: number;
@@ -106,8 +120,17 @@ const newBookSchema = z.object({
   ...commonBookSchema,
   fileInfo: fileInfoSchema,
 });
+const updateBookSchema = z.object({
+  ...commonBookSchema,
+  fileInfo: fileInfoSchema.optional(),
+});
 
-const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
+const BookForm: FC<Props> = ({
+  title,
+  submitBtnTitle,
+  onSubmit,
+  initialState,
+}) => {
   const [bookInfo, setBookInfo] = useState<DefaultForm>(defaultBookInfo);
   const [cover, setCover] = useState("");
   const [isForUpdate, setIsForUpdate] = useState(false);
@@ -225,9 +248,111 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
       }
 
       await onSubmit(formData);
-      setBookInfo({...defaultBookInfo, file: null});
+      setBookInfo({ ...defaultBookInfo, file: null });
       setCover("");
-      toast.success("Congratulations!! Your book have been published.", { position: "top-right", duration: 5000 });
+      toast.success("Congratulations!! Your book have been published.", {
+        position: "top-right",
+        duration: 5000,
+      });
+
+      // console.log(result.data);
+    } catch (error) {
+      ParseError(error);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const handleBookUpdate = async () => {
+    setBusy(true);
+    try {
+      const formData = new FormData();
+
+      const { file, cover } = bookInfo;
+
+      // Validate book file (must be epub type)
+      if (file && file?.type !== "application/epub+zip") {
+        return setErrors({
+          ...errors,
+          file: ["Please select a valid (.epub) file."],
+        });
+      } else {
+        setErrors({
+          ...errors,
+          file: undefined,
+        });
+      }
+
+      // Validate cover file
+      if (cover && !cover.type.startsWith("image/")) {
+        return setErrors({
+          ...errors,
+          cover: ["Please select a valid poster file."],
+        });
+      } else {
+        setErrors({
+          ...errors,
+          cover: undefined,
+        });
+      }
+
+      if (cover) {
+        formData.append("cover", cover);
+      }
+
+      // validate data for book creation
+      const bookToSend: BookToSubmit = {
+        title: bookInfo.title,
+        description: bookInfo.description,
+        genre: bookInfo.genre,
+        language: bookInfo.language,
+        publicationName: bookInfo.publicationName,
+        uploadMethod: "local",
+        publishedAt: bookInfo.publishedAt,
+        slug: initialState?.slug,
+        price: {
+          mrp: Number(bookInfo.mrp),
+          sale: Number(bookInfo.sale),
+        },
+        
+      };
+
+      if(file) {
+        bookToSend.fileInfo = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        };
+      }
+
+      const result = updateBookSchema.safeParse(bookToSend);
+      if (!result.success) {
+        return setErrors(result.error.flatten().fieldErrors);
+        // setErrors(result.error.flatten().fieldErrors);
+      }
+
+      if (file && result.data.uploadMethod === "local") {
+        formData.append("book", file);
+      }
+
+      for (let key in bookToSend) {
+        type keyType = keyof typeof bookToSend;
+        const value = bookToSend[key as keyType];
+
+        if (typeof value === "string") {
+          formData.append(key, value);
+        }
+
+        if (typeof value === "object") {
+          formData.append(key, JSON.stringify(value));
+        }
+      }
+
+      await onSubmit(formData);
+      setCover("");
+      toast.success("Congratulations!! Your changes have been published.", {
+        position: "top-right",
+        duration: 5000,
+      });
 
       // console.log(result.data);
     } catch (error) {
@@ -237,7 +362,6 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
     }
   };
 
-  const handleBookUpdate = () => {};
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (evt) => {
     evt.preventDefault();
@@ -245,6 +369,36 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
     if (isForUpdate) handleBookUpdate();
     else handleBookPublish();
   };
+
+  useEffect(() => {
+    if (initialState) {
+      const {
+        title,
+        description,
+        language,
+        genre,
+        publicationName,
+        publishedAt,
+        price,
+        cover,
+      } = initialState;
+
+      if(cover) setCover(cover);
+
+      setBookInfo({
+        title,
+        description,
+        language,
+        genre,
+        publicationName,
+        publishedAt,
+        mrp: price.mrp,
+        sale: price.sale,
+      });
+    }
+
+    setIsForUpdate(true);
+  }, [initialState]);
 
   return (
     <form onSubmit={handleSubmit} className="p-10 space-y-6">
@@ -323,6 +477,7 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
         label="Language"
         placeholder="Select a Language"
         defaultSelectedKey={bookInfo.language}
+        selectedKey={bookInfo.language}
         isInvalid={errors?.language ? true : false}
         errorMessage={<ErrorList errors={errors?.language} />}
         onSelectionChange={(key = "") => {
@@ -344,6 +499,7 @@ const BookForm: FC<Props> = ({ title, submitBtnTitle, onSubmit }) => {
         label="Genre"
         placeholder="Select a Genre"
         defaultSelectedKey={bookInfo.genre}
+        selectedKey={bookInfo.genre}
         onSelectionChange={(key = "") => {
           setBookInfo({ ...bookInfo, genre: key as string });
         }}

@@ -8,7 +8,7 @@ interface Props {}
 const Private: FC<Props> = () => {
   const { status } = useAuth();
   const notLoggedIn = status === "unauthenticated";
-  console.log(status);
+  // console.log(status);
 
   if (status === "busy") return <LoadingSpinner />;
 
