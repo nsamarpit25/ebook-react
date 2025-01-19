@@ -39,7 +39,6 @@ interface Props {
   title: string;
   submitBtnTitle: string;
   initialState?: InitialBookToUpdate;
-  // eslint-disable-next-line
   onSubmit(data: FormData): Promise<void>;
 }
 

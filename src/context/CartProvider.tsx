@@ -1,8 +1,4 @@
 import { createContext, FC, ReactNode, useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import client from "../api/client";
-import useAuth from "../hooks/useAuth";
 import {
   CartItem,
   CartItemAPI,
@@ -11,17 +7,21 @@ import {
   updateCartItems,
   updateCartState,
 } from "../store/cart";
+import { useDispatch, useSelector } from "react-redux";
+import useAuth from "../hooks/useAuth";
+import client from "../api/client";
+import toast from "react-hot-toast";
 import { ParseError } from "../utils/helper";
-
-interface Props {
-  children: ReactNode;
-}
 
 interface CartApiResponse {
   cart: {
     id: string;
     items: CartItemAPI[];
   };
+}
+
+interface Props {
+  children: ReactNode;
 }
 
 export interface ICartContext {
@@ -46,6 +46,13 @@ export const CartContext = createContext<ICartContext>({
   updateCart() {},
   clearCart() {},
 });
+
+const CART_KEY = "cartItems";
+const updateCartInLS = (cartItems: CartItem[]) => {
+  localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+};
+
+let startLSUpdate = false;
 
 const CartProvider: FC<Props> = ({ children }) => {
   const cart = useSelector(getCartState);
@@ -74,16 +81,46 @@ const CartProvider: FC<Props> = ({ children }) => {
     }
   };
 
+  const updateCart = (item: CartItem) => {
+    startLSUpdate = true;
+    // update the UI
+    dispatch(updateCartItems(item));
+
+    if (profile) {
+      // update the server/database
+      // if user is authenticated sending api request
+      setPending(true);
+      client
+        .post("/cart", {
+          items: [{ product: item.product.id, quantity: item.quantity }],
+        })
+        .then(({ data }) => {
+          toast.success("Product added to cart.");
+          dispatch(updateCartId(data.cart));
+        })
+        .catch(ParseError)
+        .finally(() => {
+          setPending(false);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (startLSUpdate && !profile) {
+      updateCartInLS(cart.items);
+    }
+  }, [cart.items, profile]);
+
   useEffect(() => {
     const fetchCartInfo = async () => {
-      // if (!profile) {
-      //   const result = localStorage.getItem(CART_KEY);
-      //   if (result) {
-      //     dispatch(updateCartState({ items: JSON.parse(result) }));
-      //   }
+      if (!profile) {
+        const result = localStorage.getItem(CART_KEY);
+        if (result) {
+          dispatch(updateCartState({ items: JSON.parse(result) }));
+        }
 
-      //   return setFetching(false);
-      // }
+        return setFetching(false);
+      }
 
       try {
         const { data } = await client.get<CartApiResponse>("/cart");
@@ -96,40 +133,7 @@ const CartProvider: FC<Props> = ({ children }) => {
     };
 
     fetchCartInfo();
-  }, [dispatch]);
-
-  const updateCart = async (item: CartItem) => {
-    dispatch(updateCartItems(item));
-
-    if (profile) {
-      setPending(true);
-      client
-        .post("/cart", {
-          items: [
-            {
-              product: item.product.id,
-              quantity: item.quantity,
-            },
-          ],
-        })
-        .then(({ data }) => {
-          // toast.success("Book added to cart.");
-          if (item.quantity === -1) {
-            toast.success("Book successfully removed from cart.");
-          }
-          if (item.quantity === 1) {
-            toast.success("Book successfully added to cart.");
-          }
-          dispatch(updateCartId(data.cart));
-        })
-        .catch((error) => {
-          ParseError(error);
-        })
-        .finally(() => {
-          setPending(false);
-        });
-    }
-  };
+  }, [dispatch, profile]);
 
   return (
     <CartContext.Provider
