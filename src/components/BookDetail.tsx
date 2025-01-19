@@ -54,6 +54,7 @@ const BookDetail: FC<Props> = ({ book }) => {
     updateCart({ product: book, quantity: 1 });
   };
 
+
   const {
     id,
     slug,
@@ -69,6 +70,10 @@ const BookDetail: FC<Props> = ({ book }) => {
     genre,
     publishedAt,
   } = book;
+
+  const handleBuyNow = () => {
+    
+  }
 
   return (
     <div className="md:flex">
@@ -174,7 +179,7 @@ const BookDetail: FC<Props> = ({ book }) => {
               >
                 Add to Cart
               </Button>
-              <Button isLoading={pending} variant="flat">
+              <Button isLoading={pending} variant="flat" onClick={handleBuyNow}>
                 Buy Now
               </Button>
             </>

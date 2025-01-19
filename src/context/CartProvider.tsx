@@ -138,6 +138,7 @@ const CartProvider: FC<Props> = ({ children }) => {
   return (
     <CartContext.Provider
       value={{
+        id: cart.id,
         items: cart.items,
         totalCount: cart.totalCount,
         subTotal: cart.subTotal,

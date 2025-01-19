@@ -1,17 +1,20 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import useCart from "../hooks/useCart";
 import { Button, Chip, Divider, Card } from "@nextui-org/react";
-import { calculateDiscount, formatPrice } from "../utils/helper";
+import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import { FaMinus, FaPlus, FaRegTrashCan } from "react-icons/fa6";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import Skeletons from "../components/Skeletons";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import client from "../api/client";
 
 interface Props {}
 
 const Cart: FC<Props> = () => {
+  const [busy, setBusy] = useState(false);
   const {
+    id,
     pending,
     items,
     totalCount,
@@ -22,6 +25,20 @@ const Cart: FC<Props> = () => {
     clearCart,
   } = useCart();
 
+  const handleCheckout = async () => {
+    try {
+      setBusy(true);
+      const { data } = await client.post("/checkout", { cartId: id });
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (error) {
+      ParseError(error);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (fetching) return <Skeletons.Cart />;
 
   if (!totalCount)
@@ -29,8 +46,16 @@ const Cart: FC<Props> = () => {
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold mb-4">Your Cart is Empty</h1>
-          <p className="text-gray-600 mb-6">Add some items to start shopping!</p>
-          <Button as={Link} to="/" color="primary" size="lg" isLoading={pending}>
+          <p className="text-gray-600 mb-6">
+            Add some items to start shopping!
+          </p>
+          <Button
+            as={Link}
+            to="/"
+            color="primary"
+            size="lg"
+            isLoading={pending || busy}
+          >
             Continue Shopping
           </Button>
         </div>
@@ -47,13 +72,15 @@ const Cart: FC<Props> = () => {
         {/* Cart Items Section */}
         <div className="lg:w-3/5">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Shopping Cart ({totalCount} items)</h1>
+            <h1 className="text-2xl font-bold">
+              Shopping Cart ({totalCount} items)
+            </h1>
             <Button
               color="danger"
               variant="light"
               startContent={<FaRegTrashCan />}
               onClick={clearCart}
-              isLoading={pending}
+              isLoading={pending || busy}
             >
               Clear Cart
             </Button>
@@ -99,30 +126,26 @@ const Cart: FC<Props> = () => {
                       <Button
                         isIconOnly
                         size="sm"
-                        isLoading={pending}
+                        isLoading={pending || busy}
                         variant="bordered"
-                        onClick={() =>
-                          updateCart({ product, quantity: -1 })
-                        }
+                        onClick={() => updateCart({ product, quantity: -1 })}
                       >
                         <FaMinus />
                       </Button>
                       <span className="font-semibold">{quantity}</span>
                       <Button
                         isIconOnly
-                        isLoading={pending}
+                        isLoading={pending || busy}
                         size="sm"
                         variant="bordered"
-                        onClick={() =>
-                          updateCart({ product, quantity: 1 })
-                        }
+                        onClick={() => updateCart({ product, quantity: 1 })}
                       >
                         <FaPlus />
                       </Button>
                       <Button
                         isIconOnly
                         size="sm"
-                        isLoading={pending}
+                        isLoading={pending || busy}
                         variant="bordered"
                         onClick={() =>
                           updateCart({ product, quantity: -quantity })
@@ -159,10 +182,12 @@ const Cart: FC<Props> = () => {
               <div className="mt-3">
                 <Chip size="sm">
                   <p>
-                    You are saving total {calculateDiscount({
+                    You are saving total{" "}
+                    {calculateDiscount({
                       mrp: subTotal.toFixed(2),
                       sale: totalPrice.toFixed(2),
-                    })}%
+                    })}
+                    %
                   </p>
                 </Chip>
               </div>
@@ -170,12 +195,12 @@ const Cart: FC<Props> = () => {
                 color="primary"
                 className="w-full mt-4"
                 size="lg"
-                isLoading={pending}
+                isLoading={pending || busy}
                 startContent={<MdOutlineShoppingCartCheckout />}
+                onClick={handleCheckout}
               >
                 Proceed to Checkout
               </Button>
-              
             </div>
           </Card>
         </div>
