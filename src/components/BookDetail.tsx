@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa6";
 import RichEditor from "./rich-editor";
 import { TbShoppingCartPlus } from "react-icons/tb";
+import useCart from "../hooks/useCart";
 
 export interface Book {
   id: string;
@@ -43,9 +44,15 @@ interface Props {
 }
 
 const BookDetail: FC<Props> = ({ book }) => {
+  const { updateCart } = useCart();
+
   if (!book) return null;
 
   const alreadyPurchased = false;
+
+  const handleCartUpdate = () => {
+    updateCart({ product: book, quantity: 1 });
+  };
 
   const {
     id,
@@ -159,7 +166,11 @@ const BookDetail: FC<Props> = ({ book }) => {
             </Button>
           ) : (
             <>
-              <Button variant="light" startContent={<TbShoppingCartPlus />}>
+              <Button
+                onClick={handleCartUpdate}
+                variant="light"
+                startContent={<TbShoppingCartPlus />}
+              >
                 Add to Cart
               </Button>
               <Button variant="flat">Buy Now</Button>
