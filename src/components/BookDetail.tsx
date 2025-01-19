@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
-import { calculateDiscount, formatPrice } from "../utils/helper";
+import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import { Button, Chip, Divider } from "@nextui-org/react";
 import {
   FaEarthAfrica,
@@ -12,6 +12,8 @@ import {
 import RichEditor from "./rich-editor";
 import { TbShoppingCartPlus } from "react-icons/tb";
 import useCart from "../hooks/useCart";
+import client from "../api/client";
+import useAuth from "../hooks/useAuth";
 
 export interface Book {
   id: string;
@@ -45,15 +47,14 @@ interface Props {
 
 const BookDetail: FC<Props> = ({ book }) => {
   const { updateCart, pending } = useCart();
+  const [busy, setBusy] = useState(false);
+  const { profile } = useAuth();
 
   if (!book) return null;
-
-  const alreadyPurchased = false;
 
   const handleCartUpdate = () => {
     updateCart({ product: book, quantity: 1 });
   };
-
 
   const {
     id,
@@ -71,9 +72,23 @@ const BookDetail: FC<Props> = ({ book }) => {
     publishedAt,
   } = book;
 
-  const handleBuyNow = () => {
-    
-  }
+  const alreadyPurchased = profile?.books?.includes(id) || false;
+
+  const handleBuyNow = async () => {
+    try {
+      setBusy(true);
+      const { data } = await client.post("/checkout/instant", {
+        productId: id,
+      });
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (error) {
+      ParseError(error);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div className="md:flex">
@@ -175,11 +190,15 @@ const BookDetail: FC<Props> = ({ book }) => {
                 onClick={handleCartUpdate}
                 variant="light"
                 startContent={<TbShoppingCartPlus />}
-                isLoading={pending}
+                isLoading={pending || busy}
               >
                 Add to Cart
               </Button>
-              <Button isLoading={pending} variant="flat" onClick={handleBuyNow}>
+              <Button
+                isLoading={pending || busy}
+                variant="flat"
+                onClick={handleBuyNow}
+              >
                 Buy Now
               </Button>
             </>
