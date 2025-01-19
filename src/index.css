@@ -57,6 +57,10 @@
   color: #faf7f2 !important;
 }
 
+.slick-dots .slick-active div {
+  @apply bg-danger dark:bg-danger;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

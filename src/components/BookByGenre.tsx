@@ -3,7 +3,7 @@ import client from "../api/client";
 import LoadingSpinner from "./common/LoadingSpinner";
 import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import { Link } from "react-router-dom";
-import { Chip, Skeleton } from "@nextui-org/react";
+import { Chip} from "@nextui-org/react";
 import { FaStar } from "react-icons/fa6";
 import DividerWithTitle from "./common/DividerWithTitle";
 import Skeletons from "./Skeletons";
@@ -28,7 +28,6 @@ interface Book {
 const BookByGenre: FC<Props> = ({ genre }) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [busy, setBusy] = useState(true);
-  const fakeData = new Array(5).fill(""); // ["", "", ...]
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -47,54 +46,67 @@ const BookByGenre: FC<Props> = ({ genre }) => {
   if (busy) return <Skeletons.BookList />;
 
   return (
-    <div>
+    <div className="container mx-auto px-4">
       <DividerWithTitle title={genre} />
 
-      <div className="mt-6 grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 gap-5">
-        {books.map((book) => {
-          return (
-            <Link key={book.id} to={`/book/${book.slug}`}>
-              <div className="flex flex-col items-center space-y-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-8">
+        {books.map((book) => (
+          <Link
+            key={book.id}
+            to={`/book/${book.slug}`}
+            className="group hover:scale-105 transition-transform duration-300"
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-4 h-full flex flex-col border border-gray-100 dark:border-gray-700">
+              <div className="relative mb-4 aspect-[2/3] overflow-hidden rounded-md bg-gray-100 dark:bg-gray-700">
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="w-32 h-[185px] object-contain rounded"
+                  className="w-full h-full object-cover"
                 />
-
-                <div className="w-full space-y-2">
-                  <p className="font-bold line-clamp-2">{book.title}</p>
-
+                <div className="absolute top-2 right-2">
                   <Chip color="danger" radius="sm" size="sm">
                     {calculateDiscount(book.price)}% Off
                   </Chip>
                 </div>
+              </div>
 
-                <div className="w-full">
-                  <div className="flex space-x-2">
-                    <p className="font-bold">
-                      {formatPrice(Number(book.price.sale))}
-                    </p>
-                    <p className="line-through">
-                      {formatPrice(Number(book.price.mrp))}
-                    </p>
-                  </div>
+              <div className="flex-grow space-y-3">
+                <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem] text-gray-800 dark:text-gray-100">
+                  {book.title}
+                </h3>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="text-primary dark:text-danger font-bold">
+                    {formatPrice(Number(book.price.sale))}
+                  </span>
+                  <span className="text-gray-400 dark:text-gray-500 text-sm line-through">
+                    {formatPrice(Number(book.price.mrp))}
+                  </span>
                 </div>
 
-                <div className="w-full">
+                <div className="mt-auto">
                   {book.rating ? (
-                    <Chip radius="sm" color="warning" variant="solid">
-                      <div className="flex items-center font-semibold text-sm space-x-1">
-                        <span>{book.rating}</span> <FaStar />
+                    <Chip 
+                      radius="sm" 
+                      color="warning" 
+                      variant="solid"
+                      className="w-fit"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span className="font-medium">{book.rating}</span>
+                        <FaStar size={12} />
                       </div>
                     </Chip>
                   ) : (
-                    <span>No Ratings</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      No Ratings
+                    </span>
                   )}
                 </div>
               </div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

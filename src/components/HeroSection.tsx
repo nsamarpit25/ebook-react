@@ -1,46 +1,10 @@
 import { Button } from "@nextui-org/react";
 import React, { FC } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
+import { FaArrowRightLong, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 
 interface Props {}
-
-// const books = [
-//     {
-//         title: "The Girl with the Dragon Tattoo",
-//         slogan: "Journalist Mikael Blomkvist and hacker Lisbeth Salander uncover dark secrets as they investigate a decades-old disappearance. Stieg Larsson's gripping thriller combines intricate plotting, compelling characters, and social commentary.",
-//         subtitle: "The Millennium Trilogy Book 1",
-//         cover:
-//           "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943170/wiayfy2opfmbm5zztdut.png",
-//         slug: "the-girl-with-the-dragon-tattoo-66d08b40ab9726b8a14859d9",
-//       },
-//     {
-//         title: "The Road",
-//         slogan: "Cormac McCarthy's post-apocalyptic novel follows a father and son as they journey through a ravaged landscape in search of hope and redemption. Against a backdrop of desolation, McCarthy explores themes of survival, love, and the human spirit.",
-//         subtitle: "The Millennium Trilogy Book 1",
-//         cover:
-//           "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943172/bycfvhs8st7eosdimqwy.png",
-//         slug: "the-road-66d08b40ab9726b8a14859d8",
-//       },
-//     {
-//         title: "The Great Gatsby",
-//         slogan: "A gripping thriller of mystery and suspense.",
-//         subtitle: "The Millennium Trilogy Book 1",
-//         cover:
-//           "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943178/nh5py32h7elbcawjpux5.png",
-//         slug: "the-great-gatsby-66d08b40ab9726b8a14859d4",
-//       },
-//     {
-//         title: "Pride and Prejudice",
-//         slogan: "Jane Austen's classic novel follows the romantic entanglements of the Bennet sisters as they navigate the societal expectations of 19th-century England. With wit, charm, and timeless characters, Austen explores themes of love, marriage, and social class.",
-//         subtitle: "The Millennium Trilogy Book 1",
-//         cover:
-//           "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943181/dszmpqruxweg5kpgxd3o.png",
-//         slug: "the-girl-with-the-dragon-tattoo-66d08b40ab9726b8a14859d9",
-//       },
-
-// ];
 
 const books = [
   {
@@ -77,6 +41,17 @@ const books = [
   },
 ];
 
+const CustomArrow = ({ direction, onClick }: { direction: 'left' | 'right', onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    className={`absolute z-10 top-1/2 -translate-y-1/2 ${
+      direction === 'left' ? 'left-4' : 'right-4'
+    } bg-white/80 dark:bg-gray-800/80 p-3 rounded-full shadow-lg hover:scale-110 transition-transform duration-300`}
+  >
+    {direction === 'left' ? <FaChevronLeft /> : <FaChevronRight />}
+  </button>
+);
+
 const settings = {
   dots: true,
   infinite: true,
@@ -86,44 +61,62 @@ const settings = {
   slidesToScroll: 1,
   autoplay: true,
   autoplaySpeed: 4000,
+  prevArrow: <CustomArrow direction="left" />,
+  nextArrow: <CustomArrow direction="right" />,
+  dotsClass: "slick-dots !bottom-5",
+  appendDots: (dots: React.ReactNode) => (
+    <div>
+      <ul className="flex justify-center gap-2"> {dots} </ul>
+    </div>
+  ),
+  customPaging: () => (
+    <div className="w-2 h-2 bg-gray-400/50 dark:bg-gray-600/50 rounded-full hover:bg-danger/50" />
+  ),
 };
 
 const HeroSection: FC<Props> = () => {
   return (
-    <div className="md:h-96 rounded-medium p-5 bg-[#faf7f2] dark:bg-[#231e1a]">
+    <div className="md:min-h-[500px] rounded-xl overflow-hidden bg-gradient-to-r from-[#faf7f2] to-[#f8f4ed] dark:from-gray-900 dark:to-gray-800 relative">
       <Slider {...settings}>
-        {books.map((item) => {
-          return (
-            <div key={item.slug}>
-              <div className="md:flex justify-between">
-                <div className="flex-1 flex flex-col justify-center p-5">
-                  <h1 className="lg:text-6xl text-3xl">{item.slogan}</h1>
-                  <p className="md:text-lg mt-3 italic">{item.subtitle}</p>
-                  <div className="mt-3">
-                    <Button
-                      radius="sm"
-                      color="danger"
-                      variant="bordered"
-                      endContent={<FaArrowRightLong />}
-                      as={Link}
-                      to={`/book/${item.slug}`}
-                    >
-                      Learn More
-                    </Button>
-                  </div>
+        {books.map((item) => (
+          <div key={item.slug}>
+            <div className="md:flex items-center justify-between max-w-7xl mx-auto">
+              <div className="flex-1 flex flex-col justify-center p-6 md:p-12 space-y-6">
+                <div className="space-y-4">
+                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white">
+                    {item.slogan}
+                  </h1>
+                  <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 italic">
+                    {item.subtitle}
+                  </p>
                 </div>
 
-                <div className="p-5 flex-1 flex items-center justify-center">
+                <Button
+                  radius="sm"
+                  color="danger"
+                  variant="shadow"
+                  endContent={<FaArrowRightLong />}
+                  as={Link}
+                  to={`/book/${item.slug}`}
+                  className="w-fit hover:scale-105 transition-transform duration-300"
+                >
+                  Learn More
+                </Button>
+              </div>
+
+              <div className="p-6 md:p-12 flex-1 flex items-center justify-center">
+                <div className="relative group transition-transform duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-r from-danger/10 to-primary/10 dark:from-danger/20 dark:to-primary/20 rounded-lg transform rotate-12 group-hover:scale-105" />
                   <img
                     src={item.cover}
                     alt={item.title}
-                    className="md:w-48 md:h-80 w-32 rounded-md object-cover shadow-lg rotate-12"
+                    className="relative md:w-64 md:h-96 w-40 h-56 object-cover rounded-lg shadow-xl transform rotate-12 group-hover:rotate-[14deg] transition-all duration-300"
                   />
                 </div>
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </Slider>
     </div>
   );
