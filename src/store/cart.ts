@@ -2,10 +2,26 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Book } from "../components/BookDetail";
 import { RootState } from ".";
 
-export type CartItem = {
-  product: Book;
+export interface CartItemAPI {
   quantity: number;
-};
+  product: {
+    id: string;
+    title: string;
+    slug: string;
+    cover?: string;
+    price: {
+      mrp: string;
+      sale: string;
+    };
+  };
+}
+
+export type CartItem =
+  | {
+      product: Book;
+      quantity: number;
+    }
+  | CartItemAPI;
 
 export interface CartState {
   id?: string;

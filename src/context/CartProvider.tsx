@@ -1,19 +1,27 @@
-import { createContext, FC, ReactNode, useState } from "react";
+import { createContext, FC, ReactNode, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import client from "../api/client";
+import useAuth from "../hooks/useAuth";
 import {
   CartItem,
+  CartItemAPI,
   getCartState,
   updateCartId,
   updateCartItems,
+  updateCartState,
 } from "../store/cart";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import client from "../api/client";
-import useAuth from "../hooks/useAuth";
-import toast from "react-hot-toast";
 import { ParseError } from "../utils/helper";
 
 interface Props {
   children: ReactNode;
+}
+
+interface CartApiResponse {
+  cart: {
+    id: string;
+    items: CartItemAPI[];
+  };
 }
 
 interface ICartContext {
@@ -22,6 +30,7 @@ interface ICartContext {
   updateCart(item: CartItem): void;
   pending: boolean;
   totalCount: number;
+  fetching: boolean;
 }
 
 export const CartContext = createContext<ICartContext>({
@@ -29,6 +38,7 @@ export const CartContext = createContext<ICartContext>({
   updateCart() {},
   pending: false,
   totalCount: 0,
+  fetching: true,
 });
 
 const CartProvider: FC<Props> = ({ children }) => {
@@ -36,6 +46,31 @@ const CartProvider: FC<Props> = ({ children }) => {
   const dispatch = useDispatch();
   const { profile } = useAuth();
   const [pending, setPending] = useState(false);
+  const [fetching, setFetching] = useState(true);
+
+  useEffect(() => {
+    const fetchCartInfo = async () => {
+      // if (!profile) {
+      //   const result = localStorage.getItem(CART_KEY);
+      //   if (result) {
+      //     dispatch(updateCartState({ items: JSON.parse(result) }));
+      //   }
+
+      //   return setFetching(false);
+      // }
+
+      try {
+        const { data } = await client.get<CartApiResponse>("/cart");
+        dispatch(updateCartState({ id: data.cart.id, items: data.cart.items }));
+      } catch (error) {
+        ParseError(error);
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    fetchCartInfo();
+  }, [dispatch]);
 
   const updateCart = async (item: CartItem) => {
     dispatch(updateCartItems(item));
@@ -71,6 +106,7 @@ const CartProvider: FC<Props> = ({ children }) => {
         totalCount: cart.totalCount,
         updateCart,
         pending,
+        fetching,
       }}
     >
       {children}

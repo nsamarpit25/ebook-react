@@ -24,11 +24,10 @@ const CartItem: FC<Props> = ({ item }) => {
         alt={item.product.title}
         className="w-24 h-32 object-cover rounded"
       />
-      
+
       <div className="flex-1">
         <h3 className="font-semibold">{item.product.title}</h3>
-        <p className="text-sm text-default-500">{`${item.product.genre.charAt(0).toUpperCase()}${item.product.genre.slice(1)}`}</p>
-        
+
         <div className="mt-4 flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Button
@@ -49,7 +48,7 @@ const CartItem: FC<Props> = ({ item }) => {
               +
             </Button>
           </div>
-          
+
           <Button
             color="danger"
             variant="light"
