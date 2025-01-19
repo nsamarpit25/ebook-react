@@ -44,7 +44,7 @@ interface Props {
 }
 
 const BookDetail: FC<Props> = ({ book }) => {
-  const { updateCart } = useCart();
+  const { updateCart, pending } = useCart();
 
   if (!book) return null;
 
@@ -170,10 +170,13 @@ const BookDetail: FC<Props> = ({ book }) => {
                 onClick={handleCartUpdate}
                 variant="light"
                 startContent={<TbShoppingCartPlus />}
+                isLoading={pending}
               >
                 Add to Cart
               </Button>
-              <Button variant="flat">Buy Now</Button>
+              <Button isLoading={pending} variant="flat">
+                Buy Now
+              </Button>
             </>
           )}
         </div>

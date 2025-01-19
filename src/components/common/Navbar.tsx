@@ -16,9 +16,7 @@ import useCart from "../../hooks/useCart";
 interface Props {}
 
 const Navbar: FC<Props> = () => {
-  const { items } = useCart();
-  let cartItems = 0;
-  items.forEach((item) => (cartItems = cartItems + item.quantity));
+  const { totalCount } = useCart();
 
   return (
     <NextUINav>
@@ -35,7 +33,7 @@ const Navbar: FC<Props> = () => {
         </NavbarItem>
         <NavbarItem>
           <Link to="/cart">
-            <Badge content={cartItems} color="danger" shape="circle">
+            <Badge content={totalCount} color="danger" shape="circle">
               <FaCartShopping size={24} />
             </Badge>
           </Link>

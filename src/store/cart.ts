@@ -55,5 +55,25 @@ const slice = createSlice({
 
 export const { updateCartState, updateCartItems, updateCartId } = slice.actions;
 
+export const getCartState = createSelector(
+  (state: RootState) => state,
+  ({ cart }) => {
+    return {
+      totalCount: cart.items.reduce((total, cartItem) => {
+        total += cartItem.quantity;
+        return total;
+      }, 0),
+      subTotal: cart.items.reduce((total, cartItem) => {
+        total += Number(cartItem.product.price.mrp) * cartItem.quantity;
+        return total;
+      }, 0),
+      totalPrice: cart.items.reduce((total, cartItem) => {
+        total += Number(cartItem.product.price.sale) * cartItem.quantity;
+        return total;
+      }, 0),
+      ...cart,
+    };
+  }
+);
 
 export default slice.reducer;
