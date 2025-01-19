@@ -1,64 +1,186 @@
 import { FC } from "react";
 import useCart from "../hooks/useCart";
-import { Button } from "@nextui-org/react";
-import { FaShoppingCart } from "react-icons/fa";
-import CartItem from "../components/CartItem";
+import { Button, Chip, Divider, Card } from "@nextui-org/react";
+import { calculateDiscount, formatPrice } from "../utils/helper";
+import { FaMinus, FaPlus, FaRegTrashCan } from "react-icons/fa6";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
+import Skeletons from "../components/Skeletons";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
-const Cart: FC = () => {
-  const { items, totalCount } = useCart();
+interface Props {}
 
-  if (!items.length) {
+const Cart: FC<Props> = () => {
+  const {
+    pending,
+    items,
+    totalCount,
+    fetching,
+    subTotal,
+    totalPrice,
+    updateCart,
+    clearCart,
+  } = useCart();
+
+  if (fetching) return <Skeletons.Cart />;
+
+  if (!totalCount)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <FaShoppingCart size={50} className="text-gray-400" />
-        <p className="text-xl text-gray-500">Your cart is empty</p>
-        <Button color="primary" href="/" as="a">
-          Continue Shopping
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Shopping Cart ({totalCount} items)</h1>
-      
-      <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
-        <div className="space-y-4">
-          {items.map((item) => (
-            <CartItem key={item.product.id} item={item} />
-          ))}
-        </div>
-
-        <div className="bg-content2 p-4 rounded-lg h-fit space-y-4">
-          <h2 className="text-xl font-semibold">Order Summary</h2>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>${items.reduce((acc, item) => acc + (Number(item.product.price.mrp) * item.quantity), 0)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Discount</span>
-              <span className="text-success">
-                -${items.reduce((acc, item) => {
-                  const discount = Number(item.product.price.mrp) - Number(item.product.price.sale);
-                  return acc + (discount * item.quantity);
-                }, 0)}
-              </span>
-            </div>
-            <div className="flex justify-between font-bold pt-2 border-t">
-              <span>Total</span>
-              <span>${items.reduce((acc, item) => acc + (Number(item.product.price.sale) * item.quantity), 0)}</span>
-            </div>
-          </div>
-
-          <Button color="primary" className="w-full">
-            Proceed to Checkout
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-bold mb-4">Your Cart is Empty</h1>
+          <p className="text-gray-600 mb-6">Add some items to start shopping!</p>
+          <Button as={Link} to="/" color="primary" size="lg" isLoading={pending}>
+            Continue Shopping
           </Button>
         </div>
       </div>
-    </div>
+    );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-7xl mx-auto px-4 py-8"
+    >
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Cart Items Section */}
+        <div className="lg:w-3/5">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold">Shopping Cart ({totalCount} items)</h1>
+            <Button
+              color="danger"
+              variant="light"
+              startContent={<FaRegTrashCan />}
+              onClick={clearCart}
+              isLoading={pending}
+            >
+              Clear Cart
+            </Button>
+          </div>
+
+          <div className="space-y-6">
+            {items.map(({ product, quantity }) => (
+              <Card key={product.id} className="p-4">
+                <div className="flex gap-4">
+                  <img
+                    src={product.cover}
+                    alt={product.title}
+                    className="w-24 h-32 object-cover rounded"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">{product.title}</h3>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="text-lg font-semibold">
+                        <span className="mr-2">
+                          {formatPrice(Number(product.price.sale))}
+                        </span>
+                        {calculateDiscount(product.price) > 0 && (
+                          <Chip
+                            color="success"
+                            size="sm"
+                            style={{
+                              fontSize: "10px",
+                              height: "18px",
+                              padding: "0px 4px",
+                              borderRadius: "8px",
+                            }}
+                          >
+                            {calculateDiscount(product.price)}% OFF
+                          </Chip>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium line-through">
+                        {formatPrice(Number(product.price.mrp))}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 mt-4">
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        isLoading={pending}
+                        variant="bordered"
+                        onClick={() =>
+                          updateCart({ product, quantity: -1 })
+                        }
+                      >
+                        <FaMinus />
+                      </Button>
+                      <span className="font-semibold">{quantity}</span>
+                      <Button
+                        isIconOnly
+                        isLoading={pending}
+                        size="sm"
+                        variant="bordered"
+                        onClick={() =>
+                          updateCart({ product, quantity: 1 })
+                        }
+                      >
+                        <FaPlus />
+                      </Button>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        isLoading={pending}
+                        variant="bordered"
+                        onClick={() =>
+                          updateCart({ product, quantity: -quantity })
+                        }
+                      >
+                        <FaRegTrashCan />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Order Summary Section */}
+        <div className="lg:w-2/5">
+          <Card className="p-6 sticky top-4">
+            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal</span>
+                <span>{formatPrice(subTotal)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Discount</span>
+                <span>-{formatPrice(subTotal - totalPrice)}</span>
+              </div>
+              <Divider />
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total</span>
+                <span>{formatPrice(totalPrice)}</span>
+              </div>
+              <div className="mt-3">
+                <Chip size="sm">
+                  <p>
+                    You are saving total {calculateDiscount({
+                      mrp: subTotal.toFixed(2),
+                      sale: totalPrice.toFixed(2),
+                    })}%
+                  </p>
+                </Chip>
+              </div>
+              <Button
+                color="primary"
+                className="w-full mt-4"
+                size="lg"
+                isLoading={pending}
+                startContent={<MdOutlineShoppingCartCheckout />}
+              >
+                Proceed to Checkout
+              </Button>
+              
+            </div>
+          </Card>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

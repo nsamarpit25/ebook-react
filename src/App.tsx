@@ -29,11 +29,11 @@ const App: FC = () => {
         <Route path="/verify" element={<Verify />} />
         <Route path="/not-found" element={<NotFound />} />
         <Route path="/book/:slug" element={<SingleBook />} />
+        <Route path="/cart" element={<Cart />} />
 
         <Route element={<Private />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
-          <Route path="/cart" element={<Cart />} />
           <Route path="/new-user" element={<NewUser />} />
           <Route path="/author-registration" element={<NewAuthorForm />} />
 

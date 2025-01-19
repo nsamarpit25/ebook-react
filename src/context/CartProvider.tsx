@@ -24,21 +24,27 @@ interface CartApiResponse {
   };
 }
 
-interface ICartContext {
+export interface ICartContext {
   id?: string;
   items: CartItem[];
-  updateCart(item: CartItem): void;
   pending: boolean;
-  totalCount: number;
   fetching: boolean;
+  totalCount: number;
+  totalPrice: number;
+  subTotal: number;
+  updateCart(item: CartItem): void;
+  clearCart(): void;
 }
 
 export const CartContext = createContext<ICartContext>({
   items: [],
-  updateCart() {},
   pending: false,
-  totalCount: 0,
   fetching: true,
+  totalCount: 0,
+  totalPrice: 0,
+  subTotal: 0,
+  updateCart() {},
+  clearCart() {},
 });
 
 const CartProvider: FC<Props> = ({ children }) => {
@@ -47,6 +53,26 @@ const CartProvider: FC<Props> = ({ children }) => {
   const { profile } = useAuth();
   const [pending, setPending] = useState(false);
   const [fetching, setFetching] = useState(true);
+
+  const clearCart = () => {
+    // update the UI
+    dispatch(updateCartState({ items: [], id: "" }));
+
+    if (profile) {
+      // update the server/database
+      // if user is authenticated sending api request
+      setPending(true);
+      client
+        .post("/cart/clear")
+        .then(() => {
+          toast.success("Cart cleared successfully.");
+        })
+        .catch(ParseError)
+        .finally(() => {
+          setPending(false);
+        });
+    }
+  };
 
   useEffect(() => {
     const fetchCartInfo = async () => {
@@ -87,7 +113,13 @@ const CartProvider: FC<Props> = ({ children }) => {
           ],
         })
         .then(({ data }) => {
-          toast.success("Book added to cart.");
+          // toast.success("Book added to cart.");
+          if (item.quantity === -1) {
+            toast.success("Book successfully removed from cart.");
+          }
+          if (item.quantity === 1) {
+            toast.success("Book successfully added to cart.");
+          }
           dispatch(updateCartId(data.cart));
         })
         .catch((error) => {
@@ -104,9 +136,12 @@ const CartProvider: FC<Props> = ({ children }) => {
       value={{
         items: cart.items,
         totalCount: cart.totalCount,
-        updateCart,
+        subTotal: cart.subTotal,
+        totalPrice: cart.totalPrice,
         pending,
         fetching,
+        updateCart,
+        clearCart,
       }}
     >
       {children}
