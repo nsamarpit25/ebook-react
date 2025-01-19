@@ -19,26 +19,50 @@ const Navbar: FC<Props> = () => {
   const { totalCount } = useCart();
 
   return (
-    <NextUINav>
+    <NextUINav 
+      className="  border-b"
+      maxWidth="xl"
+    >
       <NavbarBrand>
-        <Link to="/" className="flex items-center justify-center space-x-2">
-          <FaBookReader size={24} />
-          <p className="font-bold text-inherit">Store</p>
+        <Link 
+          to="/" 
+          className="flex items-center space-x-3 transition-transform hover:scale-105"
+        >
+          <FaBookReader 
+            size={28} 
+            className="text-gray-900 dark:text-gray-100" 
+          />
+          <p className="font-bold text-xl text-gray-900 dark:text-gray-100">
+            Store
+          </p>
         </Link>
       </NavbarBrand>
 
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="space-x-4">
         <NavbarItem>
           <DarkModeSwitch />
         </NavbarItem>
+        
         <NavbarItem>
-          <Link to="/cart">
-            <Badge content={totalCount} color="danger" shape="circle">
-              <FaCartShopping size={24} />
+          <Link 
+            to="/cart" 
+            className="relative transition-transform hover:scale-110"
+          >
+            <Badge 
+              content={totalCount} 
+              color="danger" 
+              shape="circle"
+              className="font-medium"
+            >
+              <FaCartShopping 
+                size={24} 
+                className="text-gray-700 dark:text-gray-300" 
+              />
             </Badge>
           </Link>
         </NavbarItem>
-        <NavbarItem>
+        
+        <NavbarItem className="flex items-center">
           <ProfileOptions />
         </NavbarItem>
       </NavbarContent>

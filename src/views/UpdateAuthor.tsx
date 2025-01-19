@@ -1,5 +1,8 @@
 import { FC, useEffect, useState } from "react";
-import AuthorForm, { AuthorInfo, InitialState } from "../components/common/AuthorForm";
+import AuthorForm, {
+  AuthorInfo,
+  InitialState,
+} from "../components/common/AuthorForm";
 import useAuth from "../hooks/useAuth";
 import client from "../api/client";
 import LoadingSpinner from "../components/common/LoadingSpinner";
@@ -36,9 +39,35 @@ const UpdateAuthor: FC<Props> = () => {
     }
   };
 
-  if (busy) return <LoadingSpinner />;
+  if (busy)
+    return (
+      <div className="min-h-screen  p-6 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
 
-  return <AuthorForm btnTitle="Update Profile" initialState={authorInfo} onSubmit={handleSubmit}/>;
+  return (
+    <div className="min-h-screen bg-gradient-to-br  p-6">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">
+              Update Author Profile
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-center mt-2">
+              Modify your author information and preferences
+            </p>
+          </div>
+
+          <AuthorForm
+            btnTitle="Update Profile"
+            initialState={authorInfo}
+            onSubmit={handleSubmit}
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default UpdateAuthor;

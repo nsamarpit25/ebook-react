@@ -91,118 +91,138 @@ const BookDetail: FC<Props> = ({ book }) => {
   };
 
   return (
-    <div className="md:flex">
-      <div>
-        <img
-          src={cover}
-          alt={title}
-          className="w-48 h-80 rounded-md object-cover"
-        />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br  p-6">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+        <div className="md:flex gap-12">
+          <div className="flex-shrink-0">
+            <img
+              src={cover}
+              alt={title}
+              className="w-64 h-96 rounded-xl shadow-md object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </div>
 
-      <div className="pl-0 md:pl-10 flex-1 pt-6">
-        <h1 className="sm:text-3xl text-2xl font-semibold">{title}</h1>
-        <div>
-          <Link
-            className="font-semibold hover:underline"
-            to={`/author/${author.id}`}
-          >
-            {author.name}
-          </Link>
+          <div className="flex-1 pt-6 md:pt-0">
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+              {title}
+            </h1>
 
-          <p>{publicationName}</p>
-        </div>
+            <div className="space-y-2 mb-6">
+              <Link
+                className="text-xl font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                to={`/author/${author.id}`}
+              >
+                {author.name}
+              </Link>
+              <p className="text-gray-600 dark:text-gray-400">
+                {publicationName}
+              </p>
+            </div>
 
-        <div className="mt-3 flex items-center space-x-2">
-          <p className="font-semibold">{formatPrice(Number(price.sale))}</p>
-          <p className="line-through italic">
-            {formatPrice(Number(price.mrp))}
-          </p>
-          <Chip color="danger">{`${calculateDiscount(price)}% Off`}</Chip>
-        </div>
+            <div className="flex items-center gap-4 mb-6">
+              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                {formatPrice(Number(price.sale))}
+              </p>
+              <p className="text-lg line-through text-gray-400 dark:text-gray-500">
+                {formatPrice(Number(price.mrp))}
+              </p>
+              <Chip color="danger" className="text-lg">
+                {`${calculateDiscount(price)}% Off`}
+              </Chip>
+            </div>
 
-        <div className="mt-3 flex items-center space-x-2 font-semibold">
-          {rating ? (
-            <Chip color="danger">
-              <div className="flex space-x-1 items-center">
-                <span>{rating}</span>
-                <FaStar />
+            <div className="flex items-center gap-4 mb-8">
+              {rating ? (
+                <Chip color="warning" className="px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{rating}</span>
+                    <FaStar className="text-yellow-400" />
+                  </div>
+                </Chip>
+              ) : (
+                <Chip className="bg-gray-100 dark:bg-gray-700">
+                  <span className="text-sm dark:text-gray-300">No Ratings</span>
+                </Chip>
+              )}
+              <Link
+                to={`/rate/${id}`}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+              >
+                Add a Review
+              </Link>
+            </div>
+
+            <div className="mb-8 prose dark:prose-invert">
+              <RichEditor value={description} className="max-w-none regular" />
+            </div>
+
+            <div className="grid grid-cols-4 gap-6 py-6 border-y border-gray-200 dark:border-gray-700">
+              <div className="flex flex-col items-center gap-2">
+                <FaEarthAfrica className="text-2xl text-gray-700 dark:text-gray-300" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {language}
+                </span>
               </div>
-            </Chip>
-          ) : (
-            <Chip>
-              <span className="text-xs">No Ratings</span>
-            </Chip>
-          )}
 
-          <Link
-            to={`/rate/${id}`}
-            className="font-normal text-sm hover:underline"
-          >
-            Add a Review
-          </Link>
-        </div>
+              <div className="flex flex-col items-center gap-2">
+                <FaMasksTheater className="text-2xl text-gray-700 dark:text-gray-300" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {genre}
+                </span>
+              </div>
 
-        <div className="mt-6">
-          <RichEditor value={description} className="regular" />
-        </div>
+              <div className="flex flex-col items-center gap-2">
+                <FaRegFileLines className="text-2xl text-gray-700 dark:text-gray-300" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {fileInfo.size}
+                </span>
+              </div>
 
-        <div className="flex items-center space-x-6 mt-6 h-10">
-          <div className="flex flex-col items-center justify-center space-y-1">
-            <FaEarthAfrica className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">{language}</span>
+              <div className="flex flex-col items-center gap-2">
+                <FaRegCalendarDays className="text-2xl text-gray-700 dark:text-gray-300" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {publishedAt}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 mt-8">
+              {alreadyPurchased ? (
+                <Button
+                  radius="full"
+                  size="lg"
+                  className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8"
+                  as={Link}
+                  to={`/read/${slug}`}
+                >
+                  Read Now
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleCartUpdate}
+                    radius="full"
+                    size="lg"
+                    variant="bordered"
+                    startContent={<TbShoppingCartPlus className="text-xl" />}
+                    isLoading={pending || busy}
+                    className="hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600"
+                  >
+                    Add to Cart
+                  </Button>
+                  <Button
+                    onClick={handleBuyNow}
+                    radius="full"
+                    size="lg"
+                    className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8"
+                    isLoading={pending || busy}
+                  >
+                    Buy Now
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
-
-          <Divider orientation="vertical" className="h-1/2" />
-
-          <div className="flex flex-col items-center justify-center space-y-1">
-            <FaMasksTheater className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">{genre}</span>
-          </div>
-
-          <Divider orientation="vertical" className="h-1/2" />
-
-          <div className="flex flex-col items-center justify-center space-y-1">
-            <FaRegFileLines className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">
-              {fileInfo.size}
-            </span>
-          </div>
-
-          <Divider orientation="vertical" className="h-1/2" />
-
-          <div className="flex flex-col items-center justify-center space-y-1">
-            <FaRegCalendarDays className="sm:text-2xl text-xl" />
-            <span className="sm:text-xs text-[10px] truncate">
-              {publishedAt}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center mt-6 space-x-3">
-          {alreadyPurchased ? (
-            <Button radius="sm" as={Link} to={`/read/${slug}`}>
-              Read Now
-            </Button>
-          ) : (
-            <>
-              <Button
-                onClick={handleCartUpdate}
-                variant="light"
-                startContent={<TbShoppingCartPlus />}
-                isLoading={pending || busy}
-              >
-                Add to Cart
-              </Button>
-              <Button
-                isLoading={pending || busy}
-                variant="flat"
-                onClick={handleBuyNow}
-              >
-                Buy Now
-              </Button>
-            </>
-          )}
         </div>
       </div>
     </div>

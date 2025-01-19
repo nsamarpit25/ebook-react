@@ -74,29 +74,43 @@ const NewUserForm: FC<Props> = ({
   };
 
   return (
-    <div className="flex-1 flex justify-center items-center">
-      <div className="w-96 border-2 p-5 rounded-md flex flex-col justify-center items-center ">
-        <h1 className="text-center text-xl font-semibold">{title}</h1>
-        <form className="w-full space-y-6 mt-6" onSubmit={handleSubmit}>
-          <label
-            htmlFor="avatar"
-            className="cursor-pointer flex justify-center items-center"
-          >
-            <Avatar
-              isBordered
-              radius="sm"
-              name="John"
-              src={localAvatar || avatar}
-            />
-            <input
-              accept="image/*"
-              type="file"
-              name="avatar"
-              id="avatar"
-              hidden
-              onChange={handleChange}
-            />
-          </label>
+    <div className="min-h-[80vh] flex justify-center items-center p-4">
+      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-8">
+          {title}
+        </h1>
+        
+        <form className="space-y-8" onSubmit={handleSubmit}>
+          <div className="flex justify-center">
+            <label
+              htmlFor="avatar"
+              className="cursor-pointer relative group"
+            >
+              <Avatar
+                isBordered
+                radius="lg"
+                size="lg"
+                name={name || "User"}
+                src={localAvatar || avatar}
+                className="w-24 h-24 transition-transform hover:scale-105"
+                classNames={{
+                  base: "border-2 border-gray-200 dark:border-gray-700",
+                }}
+              />
+              <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-white text-sm">Change Photo</span>
+              </div>
+              <input
+                accept="image/*"
+                type="file"
+                name="avatar"
+                id="avatar"
+                hidden
+                onChange={handleChange}
+              />
+            </label>
+          </div>
+
           <Input
             name="name"
             type="text"
@@ -107,9 +121,19 @@ const NewUserForm: FC<Props> = ({
             onChange={handleChange}
             isInvalid={invalidFormState}
             errorMessage={errorMessage}
+            classNames={{
+              input: "dark:text-gray-100",
+              label: "dark:text-gray-400",
+            }}
           />
 
-          <Button type="submit" className="w-full" isLoading={busy}>
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+            size="lg"
+            radius="full"
+            isLoading={busy}
+          >
             {btnTitle}
           </Button>
         </form>
