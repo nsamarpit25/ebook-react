@@ -20,6 +20,7 @@ import SingleBook from "./views/SingleBook";
 import Cart from "./views/Cart";
 import PaymentSuccess from "./views/PaymentSuccess";
 import Orders from "./views/Orders";
+import ReviewForm from "./views/ReviewForm";
 
 // interface Props {}
 
@@ -40,6 +41,7 @@ const App: FC = () => {
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/new-user" element={<NewUser />} />
           <Route path="/author-registration" element={<NewAuthorForm />} />
+          <Route path="/rate/:bookId" element={<ReviewForm />} />
 
           <Route element={<Author />}>
             <Route path="/update-author" element={<UpdateAuthor />} />

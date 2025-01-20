@@ -406,171 +406,256 @@ const BookForm: FC<Props> = ({
   }, [initialState]);
 
   return (
-    <form onSubmit={handleSubmit} className="p-10 space-y-6">
-      <h1 className="pb-6 font-semibold text-2xl w-full">{title}</h1>
+    <div className="max-w-4xl mx-auto">
+      <form onSubmit={handleSubmit} className="p-6 lg:p-8 space-y-8">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">
+          {title}
+        </h1>
 
-      <div>
-        <label htmlFor="file" className={clsx(errors?.file && "text-red-400")}>
-          <span>Select File: </span>
-          <input
-            accept="application/epub+zip"
-            type="file"
-            name="file"
-            id="file"
+        {/* File Upload Section */}
+        <div className="space-y-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl">
+          <div className="space-y-3">
+            <label 
+              htmlFor="file" 
+              className={clsx(
+                "flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-xl transition-colors",
+                errors?.file 
+                  ? "border-red-400 text-red-400" 
+                  : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-blue-500 dark:hover:border-blue-400"
+              )}
+            >
+              <span className="mb-2">Select EPUB File</span>
+              <input
+                accept="application/epub+zip"
+                type="file"
+                name="file"
+                id="file"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <span className="text-sm opacity-70">Only .epub files are supported</span>
+            </label>
+            
+            {/* Show selected file name */}
+            {bookInfo.file && (
+              <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex items-center gap-2 text-sm">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded">
+                    📖
+                  </div>
+                  <span className="font-medium text-gray-700 dark:text-gray-300">
+                    {bookInfo.file.name}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {(bookInfo.file.size / (1024 * 1024)).toFixed(2)} MB
+                </span>
+              </div>
+            )}
+            
+            <ErrorList errors={errors?.file} />
+          </div>
+
+          <PosterSelector
+            src={cover}
+            name="cover"
+            isInvalid={errors?.cover ? true : false}
+            fileName={bookInfo.cover?.name}
+            errorMessage={<ErrorList errors={errors?.cover} />}
             onChange={handleFileChange}
           />
-        </label>
-        <ErrorList errors={errors?.file} />
-      </div>
+        </div>
 
-      <PosterSelector
-        src={cover}
-        name="cover"
-        isInvalid={errors?.cover ? true : false}
-        fileName={bookInfo.cover?.name}
-        errorMessage={<ErrorList errors={errors?.cover} />}
-        onChange={handleFileChange}
-      />
+        {/* Book Details Section */}
+        <div className="space-y-6">
+          <Input
+            type="text"
+            name="title"
+            isRequired
+            label="Book Title"
+            placeholder="Think & Grow Rich"
+            value={bookInfo.title}
+            onChange={handleTextChange}
+            isInvalid={errors?.title ? true : false}
+            errorMessage={<ErrorList errors={errors?.title} />}
+            classNames={{
+              label: "text-gray-600 dark:text-gray-400",
+              input: "dark:text-gray-100"
+            }}
+          />
 
-      <Input
-        type="text"
-        name="title"
-        isRequired
-        label="Book Title"
-        placeholder="Think & Grow Rich"
-        value={bookInfo.title}
-        onChange={handleTextChange}
-        isInvalid={errors?.title ? true : false}
-        errorMessage={<ErrorList errors={errors?.title} />}
-      />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              Book Description
+            </label>
+            <div className="border dark:border-gray-700 rounded-lg overflow-hidden">
+              <RichEditor
+                placeholder="About Book..."
+                isInvalid={errors?.description ? true : false}
+                errorMessage={<ErrorList errors={errors?.description} />}
+                value={bookInfo.description}
+                editable
+                onChange={(description) => setBookInfo({ ...bookInfo, description })}
+              />
+            </div>
+          </div>
 
-      <RichEditor
-        placeholder="About Book..."
-        isInvalid={errors?.description ? true : false}
-        errorMessage={<ErrorList errors={errors?.description} />}
-        value={bookInfo.description}
-        editable
-        onChange={(description) => setBookInfo({ ...bookInfo, description })}
-      />
-
-      <Input
-        name="publicationName"
-        type="text"
-        label="Publication Name"
-        isRequired
-        placeholder="Penguin Book"
-        value={bookInfo.publicationName}
-        onChange={handleTextChange}
-        isInvalid={errors?.publicationName ? true : false}
-        errorMessage={<ErrorList errors={errors?.publicationName} />}
-      />
-
-      <DatePicker
-        onChange={(date) => {
-          setBookInfo({ ...bookInfo, publishedAt: date.toString() });
-        }}
-        value={bookInfo.publishedAt ? parseDate(bookInfo.publishedAt) : null}
-        label="Publish Date"
-        showMonthAndYearPickers
-        isRequired
-        isInvalid={errors?.publishedAt ? true : false}
-        errorMessage={<ErrorList errors={errors?.publishedAt} />}
-      />
-
-      <Autocomplete
-        isRequired
-        label="Language"
-        placeholder="Select a Language"
-        defaultSelectedKey={bookInfo.language}
-        selectedKey={bookInfo.language}
-        isInvalid={errors?.language ? true : false}
-        errorMessage={<ErrorList errors={errors?.language} />}
-        onSelectionChange={(key = "") => {
-          setBookInfo({ ...bookInfo, language: key as string });
-        }}
-      >
-        {languages.map((item) => {
-          return (
-            <AutocompleteItem value={item.name} key={item.name}>
-              {item.name}
-            </AutocompleteItem>
-          );
-        })}
-      </Autocomplete>
-
-      <Autocomplete
-        isInvalid={errors?.genre ? true : false}
-        errorMessage={<ErrorList errors={errors?.genre} />}
-        label="Genre"
-        placeholder="Select a Genre"
-        defaultSelectedKey={bookInfo.genre}
-        selectedKey={bookInfo.genre}
-        onSelectionChange={(key = "") => {
-          setBookInfo({ ...bookInfo, genre: key as string });
-        }}
-        isRequired
-      >
-        {genres.map((item) => {
-          return (
-            <AutocompleteItem value={item.name} key={item.name}>
-              {item.name}
-            </AutocompleteItem>
-          );
-        })}
-      </Autocomplete>
-      <div>
-        <div className="bg-default-100 rounded-md py-2 px-3">
-          <p
-            className={clsx(
-              "text-xs pl-3",
-              errors?.price ? "text-red-400" : ""
-            )}
-          >
-            Price*
-          </p>
-
-          <div className="flex space-x-6 mt-2">
+          <div className="grid md:grid-cols-2 gap-6">
             <Input
-              name="mrp"
-              type="number"
-              label="MRP"
+              name="publicationName"
+              type="text"
+              label="Publication Name"
               isRequired
-              placeholder="0.00"
-              value={bookInfo.mrp}
+              placeholder="Penguin Book"
+              value={bookInfo.publicationName}
               onChange={handleTextChange}
-              isInvalid={errors?.price ? true : false}
-              startContent={
-                <div className="pointer-events-none flex items-center">
-                  <span className="text-default-400 text-small">$</span>
-                </div>
-              }
+              isInvalid={errors?.publicationName ? true : false}
+              errorMessage={<ErrorList errors={errors?.publicationName} />}
+              classNames={{
+                label: "text-gray-600 dark:text-gray-400",
+                input: "dark:text-gray-100"
+              }}
             />
-            <Input
-              name="sale"
-              type="number"
-              label="Sale Price"
+
+            <DatePicker
+              onChange={(date) => {
+                setBookInfo({ ...bookInfo, publishedAt: date.toString() });
+              }}
+              value={bookInfo.publishedAt ? parseDate(bookInfo.publishedAt) : null}
+              label="Publish Date"
+              showMonthAndYearPickers
               isRequired
-              placeholder="0.00"
-              value={bookInfo.sale}
-              onChange={handleTextChange}
-              isInvalid={errors?.price ? true : false}
-              startContent={
-                <div className="pointer-events-none flex items-center">
-                  <span className="text-default-400 text-small">$</span>
-                </div>
-              }
+              isInvalid={errors?.publishedAt ? true : false}
+              errorMessage={<ErrorList errors={errors?.publishedAt} />}
+              classNames={{
+                label: "text-gray-600 dark:text-gray-400"
+              }}
             />
+
+            <Autocomplete
+              isRequired
+              label="Language"
+              placeholder="Select a Language"
+              defaultSelectedKey={bookInfo.language}
+              selectedKey={bookInfo.language}
+              isInvalid={errors?.language ? true : false}
+              errorMessage={<ErrorList errors={errors?.language} />}
+              onSelectionChange={(key = "") => {
+                setBookInfo({ ...bookInfo, language: key as string });
+              }}
+              classNames={{
+                base: "dark:text-gray-400",
+                listbox: "dark:bg-gray-800",
+                popoverContent: "dark:bg-gray-800",
+                endContentWrapper: "dark:text-gray-300",
+                // value: "dark:text-gray-300",
+                selectorButton: "dark:text-gray-300",
+                clearButton: "dark:text-gray-300"
+              }}
+            >
+              {languages.map((item) => (
+                <AutocompleteItem 
+                  key={item.name} 
+                  value={item.name}
+                  className="dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  {item.name}
+                </AutocompleteItem>
+              ))}
+            </Autocomplete>
+
+            <Autocomplete
+              isInvalid={errors?.genre ? true : false}
+              errorMessage={<ErrorList errors={errors?.genre} />}
+              label="Genre"
+              placeholder="Select a Genre"
+              defaultSelectedKey={bookInfo.genre}
+              selectedKey={bookInfo.genre}
+              onSelectionChange={(key = "") => {
+                setBookInfo({ ...bookInfo, genre: key as string });
+              }}
+              isRequired
+              classNames={{
+                base: "dark:text-gray-400",
+                listbox: "dark:bg-gray-800",
+                popoverContent: "dark:bg-gray-800",
+                endContentWrapper: "dark:text-gray-300",
+                // value: "dark:text-gray-300",
+                selectorButton: "dark:text-gray-300",
+                clearButton: "dark:text-gray-300"
+              }}
+            >
+              {genres.map((item) => (
+                <AutocompleteItem 
+                  key={item.name} 
+                  value={item.name}
+                  className="dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  {item.name}
+                </AutocompleteItem>
+              ))}
+            </Autocomplete>
+          </div>
+
+          {/* Price Section */}
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
+            <p className={clsx(
+              "text-sm font-medium mb-4",
+              errors?.price ? "text-red-400" : "text-gray-600 dark:text-gray-400"
+            )}>
+              Price Information
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <Input
+                name="mrp"
+                type="number"
+                label="MRP"
+                isRequired
+                placeholder="0.00"
+                value={bookInfo.mrp}
+                onChange={handleTextChange}
+                isInvalid={errors?.price ? true : false}
+                startContent={
+                  <span className="text-default-400 text-small">$</span>
+                }
+                classNames={{
+                  label: "text-gray-600 dark:text-gray-400",
+                  input: "dark:text-gray-100"
+                }}
+              />
+              <Input
+                name="sale"
+                type="number"
+                label="Sale Price"
+                isRequired
+                placeholder="0.00"
+                value={bookInfo.sale}
+                onChange={handleTextChange}
+                isInvalid={errors?.price ? true : false}
+                startContent={
+                  <span className="text-default-400 text-small">$</span>
+                }
+                classNames={{
+                  label: "text-gray-600 dark:text-gray-400",
+                  input: "dark:text-gray-100"
+                }}
+              />
+            </div>
+            <ErrorList errors={errors?.price} />
           </div>
         </div>
-        <div className="p-2">
-          <ErrorList errors={errors?.price} />
-        </div>
-      </div>
 
-      <Button isLoading={busy} type="submit" className="w-full">
-        {submitBtnTitle}
-      </Button>
-    </form>
+        <Button 
+          isLoading={busy} 
+          type="submit" 
+          size="lg"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700"
+        >
+          {submitBtnTitle}
+        </Button>
+      </form>
+    </div>
   );
 };
 

@@ -12,6 +12,7 @@ const Home: FC = () => {
     "Autobiography",
     "Romance",
     "Self-Help",
+    "Fantasy"
   ];
 
   return (

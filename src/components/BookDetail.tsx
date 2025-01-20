@@ -91,7 +91,7 @@ const BookDetail: FC<Props> = ({ book }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br  p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
       <div className="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
         <div className="md:flex gap-12">
           <div className="flex-shrink-0">
@@ -144,12 +144,12 @@ const BookDetail: FC<Props> = ({ book }) => {
                   <span className="text-sm dark:text-gray-300">No Ratings</span>
                 </Chip>
               )}
-              <Link
+              {alreadyPurchased? <Link
                 to={`/rate/${id}`}
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
               >
                 Add a Review
-              </Link>
+              </Link> : null}
             </div>
 
             <div className="mb-8 prose dark:prose-invert">

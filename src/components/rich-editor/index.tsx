@@ -2,7 +2,7 @@ import { Placeholder } from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import clsx from "clsx";
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import Tools from "./Tools";
 
 interface Props {
@@ -32,8 +32,6 @@ const extensions = [
   }),
 ];
 
-let loaded = false;
-
 const RichEditor: FC<Props> = ({
   placeholder,
   isInvalid,
@@ -43,6 +41,8 @@ const RichEditor: FC<Props> = ({
   className,
   onChange,
 }) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const editor = useEditor({
     extensions: [
       ...extensions,
@@ -50,29 +50,48 @@ const RichEditor: FC<Props> = ({
         placeholder: placeholder,
       }),
     ],
+    content: value,
+    editable: editable !== false,
     onUpdate({ editor }) {
       onChange && onChange(editor.getHTML());
     },
   });
 
   useEffect(() => {
-    if (loaded) return;
-    if (editor && !editable) {
-      editor.setEditable(false);
-    }
-
-    if (editor && value) {
+    if (!editor || isInitialized) return;
+    
+    if (value) {
       editor.commands.setContent(value);
-      loaded = true;
     }
-  }, [editor, value, editable]);
+    
+    setIsInitialized(true);
+  }, [editor, value, isInitialized]);
+
+  useEffect(() => {
+    if (!editor || !isInitialized) return;
+    
+    if (editor.getHTML() !== value) {
+      editor.commands.setContent(value || '');
+    }
+  }, [value, editor, isInitialized]);
 
   return (
     <div
-      className={clsx(isInvalid && "ring-2 ring-red-400 p-2 rounded-medium")}
+      className={clsx(
+        isInvalid && "ring-2 ring-red-400 p-2 rounded-medium",
+        "rich-editor-container"
+      )}
     >
       <Tools editor={editor} visible={editable} />
-      <EditorContent editor={editor} content={value} className={className} />
+      <EditorContent 
+        editor={editor} 
+        content={value} 
+        className={clsx(
+          className,
+          editable ? "min-h-[6.5em]" : "h-auto",
+          "prose max-w-none"
+        )} 
+      />
       {errorMessage}
     </div>
   );

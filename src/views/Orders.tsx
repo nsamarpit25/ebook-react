@@ -1,13 +1,11 @@
-import { FC, useEffect, useState } from "react";
 import dateFormat from "dateformat";
+import { FC, useEffect, useState } from "react";
 
 import client from "../api/client";
 import { formatPrice, ParseError } from "../utils/helper";
 
-import DividerWithTitle from "../components/common/DividerWithTitle";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { IoCloseOutline } from "react-icons/io5";
-import { Chip, Divider } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
+import { Link, useNavigate } from "react-router-dom";
 import Skeletons from "../components/Skeletons";
 
 interface Props {}

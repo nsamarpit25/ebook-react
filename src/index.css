@@ -61,6 +61,19 @@
   @apply bg-danger dark:bg-danger;
 }
 
+.rich-editor-container .ProseMirror {
+  outline: none;
+  height: 100%;
+}
+
+.rich-editor-container .ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

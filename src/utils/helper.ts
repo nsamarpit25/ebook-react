@@ -15,23 +15,23 @@ export const ParseError = (error: unknown) => {
       // it means this is an array of objects with error
       const messages = data.errors.map((err) => Object.values(err)).flat();
       return messages.map((msg) => {
-        toast(msg, { position: "top-right" });
+        toast.error(msg, { position: "top-right" });
       });
     }
 
     if (data.error) {
       // it means this is an error message: string
-      return toast(data.error, { position: "top-right" });
+      return toast.error(data.error, { position: "top-right" });
     }
 
     if (data.message) {
       // it means this is an error message: string
-      return toast(data.message, { position: "top-right" });
+      return toast.error(data.message, { position: "top-right" });
     }
   }
 
   if (error instanceof Error) {
-    return toast(error.message, { position: "top-right" });
+    return toast.error(error.message, { position: "top-right" });
   }
 
   toast("Something went wrong, please try after sometime!", {
