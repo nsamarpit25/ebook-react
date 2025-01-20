@@ -570,7 +570,7 @@ const BookForm: FC<Props> = ({
               label="Genre"
               placeholder="Select a Genre"
               defaultSelectedKey={bookInfo.genre}
-              selectedKey={bookInfo.genre}
+              selectedKey={`${bookInfo.genre.charAt(0).toUpperCase()}${bookInfo.genre.slice(1)}`}
               onSelectionChange={(key = "") => {
                 setBookInfo({ ...bookInfo, genre: key as string });
               }}

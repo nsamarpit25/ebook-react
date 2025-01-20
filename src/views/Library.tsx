@@ -51,7 +51,7 @@ const Library: FC<Props> = () => {
       fetchCreatedBooks()
     }
     
-  }, []);
+  }, [profile?.authorId]);
 
   if (fetching) {
     return (
