@@ -20,7 +20,7 @@ const Navbar: FC<Props> = () => {
 
   return (
     <NextUINav 
-      className="  border-b"
+      className="x  border-b"
       maxWidth="xl"
     >
       <NavbarBrand>

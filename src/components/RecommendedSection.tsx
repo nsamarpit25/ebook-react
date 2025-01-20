@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from "react";
+import { FaStar } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 import client from "../api/client";
 import { formatPrice, ParseError } from "../utils/helper";
-import BookList, { Book } from "./BookList";
+import { Book } from "./BookList";
 import Skeletons from "./Skeletons";
-import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa6";
 
 interface Props {
   id?: string;

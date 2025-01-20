@@ -24,7 +24,7 @@ interface Props {
   reviews: Review[];
 }
 
-const ReviewSection: FC<Props> = ({ id, title, reviews }) => {
+const ReviewSection: FC<Props> = ({ id, reviews }) => {
   const { profile } = useAuth();
 
   const alreadyPurchased = id && profile?.books?.includes(id) || false;

@@ -1,7 +1,5 @@
+import { Button, Chip } from "@nextui-org/react";
 import { FC, useState } from "react";
-import { Link } from "react-router-dom";
-import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
-import { Button, Chip, Divider } from "@nextui-org/react";
 import {
   FaEarthAfrica,
   FaMasksTheater,
@@ -9,11 +7,13 @@ import {
   FaRegFileLines,
   FaStar,
 } from "react-icons/fa6";
-import RichEditor from "./rich-editor";
 import { TbShoppingCartPlus } from "react-icons/tb";
-import useCart from "../hooks/useCart";
+import { Link } from "react-router-dom";
 import client from "../api/client";
 import useAuth from "../hooks/useAuth";
+import useCart from "../hooks/useCart";
+import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
+import RichEditor from "./rich-editor";
 
 export interface Book {
   id: string;
