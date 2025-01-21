@@ -67,9 +67,9 @@ const EpubReader: FC<Props> = ({ url }) => {
     if (!rendition) return;
 
     const display = async () => {
+      book?.loaded.navigation.then(console.log);
       await rendition.display();
       rendition.on("rendered", () => {
-        console.log(loading);
         setLoading(false);
       });
     };
