@@ -23,6 +23,7 @@ import Orders from "./views/Orders";
 import ReviewForm from "./views/ReviewForm";
 import AuthorPage from "./views/AuthorPage";
 import Library from "./views/Library";
+import ReadingPage from "./views/ReadingPage";
 
 // interface Props {}
 
@@ -39,6 +40,7 @@ const App: FC = () => {
 
         <Route element={<Private />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/read/:slug" element={<ReadingPage />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />

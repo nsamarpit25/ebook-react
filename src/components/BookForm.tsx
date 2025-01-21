@@ -415,12 +415,12 @@ const BookForm: FC<Props> = ({
         {/* File Upload Section */}
         <div className="space-y-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl">
           <div className="space-y-3">
-            <label 
-              htmlFor="file" 
+            <label
+              htmlFor="file"
               className={clsx(
                 "flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-xl transition-colors",
-                errors?.file 
-                  ? "border-red-400 text-red-400" 
+                errors?.file
+                  ? "border-red-400 text-red-400"
                   : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-blue-500 dark:hover:border-blue-400"
               )}
             >
@@ -435,7 +435,7 @@ const BookForm: FC<Props> = ({
               />
               <span className="text-sm opacity-70">Only .epub files are supported</span>
             </label>
-            
+
             {/* Show selected file name */}
             {bookInfo.file && (
               <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -452,7 +452,6 @@ const BookForm: FC<Props> = ({
                 </span>
               </div>
             )}
-            
             <ErrorList errors={errors?.file} />
           </div>
 
@@ -554,8 +553,8 @@ const BookForm: FC<Props> = ({
               }}
             >
               {languages.map((item) => (
-                <AutocompleteItem 
-                  key={item.name} 
+                <AutocompleteItem
+                  key={item.name}
                   value={item.name}
                   className="dark:text-gray-300 dark:hover:bg-gray-700"
                 >
@@ -586,8 +585,8 @@ const BookForm: FC<Props> = ({
               }}
             >
               {genres.map((item) => (
-                <AutocompleteItem 
-                  key={item.name} 
+                <AutocompleteItem
+                  key={item.name}
                   value={item.name}
                   className="dark:text-gray-300 dark:hover:bg-gray-700"
                 >
@@ -646,9 +645,9 @@ const BookForm: FC<Props> = ({
           </div>
         </div>
 
-        <Button 
-          isLoading={busy} 
-          type="submit" 
+        <Button
+          isLoading={busy}
+          type="submit"
           size="lg"
           className="w-full bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700"
         >

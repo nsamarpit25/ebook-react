@@ -41,15 +41,25 @@ const SingleBook: FC<Props> = () => {
   if (busy) return <Skeletons.BookDetails />;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <BookDetail book={bookDetails} />
-        <RecommendedSection id={bookDetails?.id} />
-        <ReviewSection
-          id={bookDetails?.id}
-          reviews={reviews}
-          title={`${bookDetails?.title} Reviews`}
-        />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto py-8 px-4 lg:px-8">
+        <div className="space-y-8">
+          <BookDetail book={bookDetails} />
+
+          {/* Related Books Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
+            <RecommendedSection id={bookDetails?.id} />
+          </div>
+
+          {/* Reviews Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
+            <ReviewSection
+              id={bookDetails?.id}
+              reviews={reviews}
+              title={`${bookDetails?.title} Reviews`}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
