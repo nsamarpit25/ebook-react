@@ -83,6 +83,7 @@ const EpubReader: FC<Props> = ({ url }) => {
   const [rendition, setRendition] = useState<Rendition | undefined>();
   const [loading, setLoading] = useState(true);
   const [tableOfContent, setTableOfContent] = useState<BookNavList[]>([]);
+  const [currentLocation, setCurrentLocation] = useState("");
 
   // Initialize book
   useEffect(() => {
@@ -121,25 +122,50 @@ const EpubReader: FC<Props> = ({ url }) => {
 
   // Display content
   useEffect(() => {
-    if (!rendition) return;
+    if (!rendition || !book) return;
 
     const display = async () => {
-      // book?.loaded.navigation.then(console.log);
-      await rendition.display();
-      if (book)
-        loadTableOfContent(book)
-          .then(setTableOfContent)
-          .finally(() => setLoading(false));
-      rendition.on("rendered", () => {
-        rendition.display(
-          "7495267509099878357_75163-h-5.htm.xhtml#pgepubid00018"
+      try {
+        await rendition.display(
+          "7495267509099878357_75163-h-6.htm.xhtml#pgepubid00046"
         );
+        const toc = await loadTableOfContent(book);
+        setTableOfContent(toc);
+      } catch (error) {
+        console.error("Error loading book:", error);
+      } finally {
         setLoading(false);
-      });
+      }
     };
 
     display();
-  }, [rendition]); // Only depend on rendition changes
+
+    rendition.on("relocated", (location: any) => {
+      setCurrentLocation(location.end.href);
+      console.log(location);
+    });
+
+    // Event listeners for navigation
+    const keyListener = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") rendition.prev();
+      if (e.key === "ArrowRight") rendition.next();
+    };
+
+    document.addEventListener("keyup", keyListener);
+    return () => {
+      document.removeEventListener("keyup", keyListener);
+    };
+  }, [rendition, book]);
+
+  const handleTocClick = (href: string) => {
+    if (rendition) {
+      rendition.display(href);
+      setCurrentLocation(href);
+      // console.log(currentLocation);
+      console.log(href);
+    }
+    // console.log(book);
+  };
 
   return (
     <div className="h-screen">
@@ -148,25 +174,19 @@ const EpubReader: FC<Props> = ({ url }) => {
         <div id={container} />
         <Navigator
           side="left"
-          onClick={() => {
-            rendition?.prev();
-          }}
+          onClick={() => rendition?.prev()}
           className="opacity-0 group-hover:opacity-100"
         />
         <Navigator
           side="right"
-          onClick={() => {
-            rendition?.next();
-          }}
+          onClick={() => rendition?.next()}
           className="opacity-0 group-hover:opacity-100"
         />
-
         <TableOfContent
           visible={true}
           data={tableOfContent}
-          onClick={() => {
-            console.log("clicked toc");
-          }}
+          onClick={handleTocClick}
+          currentLocation={currentLocation}
         />
       </div>
     </div>

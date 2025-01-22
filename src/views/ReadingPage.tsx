@@ -3,6 +3,7 @@ import client from "../api/client";
 import { useParams } from "react-router-dom";
 import { ParseError } from "../utils/helper";
 import EpubReader from "../components/reader";
+import LoadingIndicator from "../components/reader/LoadingIndicator";
 
 interface Props {}
 
@@ -25,6 +26,7 @@ const ReadingPage: FC<Props> = () => {
     const fetchBookUrl = async () => {
       try {
         setLoading(true);
+
         const { data } = await client.get<BookAPIRes>(`/book/read/${slug}`);
         const res = await client.get(data.url, { responseType: "blob" });
         setUrl(res.data);
@@ -34,10 +36,11 @@ const ReadingPage: FC<Props> = () => {
         setLoading(false);
       }
     };
+
     fetchBookUrl();
   }, [slug]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingIndicator />;
   return <EpubReader url={url} />;
 };
 
