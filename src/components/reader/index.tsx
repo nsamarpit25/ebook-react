@@ -3,9 +3,12 @@ import ePub, { Book, type NavItem, type Rendition } from "epubjs";
 import Navigator from "./Navigator";
 import LoadingIndicator from "./LoadingIndicator";
 import TableOfContent, { type BookNavList } from "./TableOfContent";
+import { IoMenu } from "react-icons/io5";
+import { Button } from "@nextui-org/react";
 
 interface Props {
   url?: Blob;
+  title: string;
 }
 
 const container = "epub_container";
@@ -86,12 +89,20 @@ const loadTableOfContent = async (book: Book) => {
   return navLabels;
 };
 
-const EpubReader: FC<Props> = ({ url }) => {
+const EpubReader: FC<Props> = ({ url, title }) => {
   const [book, setBook] = useState<Book>();
   const [rendition, setRendition] = useState<Rendition | undefined>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [tableOfContent, setTableOfContent] = useState<BookNavList[]>([]);
   const [currentLocation, setCurrentLocation] = useState("");
+  const [showToc, setShowToc] = useState(false);
+
+  function toggleToc() {
+    setShowToc(!showToc);
+  }
+  function hideToc() {
+    setShowToc(false);
+  }
 
   // Initialize book
   useEffect(() => {
@@ -150,6 +161,7 @@ const EpubReader: FC<Props> = ({ url }) => {
       setCurrentLocation(location.end.href);
       console.log(location);
     });
+    rendition.on("click", () => toggleToc());
 
     // Event listeners for navigation
     const keyListener = (e: KeyboardEvent) => {
@@ -174,22 +186,41 @@ const EpubReader: FC<Props> = ({ url }) => {
   };
 
   return (
-    <div className="h-screen">
+    <div className="h-screen flex flex-col group">
       <LoadingIndicator visible={loading} />
-      <div id={wrapper} className="h-full relative group">
+
+      <div className="flex items-center h-14 shadow-md opacity-0 group-hover:opacity-100 transition">
+        <div className="max-w-3xl md:mx-auto pl-5 md:pl-0">
+          <h1 className="line-clamp-1 font-semibold text-lg">{title}</h1>
+        </div>
+        <div className="div">
+          <Button onClick={() => toggleToc()} variant="light" isIconOnly>
+            <IoMenu size={30} />
+          </Button>
+        </div>
+      </div>
+
+      <div id={wrapper} className="h-full relative">
         <div id={container} />
+
         <Navigator
           side="left"
-          onClick={() => rendition?.prev()}
+          onClick={() => {
+            rendition?.prev();
+            hideToc();
+          }}
           className="opacity-0 group-hover:opacity-100"
         />
         <Navigator
           side="right"
-          onClick={() => rendition?.next()}
+          onClick={() => {
+            rendition?.next();
+            hideToc();
+          }}
           className="opacity-0 group-hover:opacity-100"
         />
         <TableOfContent
-          visible={true}
+          visible={showToc}
           data={tableOfContent}
           onClick={handleTocClick}
           currentLocation={currentLocation}

@@ -144,12 +144,14 @@ const BookDetail: FC<Props> = ({ book }) => {
                   <span className="text-sm dark:text-gray-300">No Ratings</span>
                 </Chip>
               )}
-              {alreadyPurchased? <Link
-                to={`/rate/${id}`}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-              >
-                Add a Review
-              </Link> : null}
+              {alreadyPurchased ? (
+                <Link
+                  to={`/rate/${id}`}
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                >
+                  Add a Review
+                </Link>
+              ) : null}
             </div>
 
             <div className="mb-8 prose dark:prose-invert">
@@ -193,7 +195,7 @@ const BookDetail: FC<Props> = ({ book }) => {
                   size="lg"
                   className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8"
                   as={Link}
-                  to={`/read/${slug}`}
+                  to={`/read/${slug}?title=${title}`}
                 >
                   Read Now
                 </Button>

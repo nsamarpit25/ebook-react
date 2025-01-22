@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import client from "../api/client";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { ParseError } from "../utils/helper";
 import EpubReader from "../components/reader";
 import LoadingIndicator from "../components/reader/LoadingIndicator";
@@ -19,6 +19,8 @@ const ReadingPage: FC<Props> = () => {
   const [url, setUrl] = useState<Blob>();
   const [loading, setLoading] = useState(true);
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const title = searchParams.get("title");
 
   useEffect(() => {
     if (!slug) return;
@@ -41,7 +43,7 @@ const ReadingPage: FC<Props> = () => {
   }, [slug]);
 
   if (loading) return <LoadingIndicator />;
-  return <EpubReader url={url} />;
+  return <EpubReader url={url} title={title ? title : ""} />;
 };
 
 export default ReadingPage;
