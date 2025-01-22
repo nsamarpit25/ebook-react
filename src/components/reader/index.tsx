@@ -5,6 +5,9 @@ import LoadingIndicator from "./LoadingIndicator";
 import TableOfContent, { type BookNavList } from "./TableOfContent";
 import { IoMenu } from "react-icons/io5";
 import { Button } from "@nextui-org/react";
+import ThemeOptions from "./ThemeOptions";
+import FontOptions from "./FontOptions";
+import { MdOutlineStickyNote2 } from "react-icons/md";
 
 interface Props {
   url?: Blob;
@@ -13,6 +16,24 @@ interface Props {
 
 const container = "epub_container";
 const wrapper = "epub_wrapper";
+const DARK_THEME = {
+  body: {
+    color: "#f8f8ea !important",
+    background: "#2B2B2B !important",
+  },
+  a: {
+    color: "#f8f8ea !important",
+  },
+};
+const LIGHT_THEME = {
+  body: {
+    color: "#000 !important",
+    background: "#fff !important",
+  },
+  a: {
+    color: "blue !important",
+  },
+};
 
 const getElementSize = (id: string) => {
   const elm = document.getElementById(id);
@@ -161,7 +182,14 @@ const EpubReader: FC<Props> = ({ url, title }) => {
       setCurrentLocation(location.end.href);
       console.log(location);
     });
-    rendition.on("click", () => toggleToc());
+    rendition.on("click", () => {
+      console.log("click");
+      hideToc();
+    });
+
+    rendition.themes.register("light", LIGHT_THEME);
+
+    rendition.themes.register("dark", DARK_THEME);
 
     // Event listeners for navigation
     const keyListener = (e: KeyboardEvent) => {
@@ -193,10 +221,21 @@ const EpubReader: FC<Props> = ({ url, title }) => {
         <div className="max-w-3xl md:mx-auto pl-5 md:pl-0">
           <h1 className="line-clamp-1 font-semibold text-lg">{title}</h1>
         </div>
-        <div className="div">
-          <Button onClick={() => toggleToc()} variant="light" isIconOnly>
-            <IoMenu size={30} />
-          </Button>
+        <div className="">
+          <div className="flex items-center justify-center space-x-3">
+            <FontOptions />
+            <Button isIconOnly>
+              <MdOutlineStickyNote2 size={30} />
+            </Button>
+            <ThemeOptions
+              onThemeSelect={(mode) => {
+                console.log(mode);
+              }}
+            />
+            <Button onClick={() => toggleToc()} variant="light" isIconOnly>
+              <IoMenu size={30} />
+            </Button>
+          </div>
         </div>
       </div>
 
