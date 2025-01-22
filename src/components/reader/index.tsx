@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import ePub, { Book, type Rendition } from "epubjs";
 import Navigator from "./Navigator";
 import LoadingIndicator from "./LoadingIndicator";
+import TableOfContent from "./TableOfContent";
 
 interface Props {
   url?: Blob;
@@ -20,6 +21,14 @@ const getElementSize = (id: string) => {
     height = res.height;
   }
   return { width, height };
+};
+
+const loadTableOfContent = async (book: Book) => {
+  const [nav, spine] = await Promise.all([
+    book.loaded.spine,
+    book.loaded.navigation,
+  ]);
+  console.log(nav, spine);
 };
 
 const EpubReader: FC<Props> = ({ url }) => {
@@ -67,9 +76,13 @@ const EpubReader: FC<Props> = ({ url }) => {
     if (!rendition) return;
 
     const display = async () => {
-      book?.loaded.navigation.then(console.log);
+      // book?.loaded.navigation.then(console.log);
       await rendition.display();
+      if (book) loadTableOfContent(book);
       rendition.on("rendered", () => {
+        rendition.display(
+          "7495267509099878357_75163-h-5.htm.xhtml#pgepubid00018"
+        );
         setLoading(false);
       });
     };
@@ -95,6 +108,15 @@ const EpubReader: FC<Props> = ({ url }) => {
             rendition?.next();
           }}
           className="opacity-0 group-hover:opacity-100"
+        />
+
+        <TableOfContent
+          data={[
+            {
+              label: { title: "", href: "" },
+              subItems: [{ title: "", href: "" }],
+            },
+          ]}
         />
       </div>
     </div>
