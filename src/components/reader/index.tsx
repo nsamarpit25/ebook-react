@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import ePub, { Book, type Rendition } from "epubjs";
+import ePub, { Book, type NavItem, type Rendition } from "epubjs";
 import Navigator from "./Navigator";
 import LoadingIndicator from "./LoadingIndicator";
 import TableOfContent, { type BookNavList } from "./TableOfContent";
@@ -51,27 +51,35 @@ const loadTableOfContent = async (book: Book) => {
     spineHref = entires.map(([key]) => key);
   }
 
-  const { toc } = nav;
+  let { toc }: { toc: NavItem[] } = nav;
+  // toc = toc[0].subitems;
+  // let mainBook: NavItem | undefined;
+  if (toc.length < 2 && toc[0].subitems) {
+    toc = toc[0].subitems;
+  }
+
+  console.log(toc);
 
   const navLabels: BookNavList[] = [];
-  toc.forEach((item) => {
-    if (item.subitems?.length) {
-      navLabels.push({
-        label: { title: item.label, href: filterHref(spineHref, item.href) },
-        subItems: item.subitems.map(({ href, label }) => {
-          return {
-            href: filterHref(spineHref, href),
-            title: label,
-          };
-        }),
-      });
-    } else {
-      navLabels.push({
-        label: { title: item.label, href: filterHref(spineHref, item.href) },
-        subItems: [],
-      });
-    }
-  });
+  if (Array.isArray(toc))
+    toc.forEach((item) => {
+      if (item.subitems?.length) {
+        navLabels.push({
+          label: { title: item.label, href: filterHref(spineHref, item.href) },
+          subItems: item.subitems.map(({ href, label }) => {
+            return {
+              href: filterHref(spineHref, href),
+              title: label,
+            };
+          }),
+        });
+      } else {
+        navLabels.push({
+          label: { title: item.label, href: filterHref(spineHref, item.href) },
+          subItems: [],
+        });
+      }
+    });
 
   // console.log(navLabels);
 
@@ -126,9 +134,7 @@ const EpubReader: FC<Props> = ({ url }) => {
 
     const display = async () => {
       try {
-        await rendition.display(
-          "7495267509099878357_75163-h-6.htm.xhtml#pgepubid00046"
-        );
+        await rendition.display();
         const toc = await loadTableOfContent(book);
         setTableOfContent(toc);
       } catch (error) {
@@ -162,7 +168,7 @@ const EpubReader: FC<Props> = ({ url }) => {
       rendition.display(href);
       setCurrentLocation(href);
       // console.log(currentLocation);
-      console.log(href);
+      // console.log(href);
     }
     // console.log(book);
   };
