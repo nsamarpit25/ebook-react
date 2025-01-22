@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import ePub, { Book, type Rendition } from "epubjs";
 import Navigator from "./Navigator";
 import LoadingIndicator from "./LoadingIndicator";
-import TableOfContent from "./TableOfContent";
+import TableOfContent, { type BookNavList } from "./TableOfContent";
 
 interface Props {
   url?: Blob;
@@ -23,12 +23,57 @@ const getElementSize = (id: string) => {
   return { width, height };
 };
 
+const filterHref = (spineHrefList: string[], href: string) => {
+  const foundItem = spineHrefList.find((spineHref) => {
+    const regex = new RegExp("[^/]+/([^/]+.xhtml)");
+    const list = regex.exec(spineHref);
+    if (list) {
+      if (href.startsWith(list[1])) {
+        return true;
+      }
+    }
+  });
+
+  return foundItem || href;
+};
+
 const loadTableOfContent = async (book: Book) => {
   const [nav, spine] = await Promise.all([
-    book.loaded.spine,
     book.loaded.navigation,
+    book.loaded.spine,
   ]);
-  console.log(nav, spine);
+
+  let spineHref: string[] = [];
+  if (!Array.isArray(spine)) {
+    const { spineByHref } = spine as { spineByHref: { [key: string]: number } };
+    const entires = Object.entries(spineByHref);
+    entires.sort((a, b) => a[1] - b[1]);
+    spineHref = entires.map(([key]) => key);
+  }
+
+  const { toc } = nav;
+
+  const navLabels: BookNavList[] = [];
+  toc.forEach((item) => {
+    if (item.subitems?.length) {
+      navLabels.push({
+        label: { title: item.label, href: filterHref(spineHref, item.href) },
+        subItems: item.subitems.map(({ href, label }) => {
+          return {
+            href: filterHref(spineHref, href),
+            title: label,
+          };
+        }),
+      });
+    } else {
+      navLabels.push({
+        label: { title: item.label, href: filterHref(spineHref, item.href) },
+        subItems: [],
+      });
+    }
+  });
+
+  return navLabels;
 };
 
 const EpubReader: FC<Props> = ({ url }) => {
@@ -111,12 +156,9 @@ const EpubReader: FC<Props> = ({ url }) => {
         />
 
         <TableOfContent
-          data={[
-            {
-              label: { title: "", href: "" },
-              subItems: [{ title: "", href: "" }],
-            },
-          ]}
+          visible={showToc}
+          data={tableOfContent}
+          onClick={handleNavigation}
         />
       </div>
     </div>
