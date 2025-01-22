@@ -73,6 +73,8 @@ const loadTableOfContent = async (book: Book) => {
     }
   });
 
+  // console.log(navLabels);
+
   return navLabels;
 };
 
@@ -80,6 +82,7 @@ const EpubReader: FC<Props> = ({ url }) => {
   const [book, setBook] = useState<Book>();
   const [rendition, setRendition] = useState<Rendition | undefined>();
   const [loading, setLoading] = useState(true);
+  const [tableOfContent, setTableOfContent] = useState<BookNavList[]>([]);
 
   // Initialize book
   useEffect(() => {
@@ -123,7 +126,10 @@ const EpubReader: FC<Props> = ({ url }) => {
     const display = async () => {
       // book?.loaded.navigation.then(console.log);
       await rendition.display();
-      if (book) loadTableOfContent(book);
+      if (book)
+        loadTableOfContent(book)
+          .then(setTableOfContent)
+          .finally(() => setLoading(false));
       rendition.on("rendered", () => {
         rendition.display(
           "7495267509099878357_75163-h-5.htm.xhtml#pgepubid00018"
@@ -156,9 +162,11 @@ const EpubReader: FC<Props> = ({ url }) => {
         />
 
         <TableOfContent
-          visible={showToc}
+          visible={true}
           data={tableOfContent}
-          onClick={handleNavigation}
+          onClick={() => {
+            console.log("clicked toc");
+          }}
         />
       </div>
     </div>
