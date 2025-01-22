@@ -5,7 +5,7 @@ import LoadingIndicator from "./LoadingIndicator";
 import TableOfContent, { type BookNavList } from "./TableOfContent";
 import { IoMenu } from "react-icons/io5";
 import { Button } from "@nextui-org/react";
-import ThemeOptions from "./ThemeOptions";
+import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
 import FontOptions from "./FontOptions";
 import { MdOutlineStickyNote2 } from "react-icons/md";
 
@@ -33,6 +33,15 @@ const LIGHT_THEME = {
   a: {
     color: "blue !important",
   },
+};
+
+const selectTheme = (rendition: Rendition, mode: ThemeModes) => {
+  if (mode === "light") {
+    document.documentElement.classList.remove("dark");
+  } else {
+    document.documentElement.classList.add("dark");
+  }
+  rendition.themes.select(mode);
 };
 
 const getElementSize = (id: string) => {
@@ -117,6 +126,12 @@ const EpubReader: FC<Props> = ({ url, title }) => {
   const [tableOfContent, setTableOfContent] = useState<BookNavList[]>([]);
   const [currentLocation, setCurrentLocation] = useState("");
   const [showToc, setShowToc] = useState(false);
+
+  const handleThemeSelection = (mode: ThemeModes) => {
+    if (!rendition) return;
+
+    selectTheme(rendition, mode);
+  };
 
   function toggleToc() {
     setShowToc(!showToc);
@@ -214,7 +229,7 @@ const EpubReader: FC<Props> = ({ url, title }) => {
   };
 
   return (
-    <div className="h-screen flex flex-col group">
+    <div className="h-screen flex flex-col group dark:bg-book-dark dark:bg-text-book-dark">
       <LoadingIndicator visible={loading} />
 
       <div className="flex items-center h-14 shadow-md opacity-0 group-hover:opacity-100 transition">
@@ -227,11 +242,7 @@ const EpubReader: FC<Props> = ({ url, title }) => {
             <Button isIconOnly>
               <MdOutlineStickyNote2 size={30} />
             </Button>
-            <ThemeOptions
-              onThemeSelect={(mode) => {
-                console.log(mode);
-              }}
-            />
+            <ThemeOptions onThemeSelect={handleThemeSelection} />
             <Button onClick={() => toggleToc()} variant="light" isIconOnly>
               <IoMenu size={30} />
             </Button>
