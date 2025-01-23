@@ -8,6 +8,7 @@ import { Button } from "@nextui-org/react";
 import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
 import FontOptions from "./FontOptions";
 import { MdOutlineStickyNote2 } from "react-icons/md";
+import type { RelocatedEvent } from "./types";
 
 interface Props {
   url?: Blob;
@@ -91,7 +92,7 @@ const loadTableOfContent = async (book: Book) => {
     toc = toc[0].subitems;
   }
 
-  console.log(toc);
+  // console.log(toc);
 
   const navLabels: BookNavList[] = [];
   if (Array.isArray(toc))
@@ -126,11 +127,36 @@ const EpubReader: FC<Props> = ({ url, title }) => {
   const [tableOfContent, setTableOfContent] = useState<BookNavList[]>([]);
   const [currentLocation, setCurrentLocation] = useState("");
   const [showToc, setShowToc] = useState(false);
+  const [settings, setSettings] = useState({ fontSize: 23 });
+  const [page, setPage] = useState({ start: 0, end: 0, total: 0 });
+
+  const updatePageNumber = (rendition: Rendition) => {
+    const location = rendition.currentLocation() as unknown as RelocatedEvent;
+    const start = location.start.displayed.page;
+    const end = location.end.displayed.page;
+    const total = location.start.displayed.total;
+    setPage({ start, end, total });
+  };
 
   const handleThemeSelection = (mode: ThemeModes) => {
     if (!rendition) return;
 
     selectTheme(rendition, mode);
+  };
+
+  const handleFontSizeUpdate = (mode: "increase" | "decrease") => {
+    if (!rendition) return;
+    let { fontSize } = settings;
+    if (mode === "increase") {
+      fontSize += 2;
+    }
+
+    if (mode === "decrease") {
+      fontSize -= 2;
+    }
+    rendition.themes.fontSize(String(fontSize + "px"));
+    setSettings({ ...settings, fontSize });
+    updatePageNumber(rendition);
   };
 
   function toggleToc() {
@@ -195,11 +221,19 @@ const EpubReader: FC<Props> = ({ url, title }) => {
 
     rendition.on("relocated", (location: any) => {
       setCurrentLocation(location.end.href);
-      console.log(location);
+      // console.log(location);
     });
+
     rendition.on("click", () => {
-      console.log("click");
+      // console.log("click");
       hideToc();
+    });
+
+    rendition.on("displayed", () => {
+      updatePageNumber(rendition);
+    });
+    rendition.on("locationChanged", () => {
+      updatePageNumber(rendition);
     });
 
     rendition.themes.register("light", LIGHT_THEME);
@@ -228,17 +262,31 @@ const EpubReader: FC<Props> = ({ url, title }) => {
     // console.log(book);
   };
 
+  useEffect(() => {
+    if (!rendition) {
+      return;
+    }
+    rendition.themes.fontSize(settings.fontSize + "px");
+  }, [rendition]);
+
   return (
     <div className="h-screen flex flex-col group dark:bg-book-dark dark:bg-text-book-dark">
       <LoadingIndicator visible={loading} />
 
-      <div className="flex items-center h-14 shadow-md opacity-0 group-hover:opacity-100 transition">
+      <div className="flex items-center h-14 shadow-sm opacity-0 group-hover:opacity-100 transition">
         <div className="max-w-3xl md:mx-auto pl-5 md:pl-0">
           <h1 className="line-clamp-1 font-semibold text-lg">{title}</h1>
         </div>
         <div className="">
           <div className="flex items-center justify-center space-x-3">
-            <FontOptions />
+            <FontOptions
+              onFontDecrease={() => {
+                handleFontSizeUpdate("decrease");
+              }}
+              onFontIncrease={() => {
+                handleFontSizeUpdate("increase");
+              }}
+            />
             <Button isIconOnly>
               <MdOutlineStickyNote2 size={30} />
             </Button>
@@ -246,6 +294,9 @@ const EpubReader: FC<Props> = ({ url, title }) => {
             <Button onClick={() => toggleToc()} variant="light" isIconOnly>
               <IoMenu size={30} />
             </Button>
+            {/* <Button onClick={currentLocationFunc} variant="light" isIconOnly>
+              <IoMenu size={30} />
+            </Button> */}
           </div>
         </div>
       </div>
@@ -275,6 +326,16 @@ const EpubReader: FC<Props> = ({ url, title }) => {
           onClick={handleTocClick}
           currentLocation={currentLocation}
         />
+      </div>
+      <div className="h-10 flex items-center justify-center opacity-0 group-hover:opacity-100">
+        <div className="flex-1 text-center">
+          <p> Page {`${page.start} - ${page.total}`}</p>
+        </div>
+        {page.start === page.end ? null : (
+          <div className="flex-1 text-center">
+            <p> Page {`${page.end} - ${page.total}`}</p>
+          </div>
+        )}
       </div>
     </div>
   );
