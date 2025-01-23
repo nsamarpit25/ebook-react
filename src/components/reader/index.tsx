@@ -1,3 +1,4 @@
+// Import necessary dependencies
 import { Button } from "@nextui-org/react";
 import ePub, { Book, type NavItem, type Rendition } from "epubjs";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import TableOfContent, { type BookNavList } from "./TableOfContent";
 import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
 import type { LocationChangedEvent, RelocatedEvent } from "./types";
 
+// Define Props interface for component
 interface Props {
   url?: Blob;
   title: string;
@@ -24,13 +26,17 @@ interface Props {
   lastLocation?: string;
 }
 
+// Define Highlight type for annotations
 export type Highlight = {
   selection: string;
   fill: string;
 };
 
+// Constants for DOM element IDs and theme configurations
 const container = "epub_container";
 const wrapper = "epub_wrapper";
+
+// Theme configurations for dark and light modes
 const DARK_THEME = {
   body: {
     color: "#f8f8ea !important",
@@ -51,6 +57,7 @@ const LIGHT_THEME = {
   },
 };
 
+// Helper function to apply theme mode
 const selectTheme = (rendition: Rendition, mode: ThemeModes) => {
   if (mode === "light") {
     document.documentElement.classList.remove("dark");
@@ -60,6 +67,7 @@ const selectTheme = (rendition: Rendition, mode: ThemeModes) => {
   rendition.themes.select(mode);
 };
 
+// Utility function to get element dimensions
 const getElementSize = (id: string) => {
   const elm = document.getElementById(id);
   let width = 0;
@@ -72,6 +80,7 @@ const getElementSize = (id: string) => {
   return { width, height };
 };
 
+// Helper function to process and filter href paths
 const filterHref = (spineHrefList: string[], href: string) => {
   const foundItem = spineHrefList.find((spineHref) => {
     const regex = new RegExp("[^/]+/([^/]+.xhtml)");
@@ -86,6 +95,7 @@ const filterHref = (spineHrefList: string[], href: string) => {
   return foundItem || href;
 };
 
+// Function to process and load table of contents
 const loadTableOfContent = async (book: Book) => {
   const [nav, spine] = await Promise.all([
     book.loaded.navigation,
@@ -135,8 +145,7 @@ const loadTableOfContent = async (book: Book) => {
   return navLabels;
 };
 
-// Event listeners for navigation
-
+// Helper function to apply highlights to the rendition
 const applyHighlight = (rendition: Rendition, highlights: Highlight[]) => {
   highlights.forEach((highlight) => {
     rendition.annotations.remove(highlight.selection, "highlight");
@@ -153,6 +162,7 @@ const applyHighlight = (rendition: Rendition, highlights: Highlight[]) => {
   });
 };
 
+// Main EpubReader component
 const EpubReader: FC<Props> = ({
   url,
   title,
@@ -162,6 +172,7 @@ const EpubReader: FC<Props> = ({
   onLocationChanged,
   lastLocation,
 }) => {
+  // State management
   const [book, setBook] = useState<Book>();
   const [rendition, setRendition] = useState<Rendition | undefined>();
   const [loading, setLoading] = useState(false);
@@ -178,6 +189,7 @@ const EpubReader: FC<Props> = ({
   const [showNotes, setShowNotes] = useState(false);
   const [locationBeforeNoteOpen, setLocationBeforeNoteOpen] = useState("");
 
+  // Page number update handler
   const updatePageNumber = (rendition: Rendition) => {
     const location = rendition.currentLocation() as unknown as RelocatedEvent;
     const start = location.start.displayed.page;
@@ -186,6 +198,7 @@ const EpubReader: FC<Props> = ({
     setPage({ start, end, total });
   };
 
+  // Keyboard navigation handler
   const keyListener = useCallback(
     (e: KeyboardEvent) => {
       if (!rendition) return;
@@ -195,6 +208,7 @@ const EpubReader: FC<Props> = ({
     [rendition]
   );
 
+  // Event listener setup for keyboard navigation
   useEffect(() => {
     if (!rendition) return;
 
@@ -211,12 +225,14 @@ const EpubReader: FC<Props> = ({
     };
   }, [rendition, keyListener]);
 
+  // Theme handling functions
   const handleThemeSelection = (mode: ThemeModes) => {
     if (!rendition) return;
 
     selectTheme(rendition, mode);
   };
 
+  // Font size management
   const handleFontSizeUpdate = (mode: "increase" | "decrease") => {
     if (!rendition) return;
     let { fontSize } = settings;
@@ -232,6 +248,7 @@ const EpubReader: FC<Props> = ({
     updatePageNumber(rendition);
   };
 
+  // Table of Contents visibility handlers
   function toggleToc() {
     setShowToc(!showToc);
   }
@@ -240,6 +257,7 @@ const EpubReader: FC<Props> = ({
     setShowToc(false);
   }
 
+  // Navigation handlers
   const handleTocClick = async (href: string) => {
     if (!rendition) return;
 
@@ -252,6 +270,7 @@ const EpubReader: FC<Props> = ({
     }
   };
 
+  // Highlight management functions
   function handleHighlightSelection(fill: string) {
     if (!rendition) return;
     const newHighlight = { fill, selection: selectedCfi };
@@ -273,7 +292,7 @@ const EpubReader: FC<Props> = ({
     onHighlightClear(selectedCfi);
   }
 
-  // Initialize book
+  // Book initialization effect
   useEffect(() => {
     if (!url) return;
     let book: Book;
@@ -294,7 +313,7 @@ const EpubReader: FC<Props> = ({
     };
   }, [url]); // Only depend on url changes
 
-  // Initialize rendition
+  // Rendition initialization effect
   useEffect(() => {
     if (!book) return;
 
@@ -310,7 +329,7 @@ const EpubReader: FC<Props> = ({
     };
   }, [book]); // Only depend on book changes
 
-  // Display content
+  // Content display and event handlers setup
   useEffect(() => {
     if (!rendition || !book) return;
 
@@ -384,6 +403,7 @@ const EpubReader: FC<Props> = ({
     rendition.themes.register("dark", DARK_THEME);
   }, [onLocationChanged, book, lastLocation, rendition]);
 
+  // Theme and highlights application effect
   useEffect(() => {
     if (!rendition) {
       return;
@@ -399,6 +419,7 @@ const EpubReader: FC<Props> = ({
     });
   }, [rendition, highlights, settings.fontSize]);
 
+  // Window resize handler effect
   useEffect(() => {
     if (!rendition) return;
     const handleResize = () => {
@@ -414,6 +435,7 @@ const EpubReader: FC<Props> = ({
     };
   }, [rendition]);
 
+  // Render component
   return (
     <div className="h-screen flex flex-col group dark:bg-book-dark dark:bg-text-book-dark">
       <LoadingIndicator visible={loading} />
