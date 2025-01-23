@@ -1,17 +1,17 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { Button } from "@nextui-org/react";
 import ePub, { Book, type NavItem, type Rendition } from "epubjs";
-import Navigator from "./Navigator";
-import LoadingIndicator from "./LoadingIndicator";
-import TableOfContent, { type BookNavList } from "./TableOfContent";
+import { FC, useCallback, useEffect, useState } from "react";
 import { IoMenu } from "react-icons/io5";
-import { button, Button } from "@nextui-org/react";
-import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
-import FontOptions from "./FontOptions";
 import { MdOutlineStickyNote2 } from "react-icons/md";
-import type { LocationChangedEvent, RelocatedEvent } from "./types";
-import HighlightOptions from "./HighlightOption";
 import { debounce } from "../../utils/helper";
+import FontOptions from "./FontOptions";
+import HighlightOptions from "./HighlightOption";
+import LoadingIndicator from "./LoadingIndicator";
+import Navigator from "./Navigator";
 import NotesModal from "./NotesModal";
+import TableOfContent, { type BookNavList } from "./TableOfContent";
+import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
+import type { LocationChangedEvent, RelocatedEvent } from "./types";
 
 interface Props {
   url?: Blob;
@@ -240,14 +240,16 @@ const EpubReader: FC<Props> = ({
     setShowToc(false);
   }
 
-  const handleTocClick = (href: string) => {
-    if (rendition) {
-      rendition.display(href);
+  const handleTocClick = async (href: string) => {
+    if (!rendition) return;
+
+    try {
+      await rendition.display(href);
       setCurrentLocation(href);
-      // console.log(currentLocation);
-      // console.log(href);
+      hideToc();
+    } catch (error) {
+      console.error("Error navigating:", error);
     }
-    // console.log(book);
   };
 
   function handleHighlightSelection(fill: string) {
@@ -333,7 +335,9 @@ const EpubReader: FC<Props> = ({
 
     rendition.on("relocated", (location: any) => {
       setCurrentLocation(location.end.href);
-      setSettings({ ...settings, currentLocation: location.end.href });
+      setSettings((old) => {
+        return { ...old, currentLocation: location.end.href };
+      });
       // console.log(location);
     });
 
@@ -345,16 +349,6 @@ const EpubReader: FC<Props> = ({
 
     rendition.on("displayed", () => {
       updatePageNumber(rendition);
-      // rendition.annotations.highlight(
-      //   "epubcfi(/6/8!/4/2/2/6,/1:1,/1:10)",
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   {
-      //     fill: "yellow",
-      //     color: "red",
-      //   }
-      // );
     });
 
     rendition.on("locationChanged", (evt: LocationChangedEvent) => {
@@ -366,6 +360,7 @@ const EpubReader: FC<Props> = ({
       setShowHighlightOption,
       3000
     );
+    const debounceUpdateLoading = debounce(setLoading, 200);
 
     rendition.on("selected", (cfi: string) => {
       setShowHighlightOption(true);
@@ -380,19 +375,14 @@ const EpubReader: FC<Props> = ({
       debounceSetShowHighlightOption(false);
     });
 
+    rendition.on("resized", () => {
+      debounceUpdateLoading(false);
+    });
+
     rendition.themes.register("light", LIGHT_THEME);
 
     rendition.themes.register("dark", DARK_THEME);
-
-    document.addEventListener("keyup", (e) => {
-      keyListener(e, rendition);
-    });
-    return () => {
-      document.removeEventListener("keyup", (e) => {
-        keyListener(e, rendition);
-      });
-    };
-  }, [rendition, book, lastLocation]);
+  }, [onLocationChanged, book, lastLocation, rendition]);
 
   useEffect(() => {
     if (!rendition) {
@@ -407,7 +397,22 @@ const EpubReader: FC<Props> = ({
     rendition.on("locationChanged", () => {
       applyHighlight(rendition, highlights);
     });
-  }, [rendition, highlights]);
+  }, [rendition, highlights, settings.fontSize]);
+
+  useEffect(() => {
+    if (!rendition) return;
+    const handleResize = () => {
+      setLoading(true);
+      const { height, width } = getElementSize(wrapper);
+      rendition.resize(width, height);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [rendition]);
 
   return (
     <div className="h-screen flex flex-col group dark:bg-book-dark dark:bg-text-book-dark">
@@ -495,9 +500,12 @@ const EpubReader: FC<Props> = ({
 
         {locationBeforeNoteOpen ? (
           <button
-            onClick={() => {
-              setLocationBeforeNoteOpen("");
-              handleTocClick(settings.currentLocation);
+            className="px-4 py-1 text-sm text-blue-500 hover:text-blue-600"
+            onClick={async () => {
+              if (locationBeforeNoteOpen) {
+                await handleTocClick(locationBeforeNoteOpen);
+                setLocationBeforeNoteOpen("");
+              }
             }}
           >
             Go to previous location

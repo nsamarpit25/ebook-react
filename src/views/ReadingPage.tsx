@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import client from "../api/client";
 import { useParams, useSearchParams } from "react-router-dom";
 import { debounce, ParseError } from "../utils/helper";
@@ -69,13 +69,16 @@ const ReadingPage: FC<Props> = () => {
     }
   }
 
-  function handleLocationChanged(location: string) {
-    try {
-      if (bookId) debounceUpdateLastLocation(bookId, location);
-    } catch (error) {
-      ParseError(error);
-    }
-  }
+  const handleLocationChanged = useCallback(
+    (location: string) => {
+      try {
+        if (bookId) debounceUpdateLastLocation(bookId, location);
+      } catch (error) {
+        ParseError(error);
+      }
+    },
+    [bookId]
+  );
 
   useEffect(() => {
     if (!slug) return;
