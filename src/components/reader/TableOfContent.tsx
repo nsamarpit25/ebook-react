@@ -36,7 +36,7 @@ const TableOfContent: FC<Props> = ({
       aria-label="Table of Contents"
       style={{ right: visible ? "0" : "-100%" }}
       className="
-        dark:bg-book-dark dark:text-book-dark
+        dark:bg-gray-900 dark:text-gray-100
         transition-all duration-300 ease-in-out
         md:w-96 w-3/4 bg-white/95 backdrop-blur-sm
         h-screen overflow-y-auto fixed z-50 top-0 right-0
@@ -44,7 +44,7 @@ const TableOfContent: FC<Props> = ({
         border-l dark:border-gray-800
       "
     >
-      <h2 className="text-2xl font-serif font-semibold mb-6 px-2 text-center border-b pb-2 dark:border-gray-700">
+      <h2 className="text-2xl font-serif font-semibold mb-6 px-2 text-center border-b pb-2 dark:border-gray-700 dark:text-gray-100">
         Contents
       </h2>
       <div className="space-y-1">
@@ -60,9 +60,9 @@ const TableOfContent: FC<Props> = ({
             return (
               <div
                 key={label.href}
-                className="flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
+                className="flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded"
               >
-                <span className="text-gray-400 pt-2 pl-2 min-w-[2rem] font-serif">
+                <span className="text-gray-400 dark:text-gray-500 pt-2 pl-2 min-w-[2rem] font-serif">
                   {index + 1}.
                 </span>
                 <p
@@ -71,9 +71,9 @@ const TableOfContent: FC<Props> = ({
                   onClick={() => onClick(label.href)}
                   onKeyPress={(e) => handleKeyPress(e, label.href)}
                   className={clsx(
-                    "py-2 pr-2 w-full cursor-pointer focus:outline-none font-medium ",
+                    "py-2 pr-2 w-full cursor-pointer focus:outline-none font-medium dark:text-gray-100",
                     String(label.href).includes(currentLocation)
-                      ? "text-blue-500"
+                      ? "text-blue-500 dark:text-blue-400"
                       : ""
                   )}
                   aria-label={`Navigate to ${label.title}`}
@@ -89,22 +89,26 @@ const TableOfContent: FC<Props> = ({
               className="px-0 pb-0 pt-0 shadow-none"
               variant="light"
               itemClasses={{
-                title: "font-medium",
+                title: "font-medium dark:text-gray-100",
                 trigger:
-                  "px-0 py-0 data-[hover=true]:bg-gray-50 dark:data-[hover=true]:bg-gray-800/50 rounded-lg",
+                  "px-0 py-0 data-[hover=true]:bg-gray-50 dark:data-[hover=true]:bg-gray-800 rounded-lg",
                 content: "pb-0",
               }}
             >
               <AccordionItem
                 title={
                   <div className={clsx("flex items-start gap-3 w-full py-2")}>
-                    <span className={clsx("text-gray-400 pl-2 font-serif")}>
+                    <span
+                      className={clsx(
+                        "text-gray-400 dark:text-gray-500 pl-2 font-serif"
+                      )}
+                    >
                       {index + 1}.
                     </span>
                     <span
                       className={
                         String(label.href).includes(currentLocation)
-                          ? "text-blue-500"
+                          ? "text-blue-500 dark:text-blue-400"
                           : ""
                       }
                     >
@@ -119,9 +123,9 @@ const TableOfContent: FC<Props> = ({
                   {subItems.map((item, subIndex) => (
                     <div
                       key={item.href}
-                      className="flex items-start gap-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
+                      className="flex items-start gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded"
                     >
-                      <span className="text-gray-400 pt-2 pl-2 min-w-[2rem] text-sm font-serif">
+                      <span className="text-gray-400 dark:text-gray-500 pt-2 pl-2 min-w-[2rem] text-sm font-serif">
                         {index + 1}.{subIndex + 1}
                       </span>
                       <p
@@ -130,7 +134,7 @@ const TableOfContent: FC<Props> = ({
                         onClick={() => onClick(item.href)}
                         onKeyPress={(e) => handleKeyPress(e, item.href)}
                         className={clsx(
-                          "py-2 pr-2 w-full cursor-pointer text-sm focus:outline-none focus:text-primary text-gray-600 dark:text-gray-300"
+                          "py-2 pr-2 w-full cursor-pointer text-sm focus:outline-none focus:text-primary text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
                         )}
                         aria-label={`Navigate to ${item.title}`}
                       >
