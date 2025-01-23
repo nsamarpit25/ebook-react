@@ -8,12 +8,25 @@ import { Button } from "@nextui-org/react";
 import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
 import FontOptions from "./FontOptions";
 import { MdOutlineStickyNote2 } from "react-icons/md";
-import type { RelocatedEvent } from "./types";
+import type { LocationChangedEvent, RelocatedEvent } from "./types";
+import HighlightOptions from "./HighlightOption";
+import { debounce } from "../../utils/helper";
 
 interface Props {
   url?: Blob;
   title: string;
+
+  highlights: Highlight[];
+  onHighlight: (data: Highlight) => void;
+  onHighlightClear: (cfi: string) => void;
+  onLocationChanged: (location: string) => void;
+  lastLocation?: string;
 }
+
+export type Highlight = {
+  selection: string;
+  fill: string;
+};
 
 const container = "epub_container";
 const wrapper = "epub_wrapper";
@@ -26,6 +39,7 @@ const DARK_THEME = {
     color: "#f8f8ea !important",
   },
 };
+
 const LIGHT_THEME = {
   body: {
     color: "#000 !important",
@@ -120,7 +134,31 @@ const loadTableOfContent = async (book: Book) => {
   return navLabels;
 };
 
-const EpubReader: FC<Props> = ({ url, title }) => {
+const applyHighlight = (rendition: Rendition, highlights: Highlight[]) => {
+  highlights.forEach((highlight) => {
+    rendition.annotations.remove(highlight.selection, "highlight");
+
+    rendition.annotations.highlight(
+      highlight.selection,
+      undefined,
+      undefined,
+      undefined,
+      {
+        fill: highlight.fill,
+      }
+    );
+  });
+};
+
+const EpubReader: FC<Props> = ({
+  url,
+  title,
+  highlights,
+  onHighlight,
+  onHighlightClear,
+  onLocationChanged,
+  lastLocation,
+}) => {
   const [book, setBook] = useState<Book>();
   const [rendition, setRendition] = useState<Rendition | undefined>();
   const [loading, setLoading] = useState(false);
@@ -129,6 +167,8 @@ const EpubReader: FC<Props> = ({ url, title }) => {
   const [showToc, setShowToc] = useState(false);
   const [settings, setSettings] = useState({ fontSize: 23 });
   const [page, setPage] = useState({ start: 0, end: 0, total: 0 });
+  const [showHighlightOption, setShowHighlightOption] = useState(false);
+  const [selectedCfi, setSelectedCfi] = useState("");
 
   const updatePageNumber = (rendition: Rendition) => {
     const location = rendition.currentLocation() as unknown as RelocatedEvent;
@@ -162,13 +202,41 @@ const EpubReader: FC<Props> = ({ url, title }) => {
   function toggleToc() {
     setShowToc(!showToc);
   }
+
   function hideToc() {
     setShowToc(false);
+  }
+
+  const handleTocClick = (href: string) => {
+    if (rendition) {
+      rendition.display(href);
+      setCurrentLocation(href);
+      // console.log(currentLocation);
+      // console.log(href);
+    }
+    // console.log(book);
+  };
+
+  function handleHighlightSelection(fill: string) {
+    if (!rendition) return;
+    const newHighlight = { fill, selection: selectedCfi };
+    applyHighlight(rendition, [newHighlight]);
+    setShowHighlightOption(false);
+    onHighlight(newHighlight);
+  }
+
+  function handleOnHighlightClear() {
+    if (!rendition) return;
+
+    rendition.annotations.remove(selectedCfi, "highlight");
+    setShowHighlightOption(false);
+    onHighlightClear(selectedCfi);
   }
 
   // Initialize book
   useEffect(() => {
     if (!url) return;
+    let book: Book;
 
     const loadBook = async () => {
       setLoading(true);
@@ -176,6 +244,7 @@ const EpubReader: FC<Props> = ({ url, title }) => {
       const EpubBook = ePub(arrayBuffer as any);
       await EpubBook.ready;
       setBook(EpubBook);
+      book = EpubBook;
     };
 
     loadBook();
@@ -207,7 +276,7 @@ const EpubReader: FC<Props> = ({ url, title }) => {
 
     const display = async () => {
       try {
-        await rendition.display();
+        await rendition.display(lastLocation);
         const toc = await loadTableOfContent(book);
         setTableOfContent(toc);
       } catch (error) {
@@ -231,9 +300,39 @@ const EpubReader: FC<Props> = ({ url, title }) => {
 
     rendition.on("displayed", () => {
       updatePageNumber(rendition);
+      // rendition.annotations.highlight(
+      //   "epubcfi(/6/8!/4/2/2/6,/1:1,/1:10)",
+      //   undefined,
+      //   undefined,
+      //   undefined,
+      //   {
+      //     fill: "yellow",
+      //     color: "red",
+      //   }
+      // );
     });
-    rendition.on("locationChanged", () => {
+
+    rendition.on("locationChanged", (evt: LocationChangedEvent) => {
+      onLocationChanged(evt.start);
       updatePageNumber(rendition);
+    });
+
+    const debounceSetShowHighlightOption = debounce(
+      setShowHighlightOption,
+      3000
+    );
+
+    rendition.on("selected", (cfi: string) => {
+      setShowHighlightOption(true);
+      setSelectedCfi(cfi);
+      debounceSetShowHighlightOption(false);
+    });
+
+    rendition.on("markClicked", (cfi: string) => {
+      setShowHighlightOption(true);
+      setSelectedCfi(cfi);
+      console.log(cfi);
+      debounceSetShowHighlightOption(false);
     });
 
     rendition.themes.register("light", LIGHT_THEME);
@@ -250,24 +349,20 @@ const EpubReader: FC<Props> = ({ url, title }) => {
     return () => {
       document.removeEventListener("keyup", keyListener);
     };
-  }, [rendition, book]);
-
-  const handleTocClick = (href: string) => {
-    if (rendition) {
-      rendition.display(href);
-      setCurrentLocation(href);
-      // console.log(currentLocation);
-      // console.log(href);
-    }
-    // console.log(book);
-  };
+  }, [rendition, book, lastLocation, onLocationChanged]);
 
   useEffect(() => {
     if (!rendition) {
       return;
     }
     rendition.themes.fontSize(settings.fontSize + "px");
-  }, [rendition]);
+
+    // console.log(highlights);
+
+    rendition.on("locationChanged", () => {
+      applyHighlight(rendition, highlights);
+    });
+  }, [rendition, highlights]);
 
   return (
     <div className="h-screen flex flex-col group dark:bg-book-dark dark:bg-text-book-dark">
@@ -325,6 +420,12 @@ const EpubReader: FC<Props> = ({ url, title }) => {
           data={tableOfContent}
           onClick={handleTocClick}
           currentLocation={currentLocation}
+        />
+
+        <HighlightOptions
+          visible={showHighlightOption}
+          onSelect={handleHighlightSelection}
+          onClear={handleOnHighlightClear}
         />
       </div>
       <div className="h-10 flex items-center justify-center opacity-0 group-hover:opacity-100">

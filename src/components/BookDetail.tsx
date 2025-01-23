@@ -195,7 +195,7 @@ const BookDetail: FC<Props> = ({ book }) => {
                   size="lg"
                   className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-8"
                   as={Link}
-                  to={`/read/${slug}?title=${title}`}
+                  to={`/read/${slug}?title=${title}&id=${id}`}
                 >
                   Read Now
                 </Button>
