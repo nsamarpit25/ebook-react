@@ -1,16 +1,17 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import ePub, { Book, type NavItem, type Rendition } from "epubjs";
 import Navigator from "./Navigator";
 import LoadingIndicator from "./LoadingIndicator";
 import TableOfContent, { type BookNavList } from "./TableOfContent";
 import { IoMenu } from "react-icons/io5";
-import { Button } from "@nextui-org/react";
+import { button, Button } from "@nextui-org/react";
 import ThemeOptions, { type ThemeModes } from "./ThemeOptions";
 import FontOptions from "./FontOptions";
 import { MdOutlineStickyNote2 } from "react-icons/md";
 import type { LocationChangedEvent, RelocatedEvent } from "./types";
 import HighlightOptions from "./HighlightOption";
 import { debounce } from "../../utils/helper";
+import NotesModal from "./NotesModal";
 
 interface Props {
   url?: Blob;
@@ -134,6 +135,8 @@ const loadTableOfContent = async (book: Book) => {
   return navLabels;
 };
 
+// Event listeners for navigation
+
 const applyHighlight = (rendition: Rendition, highlights: Highlight[]) => {
   highlights.forEach((highlight) => {
     rendition.annotations.remove(highlight.selection, "highlight");
@@ -165,10 +168,15 @@ const EpubReader: FC<Props> = ({
   const [tableOfContent, setTableOfContent] = useState<BookNavList[]>([]);
   const [currentLocation, setCurrentLocation] = useState("");
   const [showToc, setShowToc] = useState(false);
-  const [settings, setSettings] = useState({ fontSize: 23 });
+  const [settings, setSettings] = useState({
+    fontSize: 23,
+    currentLocation: "",
+  });
   const [page, setPage] = useState({ start: 0, end: 0, total: 0 });
   const [showHighlightOption, setShowHighlightOption] = useState(false);
   const [selectedCfi, setSelectedCfi] = useState("");
+  const [showNotes, setShowNotes] = useState(false);
+  const [locationBeforeNoteOpen, setLocationBeforeNoteOpen] = useState("");
 
   const updatePageNumber = (rendition: Rendition) => {
     const location = rendition.currentLocation() as unknown as RelocatedEvent;
@@ -177,6 +185,31 @@ const EpubReader: FC<Props> = ({
     const total = location.start.displayed.total;
     setPage({ start, end, total });
   };
+
+  const keyListener = useCallback(
+    (e: KeyboardEvent) => {
+      if (!rendition) return;
+      if (e.key === "ArrowLeft") rendition.prev();
+      if (e.key === "ArrowRight") rendition.next();
+    },
+    [rendition]
+  );
+
+  useEffect(() => {
+    if (!rendition) return;
+
+    // Add document level listener
+    document.addEventListener("keyup", keyListener);
+
+    // Add rendition level listener
+    rendition.on("keyup", keyListener);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("keyup", keyListener);
+      rendition.off("keyup", keyListener);
+    };
+  }, [rendition, keyListener]);
 
   const handleThemeSelection = (mode: ThemeModes) => {
     if (!rendition) return;
@@ -223,6 +256,11 @@ const EpubReader: FC<Props> = ({
     applyHighlight(rendition, [newHighlight]);
     setShowHighlightOption(false);
     onHighlight(newHighlight);
+  }
+  function handleOnNoteClick(path: string) {
+    if (!locationBeforeNoteOpen)
+      setLocationBeforeNoteOpen(settings.currentLocation);
+    handleTocClick(path);
   }
 
   function handleOnHighlightClear() {
@@ -276,6 +314,11 @@ const EpubReader: FC<Props> = ({
 
     const display = async () => {
       try {
+        if (lastLocation !== "") {
+          await rendition.display(lastLocation);
+        } else {
+          await rendition.display();
+        }
         await rendition.display(lastLocation);
         const toc = await loadTableOfContent(book);
         setTableOfContent(toc);
@@ -290,11 +333,13 @@ const EpubReader: FC<Props> = ({
 
     rendition.on("relocated", (location: any) => {
       setCurrentLocation(location.end.href);
+      setSettings({ ...settings, currentLocation: location.end.href });
       // console.log(location);
     });
 
     rendition.on("click", () => {
       // console.log("click");
+
       hideToc();
     });
 
@@ -339,22 +384,22 @@ const EpubReader: FC<Props> = ({
 
     rendition.themes.register("dark", DARK_THEME);
 
-    // Event listeners for navigation
-    const keyListener = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") rendition.prev();
-      if (e.key === "ArrowRight") rendition.next();
-    };
-
-    document.addEventListener("keyup", keyListener);
+    document.addEventListener("keyup", (e) => {
+      keyListener(e, rendition);
+    });
     return () => {
-      document.removeEventListener("keyup", keyListener);
+      document.removeEventListener("keyup", (e) => {
+        keyListener(e, rendition);
+      });
     };
-  }, [rendition, book, lastLocation, onLocationChanged]);
+  }, [rendition, book, lastLocation]);
 
   useEffect(() => {
     if (!rendition) {
       return;
     }
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark" || theme === "light") selectTheme(rendition, theme);
     rendition.themes.fontSize(settings.fontSize + "px");
 
     // console.log(highlights);
@@ -382,7 +427,13 @@ const EpubReader: FC<Props> = ({
                 handleFontSizeUpdate("increase");
               }}
             />
-            <Button isIconOnly>
+            <Button
+              isIconOnly
+              variant="light"
+              onClick={() => {
+                setShowNotes(true);
+              }}
+            >
               <MdOutlineStickyNote2 size={30} />
             </Button>
             <ThemeOptions onThemeSelect={handleThemeSelection} />
@@ -427,11 +478,32 @@ const EpubReader: FC<Props> = ({
           onSelect={handleHighlightSelection}
           onClear={handleOnHighlightClear}
         />
+        <NotesModal
+          book={rendition?.book}
+          notes={highlights.map(({ selection }) => selection)}
+          isOpen={showNotes}
+          onClose={() => {
+            setShowNotes(false);
+          }}
+          onNoteClick={handleOnNoteClick}
+        />
       </div>
       <div className="h-10 flex items-center justify-center opacity-0 group-hover:opacity-100">
         <div className="flex-1 text-center">
           <p> Page {`${page.start} - ${page.total}`}</p>
         </div>
+
+        {locationBeforeNoteOpen ? (
+          <button
+            onClick={() => {
+              setLocationBeforeNoteOpen("");
+              handleTocClick(settings.currentLocation);
+            }}
+          >
+            Go to previous location
+          </button>
+        ) : null}
+
         {page.start === page.end ? null : (
           <div className="flex-1 text-center">
             <p> Page {`${page.end} - ${page.total}`}</p>
