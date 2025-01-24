@@ -1,12 +1,11 @@
 import { Button, Card } from "@nextui-org/react";
-import { FaCheckCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { FC, useEffect, useState } from "react";
+import { FaCheckCircle } from "react-icons/fa";
 import { Link, useSearchParams } from "react-router-dom";
 import client from "../api/client";
-import { formatPrice, ParseError } from "../utils/helper";
 import Skeletons from "../components/Skeletons";
-import { Divider } from "@nextui-org/react";
+import { formatPrice, ParseError } from "../utils/helper";
 
 interface Props {}
 
@@ -58,7 +57,7 @@ const PaymentSuccess: FC<Props> = () => {
       <Card className="max-w-4xl w-full mx-auto overflow-visible bg-white dark:bg-gray-800">
         <div className="relative">
           {/* Centered Success Badge */}
-          <motion.div 
+          <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className="absolute left-1/2 -translate-x-1/2 -top-12"
@@ -93,14 +92,14 @@ const PaymentSuccess: FC<Props> = () => {
                     key={item.id}
                     className="flex gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:shadow-md transition-shadow"
                   >
-                    <img 
-                      src={item.cover} 
-                      alt={item.title} 
-                      className="w-20 h-28 object-cover rounded-md shadow-sm" 
+                    <img
+                      src={item.cover}
+                      alt={item.title}
+                      className="w-20 h-28 object-cover rounded-md shadow-sm"
                     />
                     <div className="flex-1">
-                      <Link 
-                        to={`/book/${item.slug}`} 
+                      <Link
+                        to={`/book/${item.slug}`}
                         className="font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         {item.title}
@@ -128,16 +127,26 @@ const PaymentSuccess: FC<Props> = () => {
                 </h2>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
-                    <span className="text-gray-600 dark:text-gray-400">Order Date</span>
-                    <span className="dark:text-gray-100">{new Date().toLocaleDateString()}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Order Date
+                    </span>
+                    <span className="dark:text-gray-100">
+                      {new Date().toLocaleDateString()}
+                    </span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-600">
-                    <span className="text-gray-600 dark:text-gray-400">Total Items</span>
-                    <span className="dark:text-gray-100">{order?.orders.length}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Total Items
+                    </span>
+                    <span className="dark:text-gray-100">
+                      {order?.orders.length}
+                    </span>
                   </div>
                   <div className="flex justify-between py-2 text-lg font-semibold">
                     <span className="dark:text-gray-100">Total Amount</span>
-                    <span className="dark:text-gray-100">{order?.totalAmount}</span>
+                    <span className="dark:text-gray-100">
+                      {order?.totalAmount}
+                    </span>
                   </div>
                 </div>
               </div>
