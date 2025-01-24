@@ -3,7 +3,7 @@ import client from "../api/client";
 import LoadingSpinner from "./common/LoadingSpinner";
 import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import { Link } from "react-router-dom";
-import { Chip} from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
 import { FaStar } from "react-icons/fa6";
 import DividerWithTitle from "./common/DividerWithTitle";
 import Skeletons from "./Skeletons";
@@ -44,6 +44,8 @@ const BookByGenre: FC<Props> = ({ genre }) => {
   }, [genre]);
 
   if (busy) return <Skeletons.BookList />;
+
+  if (books.length === 0) return null;
 
   return (
     <div className="container mx-auto px-4">
@@ -86,9 +88,9 @@ const BookByGenre: FC<Props> = ({ genre }) => {
 
                 <div className="mt-auto">
                   {book.rating ? (
-                    <Chip 
-                      radius="sm" 
-                      color="warning" 
+                    <Chip
+                      radius="sm"
+                      color="warning"
                       variant="solid"
                       className="w-fit"
                     >
