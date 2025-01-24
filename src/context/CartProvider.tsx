@@ -1,4 +1,10 @@
-import { createContext, FC, ReactNode, useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import { FC, ReactNode, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import client from "../api/client";
+import { CartContext } from "../hooks/uesCartContext";
+import useAuth from "../hooks/useAuth";
 import {
   CartItem,
   CartItemAPI,
@@ -7,13 +13,7 @@ import {
   updateCartItems,
   updateCartState,
 } from "../store/cart";
-import { useDispatch, useSelector } from "react-redux";
-import useAuth from "../hooks/useAuth";
-import client from "../api/client";
-import toast from "react-hot-toast";
 import { ParseError } from "../utils/helper";
-import { AxiosError } from "axios";
-import { CartContext } from "../hooks/uesCartContext";
 
 interface CartApiResponse {
   cart: {
@@ -51,6 +51,7 @@ const CartProvider: FC<Props> = ({ children }) => {
   const { profile } = useAuth();
   const [pending, setPending] = useState(false);
   const [fetching, setFetching] = useState(true);
+  const { dbConnectionStatus } = useAuth();
 
   const clearCart = () => {
     // update the UI
@@ -59,6 +60,9 @@ const CartProvider: FC<Props> = ({ children }) => {
     if (profile) {
       // update the server/database
       // if user is authenticated sending api request
+      if (!dbConnectionStatus) {
+        toast.error("Connection to database failed. Please try again later.");
+      }
       setPending(true);
       client
         .post("/cart/clear")
@@ -114,6 +118,8 @@ const CartProvider: FC<Props> = ({ children }) => {
       }
 
       try {
+        // if (!profile) return;
+        // console.log(profile);
         const { data } = await client.get<CartApiResponse>("/cart");
         dispatch(updateCartState({ id: data.cart.id, items: data.cart.items }));
       } catch (error) {

@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect } from "react";
+import { AxiosError } from "axios";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import client from "../api/client";
 import { AuthContext } from "../hooks/useAuthContext";
@@ -17,6 +18,7 @@ export interface IAuthContext {
   profile: AuthState["profile"];
   status: AuthState["status"];
   signOut(): void;
+  dbConnectionStatus: boolean;
 }
 
 // export const AuthContext = createContext<IAuthContext>({
@@ -28,6 +30,7 @@ export interface IAuthContext {
 const AuthProvider: FC<Props> = ({ children }) => {
   const { profile, status } = useSelector(getAuthState);
   const dispatch = useDispatch();
+  const [dbConnectionStatus, setDbConnectionStatus] = useState(true);
 
   const signOut = async () => {
     try {
@@ -42,7 +45,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
   };
 
   useEffect(() => {
-    // dispatch(updateAuthStatus("busy"));
+    dispatch(updateAuthStatus("busy"));
     client
       .get("/auth/profile")
       .then(({ data }) => {
@@ -50,7 +53,14 @@ const AuthProvider: FC<Props> = ({ children }) => {
         dispatch(updateAuthStatus("authenticated"));
         // console.log(profile)
       })
-      .catch(() => {
+      .catch((data) => {
+        if (data instanceof AxiosError) {
+          if (data.status === 503) {
+            console.log("error");
+            setDbConnectionStatus(false);
+          }
+        }
+
         dispatch(updateProfile(null));
         dispatch(updateAuthStatus("unauthenticated"));
       });
@@ -59,7 +69,9 @@ const AuthProvider: FC<Props> = ({ children }) => {
   // if (status === "busy") return <div>Loading...</div>;
 
   return (
-    <AuthContext.Provider value={{ profile, status, signOut }}>
+    <AuthContext.Provider
+      value={{ profile, status, signOut, dbConnectionStatus }}
+    >
       {children}
     </AuthContext.Provider>
   );

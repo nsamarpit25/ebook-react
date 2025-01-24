@@ -29,7 +29,7 @@ const slice = createSlice({
     updateProfile(state, { payload }: PayloadAction<Profile | null>) {
       state.profile = payload;
     },
-    updateAuthStatus(state, { payload }: PayloadAction<AuthState['status']>) {
+    updateAuthStatus(state, { payload }: PayloadAction<AuthState["status"]>) {
       state.status = payload;
     },
   },

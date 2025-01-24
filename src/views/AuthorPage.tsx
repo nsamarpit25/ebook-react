@@ -6,6 +6,8 @@ import { Link, Card, Skeleton, Divider } from "@nextui-org/react";
 import RichEditor from "../components/rich-editor";
 import BookList, { Book } from "../components/BookList";
 import { FaGlobe } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 interface Props {}
 
@@ -22,15 +24,19 @@ const AuthorPage: FC<Props> = () => {
   const [fetching, setFetching] = useState(true);
   const [authorInfo, setAuthorInfo] = useState<AuthorInfo>();
   const { id } = useParams();
+  const { dbConnectionStatus } = useAuth();
 
   useEffect(() => {
+    if (!dbConnectionStatus) {
+      toast.error("Connection to database failed. Please try again later.");
+    }
     if (!id) return;
 
     const fetchAuthorInfo = async () => {
       try {
         const { data } = await client.get(`/author/${id}`);
         setAuthorInfo(data);
-        console.log(data)
+        console.log(data);
       } catch (error) {
         ParseError(error);
       } finally {
@@ -39,7 +45,7 @@ const AuthorPage: FC<Props> = () => {
     };
 
     fetchAuthorInfo();
-  }, [id]);
+  }, [id, dbConnectionStatus]);
 
   if (fetching) {
     return (
@@ -51,7 +57,6 @@ const AuthorPage: FC<Props> = () => {
 
   return (
     <div className="container mx-auto max-w-5xl py-8 px-4">
-
       <Card className="p-6">
         <div className="flex flex-col items-center space-y-4 mb-8">
           {/* Author Avatar */}
@@ -75,8 +80,7 @@ const AuthorPage: FC<Props> = () => {
           <h1 className="text-3xl font-bold text-center">{authorInfo?.name}</h1>
 
           {/* Social Links */}
-          {authorInfo?.socialLinks && authorInfo.socialLinks.length > 0 ?
-           (
+          {authorInfo?.socialLinks && authorInfo.socialLinks.length > 0 ? (
             <div className="flex flex-wrap justify-center gap-3 mt-4">
               {authorInfo.socialLinks.map((link) => {
                 const { host } = new URL(link);

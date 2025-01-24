@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import client from "../api/client";
+import useAuth from "../hooks/useAuth";
 import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import DividerWithTitle from "./common/DividerWithTitle";
 import Skeletons from "./Skeletons";
@@ -27,10 +28,17 @@ interface Book {
 const BookByGenre: FC<Props> = ({ genre }) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [busy, setBusy] = useState(true);
+  const { dbConnectionStatus } = useAuth();
 
   useEffect(() => {
+    if (!dbConnectionStatus) {
+      // toast.error("Connection to database failed. Please try again later.");
+      return;
+    }
     const fetchBooks = async () => {
+      console.log(dbConnectionStatus);
       try {
+        // console.log("reached here");
         const { data } = await client.get(`book/by-genre/${genre}`);
         setBooks(data.books);
       } catch (error) {
@@ -40,7 +48,7 @@ const BookByGenre: FC<Props> = ({ genre }) => {
       }
     };
     fetchBooks();
-  }, [genre]);
+  }, [genre, dbConnectionStatus]);
 
   if (busy) return <Skeletons.BookList />;
 

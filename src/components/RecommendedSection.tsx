@@ -5,6 +5,8 @@ import client from "../api/client";
 import { formatPrice, ParseError } from "../utils/helper";
 import { Book } from "./BookList";
 import Skeletons from "./Skeletons";
+import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 interface Props {
   id?: string;
@@ -13,12 +15,16 @@ interface Props {
 const RecommendedSection: FC<Props> = ({ id }) => {
   const [fetching, setFetching] = useState(true);
   const [books, setBooks] = useState<Book[]>([]);
+  const { dbConnectionStatus } = useAuth();
 
   useEffect(() => {
     if (!id) return;
 
     const fetchBooks = async () => {
       try {
+        if (!dbConnectionStatus) {
+          toast.error("Connection to database failed. Please try again later.");
+        }
         const { data } = await client.get("/book/recommended/" + id);
         setBooks(data);
       } catch (error) {
@@ -29,7 +35,7 @@ const RecommendedSection: FC<Props> = ({ id }) => {
     };
 
     fetchBooks();
-  }, [id]);
+  }, [id, dbConnectionStatus]);
 
   if (!id) return null;
   if (fetching) return <Skeletons.BookList />;
@@ -42,8 +48,8 @@ const RecommendedSection: FC<Props> = ({ id }) => {
       </h2>
       <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 gap-6">
         {books.map((book) => (
-          <Link 
-            key={book.id} 
+          <Link
+            key={book.id}
             to={`/book/${book.slug}`}
             className="group bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 transition-all hover:shadow-lg hover:-translate-y-1"
           >

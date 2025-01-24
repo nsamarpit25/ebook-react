@@ -5,4 +5,5 @@ export const AuthContext = createContext<IAuthContext>({
   profile: null,
   status: "unauthenticated",
   signOut() {},
+  dbConnectionStatus: false,
 });

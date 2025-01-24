@@ -39,11 +39,12 @@ const UpdateBookForm: FC<Props> = () => {
     }
   };
 
-  if (busy) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <Spinner size="lg" label="Loading book details..." color="primary" />
-    </div>
-  );
+  if (busy)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <Spinner size="lg" label="Loading book details..." color="primary" />
+      </div>
+    );
 
   return (
     <div className="min-h-screen py-8 px-4 bg-gray-50 dark:bg-gray-900">

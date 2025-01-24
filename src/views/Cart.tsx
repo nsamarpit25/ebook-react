@@ -8,11 +8,13 @@ import Skeletons from "../components/Skeletons";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import client from "../api/client";
+import useAuth from "../hooks/useAuth";
 
 interface Props {}
 
 const Cart: FC<Props> = () => {
   const [busy, setBusy] = useState(false);
+  const { profile } = useAuth();
   const {
     id,
     pending,
@@ -27,6 +29,7 @@ const Cart: FC<Props> = () => {
 
   const handleCheckout = async () => {
     try {
+      if (!profile) return;
       setBusy(true);
       const { data } = await client.post("/checkout", { cartId: id });
       if (data.checkoutUrl) {
