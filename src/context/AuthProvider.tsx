@@ -1,12 +1,13 @@
-import { createContext, FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import client from "../api/client";
+import { AuthContext } from "../hooks/useAuthContext";
 import {
   AuthState,
   getAuthState,
   updateAuthStatus,
   updateProfile,
 } from "../store/auth";
-import client from "../api/client";
-import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
   children: ReactNode;
@@ -18,11 +19,11 @@ export interface IAuthContext {
   signOut(): void;
 }
 
-export const AuthContext = createContext<IAuthContext>({
-  profile: null,
-  status: "unauthenticated",
-  signOut() {},
-});
+// export const AuthContext = createContext<IAuthContext>({
+//   profile: null,
+//   status: "unauthenticated",
+//   signOut() {},
+// });
 
 const AuthProvider: FC<Props> = ({ children }) => {
   const { profile, status } = useSelector(getAuthState);

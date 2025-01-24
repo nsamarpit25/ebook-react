@@ -44,6 +44,7 @@ const NotesModal: FC<Props> = ({
 
   useEffect(() => {
     if (isOpen) show();
+    // console.log("....");
   }, [isOpen]);
 
   const handleClose = () => {
