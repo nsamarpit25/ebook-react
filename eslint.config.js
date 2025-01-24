@@ -28,7 +28,7 @@ export default [
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-empty-interface": "off", // Correct TypeScript rule
-      "no-unused-vars": "off",
+      "no-unused-vars": "warn",
       "prefer-const": "error",
     },
   },

@@ -1,6 +1,6 @@
 import { Button } from "@nextui-org/react";
 import clsx from "clsx";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useAutoHide } from "../../hooks/useAutoHide";
 

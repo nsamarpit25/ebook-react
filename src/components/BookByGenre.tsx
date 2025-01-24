@@ -1,10 +1,9 @@
-import { FC, useEffect, useState } from "react";
-import client from "../api/client";
-import LoadingSpinner from "./common/LoadingSpinner";
-import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
-import { Link } from "react-router-dom";
 import { Chip } from "@nextui-org/react";
+import { FC, useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import client from "../api/client";
+import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import DividerWithTitle from "./common/DividerWithTitle";
 import Skeletons from "./Skeletons";
 
