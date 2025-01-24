@@ -23,7 +23,7 @@ const NewUserForm: FC<Props> = ({
   title,
   btnTitle,
 }) => {
-  const [userInfo, setUserInfo] = useState<UserInfo>({ name: "" });
+  const [userInfo, setUserInfo] = useState<UserInfo>({ name: name || "" });
   const [localAvatar, setLocalAvatar] = useState("");
   const [invalidFormState, setInvalidFormState] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -79,13 +79,10 @@ const NewUserForm: FC<Props> = ({
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-8">
           {title}
         </h1>
-        
+
         <form className="space-y-8" onSubmit={handleSubmit}>
           <div className="flex justify-center">
-            <label
-              htmlFor="avatar"
-              className="cursor-pointer relative group"
-            >
+            <label htmlFor="avatar" className="cursor-pointer relative group">
               <Avatar
                 isBordered
                 radius="lg"
