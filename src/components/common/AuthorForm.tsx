@@ -45,7 +45,9 @@ const newAuthorSchema = z.object({
 
 const AuthorForm: FC<Props> = ({ initialState, btnTitle, onSubmit }) => {
   const [socialLinks, setSocialLinks] = useState([""]);
-  const [about, setAbout] = useState("");
+  const [about, setAbout] = useState(
+    "For Demo: I am a passionate writer and storyteller with over a decade of experience in creating compelling narratives. My work spans multiple genres including fiction, non-fiction, and technical writing. I believe in the power of words to inspire, educate, and transform lives. Through my books, I aim to share unique perspectives and connect with readers on a deeper level."
+  );
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<{
     [key: string]: string[] | undefined;
