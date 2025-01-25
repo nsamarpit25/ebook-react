@@ -23,6 +23,7 @@
     "dateformat": "^5.0.3",
     "epubjs": "^0.3.93",
     "framer-motion": "^11.3.30",
+    "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/dateformat": "^5.0.3",
+    "@types/js-cookie": "^3.0.6",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@types/react-slick": "^0.23.13",
