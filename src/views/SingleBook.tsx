@@ -44,21 +44,32 @@ const SingleBook: FC<Props> = () => {
     fetchBookDetail();
   }, [slug]);
 
-  if (busy) return <Skeletons.BookDetails />;
+  if (busy)
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <Skeletons.BookDetails />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto py-8 px-4 lg:px-8">
-        <div className="space-y-8">
-          <BookDetail book={bookDetails} />
+      <div className="max-w-7xl mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
+        <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+          <div className="transition-all duration-300">
+            <BookDetail book={bookDetails} />
+          </div>
 
           {/* Related Books Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm sm:shadow-md overflow-hidden transition-all duration-300">
             <RecommendedSection id={bookDetails?.id} />
           </div>
 
           {/* Reviews Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm sm:shadow-md overflow-hidden transition-all duration-300">
             <ReviewSection
               id={bookDetails?.id}
               reviews={reviews}

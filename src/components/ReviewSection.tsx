@@ -27,35 +27,39 @@ interface Props {
 const ReviewSection: FC<Props> = ({ id, reviews }) => {
   const { profile } = useAuth();
 
-  const alreadyPurchased = id && profile?.books?.includes(id) || false;
+  const alreadyPurchased = (id && profile?.books?.includes(id)) || false;
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
           Reviews
         </h2>
-        {alreadyPurchased? <Link
-          to={`/rate/${id}`}
-          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
-        >
-          Write a Review
-        </Link> : null}
+        {alreadyPurchased && (
+          <Link
+            to={`/rate/${id}`}
+            className="inline-flex items-center text-sm sm:text-base text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
+          >
+            Write a Review
+          </Link>
+        )}
       </div>
 
       {!reviews.length ? (
         <div className="text-center py-12">
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            {alreadyPurchased ? 'Be the first to review this book': 'Buy Now to add review'}
+            {alreadyPurchased
+              ? "Be the first to review this book"
+              : "Buy Now to add review"}
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6"
+              className="bg-gray-50 dark:bg-gray-700/50 rounded-lg sm:rounded-xl p-4 sm:p-6"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-600">
                     {review.user.avatar?.url ? (

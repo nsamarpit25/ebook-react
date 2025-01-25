@@ -1,50 +1,44 @@
-import { Divider, Skeleton } from "@nextui-org/react";
+import { FC } from "react";
 
-const BookDetails = () => {
+const BookDetails: FC = () => {
   return (
-    <div className="md:flex">
-      <div className="">
-        <div className="">
-          <Skeleton className="w-48 h-80 rounded-md object-cover" />
-        </div>
-      </div>
+    <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm sm:shadow-md p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-12">
+        {/* Book Cover Skeleton */}
+        <div className="w-full md:w-64 h-72 md:h-96 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
 
-      <div className="md:pt-0 pt-6 md:pl-10 flex-1">
-        <Skeleton className="h-4 w-1/2 rounded" />
-        <div className="mt-3 space-y-2">
-          <Skeleton className="h-4 w-24 rounded" />
-          <Skeleton className="h-4 w-20 rounded" />
-        </div>
+        <div className="flex-1 space-y-4 sm:space-y-6">
+          {/* Title Skeleton */}
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-3/4 animate-pulse" />
 
-        <div className="mt-3 space-x-1 flex items-center font-semibold">
-          <Skeleton className="h-4 w-20 rounded" />
-        </div>
+          {/* Author & Publication Skeleton */}
+          <div className="space-y-2">
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-1/2 animate-pulse" />
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-lg w-1/3 animate-pulse" />
+          </div>
 
-        <div className="mt-6 space-y-3">
-          <Skeleton className="h-4 rounded" />
-          <Skeleton className="h-4 rounded" />
-          <Skeleton className="h-4 w-1/2 rounded" />
-        </div>
+          {/* Price Section Skeleton */}
+          <div className="flex items-center gap-4">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-24 animate-pulse" />
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-20 animate-pulse" />
+          </div>
 
-        <div className="flex h-10 mt-6 items-center space-x-6">
-          <Skeleton className="h-8 w-8 rounded" />
+          {/* Description Skeleton */}
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="h-4 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"
+                style={{ width: `${Math.random() * 40 + 60}%` }}
+              />
+            ))}
+          </div>
 
-          <Divider orientation="vertical" className="h-1/2" />
-
-          <Skeleton className="h-8 w-8 rounded" />
-
-          <Divider orientation="vertical" className="h-1/2" />
-
-          <Skeleton className="h-8 w-8 rounded" />
-
-          <Divider orientation="vertical" className="h-1/2" />
-
-          <Skeleton className="h-8 w-8 rounded" />
-        </div>
-
-        <div className="mt-6 flex items-center space-x-3">
-          <Skeleton className="h-8 w-20 rounded" />
-          <Skeleton className="h-8 w-20 rounded" />
+          {/* Action Buttons Skeleton */}
+          <div className="flex gap-4 pt-4">
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-full w-36 animate-pulse" />
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-full w-36 animate-pulse" />
+          </div>
         </div>
       </div>
     </div>
