@@ -39,7 +39,7 @@ interface Props {
   title: string;
   submitBtnTitle: string;
   initialState?: InitialBookToUpdate;
-  onSubmit(data: FormData): Promise<void>;
+  onSubmit(data: FormData, file?: File | null): Promise<void>;
 }
 
 interface DefaultForm {
@@ -218,7 +218,7 @@ const BookForm: FC<Props> = ({
         genre: bookInfo.genre,
         language: bookInfo.language,
         publicationName: bookInfo.publicationName,
-        uploadMethod: "local",
+        uploadMethod: "aws",
         publishedAt: bookInfo.publishedAt,
         price: {
           mrp: Number(bookInfo.mrp),
@@ -237,7 +237,7 @@ const BookForm: FC<Props> = ({
         // setErrors(result.error.flatten().fieldErrors);
       }
 
-      if (result.data.uploadMethod === "local") {
+      if (result.data.uploadMethod === "aws") {
         formData.append("book", file);
       }
 
@@ -254,7 +254,7 @@ const BookForm: FC<Props> = ({
         }
       }
 
-      await onSubmit(formData);
+      await onSubmit(formData, file);
       setBookInfo({ ...defaultBookInfo, file: null });
       setCover("");
       toast.success("Congratulations!! Your book have been published.", {
@@ -275,6 +275,7 @@ const BookForm: FC<Props> = ({
       const formData = new FormData();
 
       const { file, cover } = bookInfo;
+      // console.log(file);
 
       // Validate book file (must be epub type)
       if (file && file?.type !== "application/epub+zip") {
@@ -313,7 +314,7 @@ const BookForm: FC<Props> = ({
         genre: bookInfo.genre,
         language: bookInfo.language,
         publicationName: bookInfo.publicationName,
-        uploadMethod: "local",
+        uploadMethod: "aws",
         publishedAt: bookInfo.publishedAt,
         slug: initialState?.slug,
         price: {
@@ -339,6 +340,9 @@ const BookForm: FC<Props> = ({
       if (file && result.data.uploadMethod === "local") {
         formData.append("book", file);
       }
+      if (file && result.data.uploadMethod === "aws") {
+        formData.append("book", file);
+      }
 
       for (const key in bookToSend) {
         type keyType = keyof typeof bookToSend;
@@ -352,8 +356,8 @@ const BookForm: FC<Props> = ({
           formData.append(key, JSON.stringify(value));
         }
       }
-
-      await onSubmit(formData);
+      // console.log(file);
+      await onSubmit(formData, file);
       setCover("");
       toast.success("Congratulations!! Your changes have been published.", {
         position: "top-right",
@@ -433,7 +437,9 @@ const BookForm: FC<Props> = ({
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <span className="text-sm opacity-70">Only .epub files are supported</span>
+              <span className="text-sm opacity-70">
+                Only .epub files are supported
+              </span>
             </label>
 
             {/* Show selected file name */}
@@ -479,7 +485,7 @@ const BookForm: FC<Props> = ({
             errorMessage={<ErrorList errors={errors?.title} />}
             classNames={{
               label: "text-gray-600 dark:text-gray-400",
-              input: "dark:text-gray-100"
+              input: "dark:text-gray-100",
             }}
           />
 
@@ -494,7 +500,9 @@ const BookForm: FC<Props> = ({
                 errorMessage={<ErrorList errors={errors?.description} />}
                 value={bookInfo.description}
                 editable
-                onChange={(description) => setBookInfo({ ...bookInfo, description })}
+                onChange={(description) =>
+                  setBookInfo({ ...bookInfo, description })
+                }
               />
             </div>
           </div>
@@ -512,7 +520,7 @@ const BookForm: FC<Props> = ({
               errorMessage={<ErrorList errors={errors?.publicationName} />}
               classNames={{
                 label: "text-gray-600 dark:text-gray-400",
-                input: "dark:text-gray-100"
+                input: "dark:text-gray-100",
               }}
             />
 
@@ -520,14 +528,16 @@ const BookForm: FC<Props> = ({
               onChange={(date) => {
                 setBookInfo({ ...bookInfo, publishedAt: date.toString() });
               }}
-              value={bookInfo.publishedAt ? parseDate(bookInfo.publishedAt) : null}
+              value={
+                bookInfo.publishedAt ? parseDate(bookInfo.publishedAt) : null
+              }
               label="Publish Date"
               showMonthAndYearPickers
               isRequired
               isInvalid={errors?.publishedAt ? true : false}
               errorMessage={<ErrorList errors={errors?.publishedAt} />}
               classNames={{
-                label: "text-gray-600 dark:text-gray-400"
+                label: "text-gray-600 dark:text-gray-400",
               }}
             />
 
@@ -549,7 +559,7 @@ const BookForm: FC<Props> = ({
                 endContentWrapper: "dark:text-gray-300",
                 // value: "dark:text-gray-300",
                 selectorButton: "dark:text-gray-300",
-                clearButton: "dark:text-gray-300"
+                clearButton: "dark:text-gray-300",
               }}
             >
               {languages.map((item) => (
@@ -569,7 +579,9 @@ const BookForm: FC<Props> = ({
               label="Genre"
               placeholder="Select a Genre"
               defaultSelectedKey={bookInfo.genre}
-              selectedKey={`${bookInfo.genre.charAt(0).toUpperCase()}${bookInfo.genre.slice(1)}`}
+              selectedKey={`${bookInfo.genre
+                .charAt(0)
+                .toUpperCase()}${bookInfo.genre.slice(1)}`}
               onSelectionChange={(key = "") => {
                 setBookInfo({ ...bookInfo, genre: key as string });
               }}
@@ -581,7 +593,7 @@ const BookForm: FC<Props> = ({
                 endContentWrapper: "dark:text-gray-300",
                 // value: "dark:text-gray-300",
                 selectorButton: "dark:text-gray-300",
-                clearButton: "dark:text-gray-300"
+                clearButton: "dark:text-gray-300",
               }}
             >
               {genres.map((item) => (
@@ -598,10 +610,14 @@ const BookForm: FC<Props> = ({
 
           {/* Price Section */}
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
-            <p className={clsx(
-              "text-sm font-medium mb-4",
-              errors?.price ? "text-red-400" : "text-gray-600 dark:text-gray-400"
-            )}>
+            <p
+              className={clsx(
+                "text-sm font-medium mb-4",
+                errors?.price
+                  ? "text-red-400"
+                  : "text-gray-600 dark:text-gray-400"
+              )}
+            >
               Price Information
             </p>
 
@@ -620,7 +636,7 @@ const BookForm: FC<Props> = ({
                 }
                 classNames={{
                   label: "text-gray-600 dark:text-gray-400",
-                  input: "dark:text-gray-100"
+                  input: "dark:text-gray-100",
                 }}
               />
               <Input
@@ -637,7 +653,7 @@ const BookForm: FC<Props> = ({
                 }
                 classNames={{
                   label: "text-gray-600 dark:text-gray-400",
-                  input: "dark:text-gray-100"
+                  input: "dark:text-gray-100",
                 }}
               />
             </div>

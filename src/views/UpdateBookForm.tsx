@@ -5,6 +5,7 @@ import client from "../api/client";
 import { ParseError } from "../utils/helper";
 import { Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 interface Props {}
 
@@ -29,11 +30,20 @@ const UpdateBookForm: FC<Props> = () => {
     fetchBook();
   }, [slug, navigate]);
 
-  const handleSubmit = async (data: FormData) => {
+  const handleSubmit = async (data: FormData, file?: File | null) => {
     try {
-      await client.patch("/book", data);
+      const res = await client.patch("/book", data);
+      console.log("file", file);
+      console.log("res", res);
+      if (res.data && file) {
+        axios.put(res.data, file, {
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        });
+      }
       toast.success("Book updated successfully!");
-      navigate("/dashboard/my-books");
+      // navigate("/dashboard/my-books");
     } catch (error) {
       ParseError(error);
     }
