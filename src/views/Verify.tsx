@@ -23,14 +23,13 @@ const Verify: FC = () => {
 
       Cookies.set("authToken", authToken || "", {
         expires: 7, // Expiry in days
-        path: "", // Make it available for all paths
+        path: "/", // Make it available for all paths
         secure: true, // Ensure it's sent only over HTTPS
         sameSite: "None", // Allow cross-site requests
       });
 
       return <Navigate to="/" />;
-    } catch (err) {
-      // console.log(err)
+    } catch (_err) {
       return <Navigate to={"/not-found"} />;
     }
   }
