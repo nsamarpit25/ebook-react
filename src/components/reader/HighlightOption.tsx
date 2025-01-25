@@ -1,9 +1,7 @@
-import { Button } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import clsx from "clsx";
 import { FC } from "react";
 import { MdOutlineClear } from "react-icons/md";
-import { Tooltip } from "@nextui-org/react";
-import { useAutoHide } from "../../hooks/useAutoHide";
 // import { useAutoHide } from "./useAutoHide";
 
 interface Props {

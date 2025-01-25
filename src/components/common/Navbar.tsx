@@ -1,21 +1,20 @@
 import {
-  Navbar as NextUINav,
-  NavbarBrand,
+  Badge,
   NavbarContent,
   NavbarItem,
-  Badge,
+  Navbar as NextUINav,
 } from "@nextui-org/react";
 import { FC, useState } from "react";
 import { FaBookReader } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
-import { Link } from "react-router-dom";
-import ProfileOptions from "../profile/ProfileOptions";
-import DarkModeSwitch from "./DarkModeSwitch";
-import useCart from "../../hooks/useCart";
 import { IoMenu } from "react-icons/io5";
-import MobileNav from "../MobileNav";
+import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useCart from "../../hooks/useCart";
+import MobileNav from "../MobileNav";
+import ProfileOptions from "../profile/ProfileOptions";
 import SearchForm from "../SearchForm";
+import DarkModeSwitch from "./DarkModeSwitch";
 
 interface Props {}
 
