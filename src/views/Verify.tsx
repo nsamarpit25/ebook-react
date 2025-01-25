@@ -1,10 +1,8 @@
-
 import { FC } from "react";
 import { useDispatch } from "react-redux";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { updateProfile } from "../store/auth";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-
 
 const Verify: FC = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +20,7 @@ const Verify: FC = () => {
 
       return <Navigate to="/" />;
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       return <Navigate to={"/not-found"} />;
     }
   }

@@ -36,6 +36,7 @@ const UpdateBookForm: FC<Props> = () => {
       console.log("file", file);
       console.log("res", res);
       if (res.data && file) {
+        console.log("uploading file");
         axios.put(res.data, file, {
           headers: {
             "Content-Type": "application/octet-stream",

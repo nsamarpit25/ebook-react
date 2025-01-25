@@ -19,12 +19,10 @@ const colorOptions = [
 ];
 
 const HighlightOptions: FC<Props> = ({ visible, onSelect, onClear }) => {
-  const { isVisible } = useAutoHide(visible);
-
   return (
     <div
       className={clsx(
-        isVisible ? "bottom-0" : "-bottom-20",
+        visible ? "bottom-0" : "-bottom-20",
         "transition-all duration-300 h-16 fixed z-50 left-0 right-0",
         "backdrop-blur-md bg-white/90 dark:bg-gray-900/90",
         "border-t dark:border-gray-800 shadow-lg"

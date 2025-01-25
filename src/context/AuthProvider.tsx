@@ -56,7 +56,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
       .catch((data) => {
         if (data instanceof AxiosError) {
           if (data.status === 503) {
-            console.log("error");
+            // console.log("error");
             setDbConnectionStatus(false);
           }
         }

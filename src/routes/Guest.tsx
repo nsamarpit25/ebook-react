@@ -8,7 +8,6 @@ interface Props {}
 const Guest: FC<Props> = () => {
   const { status } = useAuth();
   const isLoggedIn = status === "authenticated";
-  console.log(status);
 
   if (status === "busy") return <LoadingSpinner />;
 

@@ -36,7 +36,6 @@ const AuthorPage: FC<Props> = () => {
       try {
         const { data } = await client.get(`/author/${id}`);
         setAuthorInfo(data);
-        console.log(data);
       } catch (error) {
         ParseError(error);
       } finally {
