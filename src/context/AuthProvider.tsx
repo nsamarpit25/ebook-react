@@ -9,6 +9,7 @@ import {
   updateAuthStatus,
   updateProfile,
 } from "../store/auth";
+import Cookies from "js-cookie";
 
 interface Props {
   children: ReactNode;
@@ -38,6 +39,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
       await client.post("/auth/logout");
       dispatch(updateAuthStatus("unauthenticated"));
       dispatch(updateProfile(null));
+      Cookies.remove("authToken", { path: "/" });
     } catch (error) {
       console.error(error);
       dispatch(updateAuthStatus("authenticated"));
