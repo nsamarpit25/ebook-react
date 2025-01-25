@@ -5,68 +5,89 @@ import {
   NavbarItem,
   Badge,
 } from "@nextui-org/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { FaBookReader } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import ProfileOptions from "../profile/ProfileOptions";
 import DarkModeSwitch from "./DarkModeSwitch";
 import useCart from "../../hooks/useCart";
+import { IoMenu } from "react-icons/io5";
+import MobileNav from "../MobileNav";
+import useAuth from "../../hooks/useAuth";
+import SearchForm from "../SearchForm";
 
 interface Props {}
 
 const Navbar: FC<Props> = () => {
+  const [showNav, setShowNav] = useState(false);
   const { totalCount } = useCart();
+  const { profile, signOut } = useAuth();
+  const isAuthor = profile?.role === "author";
+
+  const openNav = () => {
+    setShowNav(true);
+  };
+
+  const closeNav = () => {
+    setShowNav(false);
+  };
 
   return (
-    <NextUINav 
-      className="x  border-b"
-      maxWidth="xl"
-    >
-      <NavbarBrand>
-        <Link 
-          to="/" 
-          className="flex items-center space-x-3 transition-transform hover:scale-105"
-        >
-          <FaBookReader 
-            size={28} 
-            className="text-gray-900 dark:text-gray-100" 
-          />
-          <p className="font-bold text-xl text-gray-900 dark:text-gray-100">
-            Store
-          </p>
-        </Link>
-      </NavbarBrand>
-
-      <NavbarContent justify="end" className="space-x-4">
-        <NavbarItem>
-          <DarkModeSwitch />
-        </NavbarItem>
-        
-        <NavbarItem>
-          <Link 
-            to="/cart" 
-            className="relative transition-transform hover:scale-110"
-          >
-            <Badge 
-              content={totalCount} 
-              color="danger" 
-              shape="circle"
-              className="font-medium"
+    <>
+      <NextUINav maxWidth="xl" position="sticky">
+        <NavbarContent className="w-full" justify="center">
+          <div className="flex items-center gap-4 w-full max-w-[800px]">
+            <Link
+              to="/"
+              className="flex items-center justify-center space-x-2 shrink-0"
+              aria-label="Store Home"
             >
-              <FaCartShopping 
-                size={24} 
-                className="text-gray-700 dark:text-gray-300" 
-              />
-            </Badge>
-          </Link>
-        </NavbarItem>
-        
-        <NavbarItem className="flex items-center">
-          <ProfileOptions />
-        </NavbarItem>
-      </NavbarContent>
-    </NextUINav>
+              <FaBookReader size={24} />
+              <p className="font-bold text-inherit hidden md:block">Store</p>
+            </Link>
+            <SearchForm />
+          </div>
+        </NavbarContent>
+
+        <NavbarContent justify="end">
+          <NavbarItem className="md:flex hidden">
+            <DarkModeSwitch />
+          </NavbarItem>
+          <NavbarItem className="md:flex hidden">
+            <Link
+              to="/cart"
+              aria-label={`Shopping cart with ${totalCount} items`}
+            >
+              <Badge content={totalCount} color="danger" shape="circle">
+                <FaCartShopping size={24} />
+              </Badge>
+            </Link>
+          </NavbarItem>
+          <NavbarItem className="md:flex hidden">
+            <ProfileOptions />
+          </NavbarItem>
+
+          <NavbarItem
+            onClick={openNav}
+            className="flex md:hidden cursor-pointer"
+          >
+            <IoMenu size={26} />
+          </NavbarItem>
+        </NavbarContent>
+      </NextUINav>
+
+      <div className="block md:hidden">
+        <MobileNav
+          isAuthor={isAuthor}
+          visible={showNav}
+          onClose={closeNav}
+          cartTotal={totalCount}
+          onLogout={signOut}
+          isLoggedIn={profile ? true : false}
+        />
+      </div>
+    </>
   );
 };
 

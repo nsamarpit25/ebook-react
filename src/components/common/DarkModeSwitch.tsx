@@ -29,8 +29,23 @@ const DarkModeSwitch: FC<Props> = () => {
 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
-    if (theme === "dark") enableDarkMode();
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    if (theme === "dark" || (!theme && systemPrefersDark)) enableDarkMode();
     else disableDarkMode();
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem("theme")) {
+        if (e.matches) enableDarkMode();
+        else disableDarkMode();
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [enableDarkMode, disableDarkMode]);
 
   return (
