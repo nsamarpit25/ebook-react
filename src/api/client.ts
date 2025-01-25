@@ -1,15 +1,18 @@
 import axios from "axios";
 
-const client = axios.create({
-  baseURL: "https://ebook-server-9sh3.onrender.com",
-  // baseURL: "http://localhost:8000",
-  // baseURL: "http://192.168.1.9:8000/",
-  // withCredentials: true,
-});
+let baseURL = "https://ebook-server-9sh3.onrender.com";
+if (import.meta.env.MODE === "development") {
+  baseURL = "http://localhost:8989";
+}
 
-export default client;
+const client = axios.create({
+  baseURL,
+});
 
 client.interceptors.request.use(function (config) {
   config.withCredentials = true;
+
   return config;
 });
+
+export default client;
