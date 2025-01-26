@@ -12,6 +12,10 @@ const client = axios.create({
 
 client.interceptors.request.use(function (config) {
   config.withCredentials = true;
+  // console.log(document.cookie);
+
+  config.headers["React-Token"] = JSON.stringify(document.cookie);
+  // console.log(config.headers);
 
   return config;
 });
