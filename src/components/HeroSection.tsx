@@ -99,7 +99,7 @@ const HeroSection: FC = () => {
                       alt={item.title}
                       className="relative w-full h-auto rounded-xl shadow-2xl
                         transform rotate-3 transition-all duration-500
-                        hover:rotate-2 hover:scale-105 hover:shadow-danger/20 "
+                        hover:rotate-2 hover:scale-105 hover:shadow-danger/30 "
                       style={{
                         maxHeight: "460px",
                         objectFit: "cover",
