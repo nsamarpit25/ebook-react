@@ -1,10 +1,9 @@
-import { Chip } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Chip, Divider } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import client from "../api/client";
 import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
-import DividerWithTitle from "./common/DividerWithTitle";
 import Skeletons from "./Skeletons";
 
 interface Props {
@@ -44,70 +43,94 @@ const BookByGenre: FC<Props> = ({ genre }) => {
   }, [genre]);
 
   if (busy) return <Skeletons.BookList />;
-
   if (books.length === 0) return null;
 
   return (
     <div className="container mx-auto px-4">
-      <DividerWithTitle title={genre} />
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+          {genre}
+        </h2>
+        <Divider className="flex-1 mx-4" />
+      </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
         {books.map((book) => (
-          <Link
+          <Card
             key={book.id}
+            as={Link}
             to={`/book/${book.slug}`}
-            className="group hover:scale-105 transition-transform duration-300"
+            isPressable
+            className="group border-none bg-background/60 backdrop-blur-sm hover:scale-105 transition-transform duration-300"
+            shadow="sm"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-4 h-full flex flex-col border border-gray-100 dark:border-gray-700">
-              <div className="relative mb-4 aspect-[2/3] overflow-hidden rounded-md bg-gray-100 dark:bg-gray-700">
+            <CardBody className="p-0 overflow-hidden">
+              <div className="relative aspect-[2/3]">
+                {/* Gradient overlay - mobile always visible, desktop on hover */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent sm:from-black/60
+                    block sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 z-10"
+                />
+
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute top-2 right-2">
-                  <Chip color="danger" radius="sm" size="sm">
+
+                {/* Discount chip */}
+                <div className="absolute top-2 right-2 z-20">
+                  <Chip
+                    className="border border-white/20 shadow-lg"
+                    color="danger"
+                    size="sm"
+                    variant="shadow"
+                  >
                     {calculateDiscount(book.price)}% Off
                   </Chip>
                 </div>
-              </div>
 
-              <div className="flex-grow space-y-3">
-                <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem] text-gray-800 dark:text-gray-100">
+                {/* Price and rating - mobile always visible, desktop on hover */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 p-3 text-white
+                    block sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 z-20"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-white/70 line-through">
+                        {formatPrice(Number(book.price.mrp))}
+                      </span>
+                      <span className="font-bold text-sm text-danger-400">
+                        {formatPrice(Number(book.price.sale))}
+                      </span>
+                    </div>
+                    {book.rating && (
+                      <Chip
+                        size="sm"
+                        color="warning"
+                        variant="shadow"
+                        classNames={{
+                          base: "border border-white/20",
+                          content: "font-bold",
+                        }}
+                        startContent={<FaStar size={12} />}
+                      >
+                        {book.rating}
+                      </Chip>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardBody>
+
+            <CardFooter className="px-3 py-2 bg-content1/5 backdrop-blur-md">
+              <div className="w-full">
+                <h3 className="font-medium text-sm line-clamp-2">
                   {book.title}
                 </h3>
-
-                <div className="flex items-baseline gap-2">
-                  <span className="text-primary dark:text-danger font-bold">
-                    {formatPrice(Number(book.price.sale))}
-                  </span>
-                  <span className="text-gray-400 dark:text-gray-500 text-sm line-through">
-                    {formatPrice(Number(book.price.mrp))}
-                  </span>
-                </div>
-
-                <div className="mt-auto">
-                  {book.rating ? (
-                    <Chip
-                      radius="sm"
-                      color="warning"
-                      variant="solid"
-                      className="w-fit"
-                    >
-                      <div className="flex items-center space-x-1">
-                        <span className="font-medium">{book.rating}</span>
-                        <FaStar size={12} />
-                      </div>
-                    </Chip>
-                  ) : (
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      No Ratings
-                    </span>
-                  )}
-                </div>
               </div>
-            </div>
-          </Link>
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </div>

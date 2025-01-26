@@ -12,28 +12,31 @@ const Home: FC = () => {
     "Autobiography",
     "Romance",
     "Self-Help",
-    "Fantasy"
+    "Fantasy",
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50transition-colors duration-300">
-      <div className="w-full">
+    <div className="min-h-screen">
+      <section className="w-full mb-6 md:mb-12">
         <HeroSection />
+      </section>
+
+      <div className="space-y-12 md:space-y-24">
+        {genres.map((genre, index) => (
+          <section
+            key={genre}
+            className="scroll-mt-16 animate-fadeIn"
+            id={genre.toLowerCase()}
+            style={{
+              animationDelay: `${index * 0.1}s`,
+            }}
+          >
+            <BookByGenre genre={genre} />
+          </section>
+        ))}
       </div>
 
-      <main className="max-w-[1440px] mx-auto py-8 px-4 lg:px-0">
-        <div className="space-y-16 scroll-smooth">
-          {genres.map((genre) => (
-            <section
-              key={genre}
-              className="scroll-mt-16 animate-fadeIn dark:text-gray-100"
-              id={genre.toLowerCase()}
-            >
-              <BookByGenre genre={genre} />
-            </section>
-          ))}
-        </div>
-      </main>
+      <div className="h-16 md:h-0" />
     </div>
   );
 };

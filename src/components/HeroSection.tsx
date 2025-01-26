@@ -1,14 +1,8 @@
-import { Button } from "@nextui-org/react";
-import React, { FC } from "react";
-import {
-  FaArrowRightLong,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa6";
+import { Button, Card } from "@nextui-org/react";
+import { FC } from "react";
+import { FaArrowRightLong } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
-
-interface Props {}
 
 const books = [
   {
@@ -45,103 +39,79 @@ const books = [
   },
 ];
 
-const CustomArrow = ({
-  direction,
-  onClick,
-}: {
-  direction: "left" | "right";
-  onClick?: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className={`absolute z-10 top-1/2 -translate-y-1/2 ${
-      direction === "left" ? "left-4" : "right-4"
-    } bg-white/80 dark:bg-gray-800/80 p-3 rounded-full shadow-lg hover:scale-110 transition-transform duration-300`}
-  >
-    {direction === "left" ? <FaChevronLeft /> : <FaChevronRight />}
-  </button>
-);
-
 const settings = {
-  dots: false,
+  dots: true,
   infinite: true,
-  speed: 1000,
-  fade: true,
+  speed: 800,
   slidesToShow: 1,
   slidesToScroll: 1,
   autoplay: true,
-  autoplaySpeed: 4000,
-  prevArrow: <CustomArrow direction="left" />,
-  nextArrow: <CustomArrow direction="right" />,
-  dotsClass: "slick-dots !bottom-5",
-  responsive: [
-    {
-      breakpoint: 9999,
-      settings: {
-        dots: true,
-      },
-    },
-    {
-      breakpoint: 768,
-      settings: {
-        dots: false,
-      },
-    },
-  ],
-  appendDots: (dots: React.ReactNode) => (
-    <div className="hidden md:block">
-      <ul className="flex justify-center gap-2"> {dots} </ul>
-    </div>
-  ),
+  autoplaySpeed: 5000,
+  fade: true,
+  cssEase: "cubic-bezier(0.87, 0, 0.13, 1)",
+  arrows: false,
   customPaging: () => (
-    <div className="w-2 h-2 bg-gray-400/50 dark:bg-gray-600/50 rounded-full hover:bg-danger/50" />
+    <div className="w-3 h-3 bg-gray-300 rounded-full hover:bg-danger/60 transition-colors duration-300" />
   ),
+  dotsClass: "slick-dots !bottom-8",
 };
 
-const HeroSection: FC<Props> = () => {
+const HeroSection: FC = () => {
   return (
-    <div className="min-h-[400px] md:min-h-[500px] rounded-xl overflow-hidden bg-gradient-to-r from-[#faf7f2] to-[#f8f4ed] dark:from-gray-900 dark:to-gray-800 relative">
+    <div className="relative overflow-hidden">
+      <div className="absolute inset-0 " />
       <Slider {...settings}>
         {books.map((item) => (
-          <div key={item.slug}>
-            <div className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto">
-              <div className="flex-1 flex flex-col justify-center p-4 md:p-12 space-y-4 md:space-y-6 text-center md:text-left">
-                <div className="space-y-3 md:space-y-4">
-                  <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white leading-tight">
-                    {item.slogan}
-                  </h1>
-                  <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 italic">
-                    {item.subtitle}
-                  </p>
-                </div>
+          <div key={item.slug} className="relative">
+            <div className="min-h-[500px] md:min-h-[600px] flex items-center">
+              <Card className="w-full bg-background/60 backdrop-blur-sm border-none shadow-xl">
+                <div className="flex flex-col md:flex-row items-center gap-6 p-4 md:p-8 lg:p-12">
+                  <div className="flex-1 space-y-4 md:space-y-6 text-center md:text-left">
+                    <div className="space-y-4">
+                      <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                        {item.title}
+                      </h1>
+                      <p className="text-xl md:text-2xl text-foreground/80">
+                        {item.slogan}
+                      </p>
+                      <p className="text-lg text-foreground/60 italic">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                    <Button
+                      as={Link}
+                      to={`/book/${item.slug}`}
+                      size="lg"
+                      color="danger"
+                      variant="shadow"
+                      endContent={<FaArrowRightLong />}
+                      className="font-semibold"
+                    >
+                      Explore Now
+                    </Button>
+                  </div>
 
-                <Button
-                  radius="sm"
-                  color="danger"
-                  variant="shadow"
-                  endContent={<FaArrowRightLong />}
-                  as={Link}
-                  to={`/book/${item.slug}`}
-                  className="w-fit mx-auto md:mx-0 hover:scale-105 transition-transform duration-300"
-                >
-                  Learn More
-                </Button>
-              </div>
+                  {/* Updated image container */}
+                  <div className="relative w-48 sm:w-56 md:w-72 lg:w-80">
+                    <div className="absolute -inset-2 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-xl opacity-75 blur transform rotate-3 scale-105 transition-transform duration-500 group-hover:rotate-2" />
+                    <img
+                      src={item.cover}
+                      alt={item.title}
+                      className="relative w-full h-auto rounded-xl shadow-2xl
+                        transform rotate-3 transition-all duration-500
+                        hover:rotate-2 hover:scale-105 hover:shadow-danger/20 "
+                      style={{
+                        maxHeight: "460px",
+                        objectFit: "cover",
+                      }}
+                    />
 
-              <div className="w-full md:w-auto p-4 pt-8 md:p-12 flex-1 flex items-center justify-center">
-                <div className="relative group w-48 sm:w-56 md:w-64">
-                  <div className="absolute inset-0 bg-gradient-to-r from-danger/20 to-primary/20 dark:from-danger/30 dark:to-primary/30 rounded-lg transform md:rotate-6 scale-105 transition-transform duration-500 ease-out shadow-[0_0_15px_rgba(0,0,0,0.2)]" />
-                  <img
-                    src={item.cover}
-                    alt={item.title}
-                    className="relative w-full h-64 sm:h-72 md:h-96 object-cover rounded-lg shadow-[0_10px_20px_rgba(0,0,0,0.15)] transform md:rotate-6 group-hover:scale-105 md:group-hover:rotate-8 transition-all duration-500 ease-out"
-                    style={{
-                      transformStyle: "preserve-3d",
-                      backfaceVisibility: "hidden",
-                    }}
-                  />
+                    {/* Add decorative elements */}
+                    <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-full blur-xl" />
+                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-danger/10 to-primary/10 rounded-full blur-lg" />
+                  </div>
                 </div>
-              </div>
+              </Card>
             </div>
           </div>
         ))}
