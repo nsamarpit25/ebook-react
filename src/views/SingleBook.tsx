@@ -40,30 +40,28 @@ const SingleBook: FC<Props> = () => {
 
   if (busy)
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
-          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-            <Skeletons.BookDetails />
-          </div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto py-6 px-4">
+          <Skeletons.BookDetails />
         </div>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
-        <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-6 px-4">
+        <div className="space-y-8">
           <div className="transition-all duration-300">
             <BookDetail book={bookDetails} />
           </div>
 
           {/* Related Books Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm sm:shadow-md overflow-hidden transition-all duration-300">
+          <div className="bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg">
             <RecommendedSection id={bookDetails?.id} />
           </div>
 
           {/* Reviews Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm sm:shadow-md overflow-hidden transition-all duration-300">
+          <div className="bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg">
             <ReviewSection
               id={bookDetails?.id}
               reviews={reviews}
