@@ -1,6 +1,10 @@
 import { Button, Card } from "@nextui-org/react";
-import { FC } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
+import { FC, useRef } from "react";
+import {
+  FaArrowRightLong,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 
@@ -49,24 +53,69 @@ const settings = {
   autoplaySpeed: 5000,
   fade: true,
   cssEase: "cubic-bezier(0.87, 0, 0.13, 1)",
-  arrows: false,
+  arrows: false, // Changed to false to avoid any conflicts
   customPaging: () => (
     <div className="w-3 h-3 bg-gray-300 rounded-full hover:bg-danger/60 transition-colors duration-300" />
   ),
-  dotsClass: "slick-dots !bottom-8",
+  dotsClass: "slick-dots !bottom-8 !hidden md:!flex md:justify-center w-full",
+  prevArrow: <></>, // We'll use custom arrows
+  nextArrow: <></>, // We'll use custom arrows
 };
 
 const HeroSection: FC = () => {
+  const sliderRef = useRef<Slider | null>(null);
+
+  const goToPrevious = () => {
+    if (sliderRef.current) {
+      sliderRef.current.slickPrev();
+    }
+  };
+
+  const goToNext = () => {
+    if (sliderRef.current) {
+      sliderRef.current.slickNext();
+    }
+  };
+
   return (
-    <div className="relative overflow-hidden">
-      <div className="absolute inset-0 " />
-      <Slider {...settings}>
+    <div className="relative overflow-hidden group">
+      {/* Navigation Buttons */}
+      <button
+        onClick={goToPrevious}
+        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-50
+          bg-background/80 hover:bg-background shadow-lg
+          p-2 md:p-3 rounded-full
+          transition-all duration-300 ease-in-out
+          opacity-0 group-hover:opacity-100
+          hover:scale-110 active:scale-95
+          border border-divider"
+        aria-label="Previous slide"
+      >
+        <FaChevronLeft className="w-4 h-4 md:w-6 md:h-6 text-foreground" />
+      </button>
+
+      <button
+        onClick={goToNext}
+        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-50
+          bg-background/80 hover:bg-background shadow-lg
+          p-2 md:p-3 rounded-full
+          transition-all duration-300 ease-in-out
+          opacity-0 group-hover:opacity-100
+          hover:scale-110 active:scale-95
+          border border-divider"
+        aria-label="Next slide"
+      >
+        <FaChevronRight className="w-4 h-4 md:w-6 md:h-6 text-foreground" />
+      </button>
+
+      <Slider ref={sliderRef} {...settings}>
         {books.map((item) => (
           <div key={item.slug} className="relative">
             <div className="min-h-[500px] md:min-h-[600px] flex items-center">
               <Card className="w-full bg-background/60 backdrop-blur-sm border-none shadow-xl">
                 <div className="flex flex-col md:flex-row items-center gap-6 p-4 md:p-8 lg:p-12">
-                  <div className="flex-1 space-y-4 md:space-y-6 text-center md:text-left">
+                  {/* Content div with order adjustment */}
+                  <div className="flex-1 space-y-4 md:space-y-6 text-center md:text-left order-2 md:order-1">
                     <div className="space-y-4">
                       <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
                         {item.title}
@@ -91,8 +140,8 @@ const HeroSection: FC = () => {
                     </Button>
                   </div>
 
-                  {/* Updated image container */}
-                  <div className="relative w-48 sm:w-56 md:w-72 lg:w-80">
+                  {/* Image container with order adjustment */}
+                  <div className="relative w-48 sm:w-56 md:w-72 lg:w-80 order-1 md:order-2">
                     <div className="absolute -inset-2 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-xl opacity-75 blur transform rotate-3 scale-105 transition-transform duration-500 group-hover:rotate-2" />
                     <img
                       src={item.cover}
