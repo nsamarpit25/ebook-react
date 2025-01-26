@@ -102,7 +102,8 @@ const ReadingPage: FC<Props> = () => {
     fetchBookUrl();
   }, [slug]);
 
-  if (loading) return <LoadingIndicator />;
+  // console.log("reader", loading);
+  if (loading) return <LoadingIndicator visible />;
   return (
     <EpubReader
       url={url}
