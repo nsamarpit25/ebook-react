@@ -10,15 +10,17 @@ const Verify: FC = () => {
   const profileInfoString = searchParams.get("profile");
   const authToken = searchParams.get("authToken");
 
-  Cookies.set("authToken", authToken || "", {
-    expires: 7, // Expiry in days
-    path: "/", // Make it available for all paths
-    secure: true, // Ensure it's sent only over HTTPS
-    sameSite: "None", // Allow cross-site requests
-  });
   // console.log(authToken);
   const dispatch = useDispatch();
 
+  if (authToken) {
+    Cookies.set("authToken", authToken || "", {
+      expires: 7, // Expiry in days
+      path: "/", // Make it available for all paths
+      secure: true, // Ensure it's sent only over HTTPS
+      sameSite: "None", // Allow cross-site requests
+    });
+  }
   if (profileInfoString) {
     try {
       const profile = JSON.parse(profileInfoString);
