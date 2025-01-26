@@ -34,7 +34,7 @@ const NewBookForm: FC<Props> = () => {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen py-8 px-4 bg-background">
       <BookForm
         onSubmit={handleSubmit}
         title="Publish New Book"

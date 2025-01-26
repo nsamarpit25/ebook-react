@@ -58,31 +58,34 @@ const DarkModeSwitch: FC<Props> = () => {
         else disableDarkMode();
       }}
       classNames={{
-        wrapper: `group-data-[selected=true]:bg-gradient-to-r from-primary to-danger
-          group-data-[selected=false]:bg-gradient-to-r from-warning to-danger/50
-          transition-all duration-300`,
-        thumb: `group-data-[selected=true]:bg-background
-          group-data-[selected=false]:bg-background
+        wrapper: `${
+          darkMode
+            ? "bg-gradient-to-r from-primary to-danger"
+            : "bg-gradient-to-r from-warning to-danger/50"
+        } group-data-[selected=true]:bg-gradient-to-r group-data-[selected=true]:from-primary group-data-[selected=true]:to-danger
+          transition-all duration-300 shadow-lg`,
+        thumb: `group-data-[selected=true]:bg-white
+          group-data-[selected=false]:bg-white
           shadow-lg backdrop-blur-sm
-          transition-transform duration-300
+          transform transition-all duration-300
           group-hover:scale-110`,
-        base: "hover:opacity-90 cursor-pointer",
+        base: "hover:opacity-90 cursor-pointer group",
       }}
       startContent={
         <div className="relative">
-          <div className="absolute inset-0 bg-yellow-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute -inset-1 bg-yellow-500/30 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <HiOutlineSun
             size={20}
-            className="relative text-yellow-500 transition-transform group-hover:scale-110"
+            className="relative text-yellow-500 transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12"
           />
         </div>
       }
       endContent={
         <div className="relative">
-          <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute -inset-1 bg-blue-500/30 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <HiMoon
             size={18}
-            className="relative text-blue-500 transition-transform group-hover:scale-110"
+            className="relative text-blue-500 transform transition-all duration-300 group-hover:scale-110 group-hover:-rotate-12"
           />
         </div>
       }

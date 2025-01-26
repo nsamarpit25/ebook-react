@@ -93,33 +93,36 @@ const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
             </DropdownItem>
           </DropdownSection>
 
+          {/* Author section */}
           {role === "author" ? (
-            <DropdownSection showDivider>
-              <DropdownItem
-                key="analytics"
-                className="p-0"
-                textValue="analytics"
-              >
-                <DropdownLink
-                  title="Analytics"
-                  to="/analytics"
-                  icon={<IoAnalyticsOutline />}
-                />
-              </DropdownItem>
-              <DropdownItem
-                key="create_new_book"
-                className="p-0"
-                textValue="Create New Book"
-              >
-                <DropdownLink
-                  title="Create New Book"
-                  to="/create-new-book"
-                  icon={<MdOutlineCreateNewFolder />}
-                />
-              </DropdownItem>
-            </DropdownSection>
+            <>
+              <DropdownSection showDivider>
+                <DropdownItem
+                  key="analytics"
+                  className="p-0"
+                  textValue="analytics"
+                >
+                  <DropdownLink
+                    title="Analytics"
+                    to="/analytics"
+                    icon={<IoAnalyticsOutline />}
+                  />
+                </DropdownItem>
+                <DropdownItem
+                  key="create_new_book"
+                  className="p-0"
+                  textValue="Create New Book"
+                >
+                  <DropdownLink
+                    title="Create New Book"
+                    to="/create-new-book"
+                    icon={<MdOutlineCreateNewFolder />}
+                  />
+                </DropdownItem>
+              </DropdownSection>
+            </>
           ) : (
-            <></>
+            <DropdownItem key="not_author" className="h-0 p-0" />
           )}
 
           <DropdownSection>

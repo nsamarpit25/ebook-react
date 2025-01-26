@@ -420,13 +420,16 @@ const BookForm: FC<Props> = ({
 
   return (
     <div className="max-w-4xl mx-auto">
-      <form onSubmit={handleSubmit} className="p-6 lg:p-8 space-y-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">
+      <form
+        onSubmit={handleSubmit}
+        className="p-6 lg:p-8 space-y-8 bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg"
+      >
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent mb-8">
           {title}
         </h1>
 
         {/* File Upload Section */}
-        <div className="space-y-6 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl">
+        <div className="space-y-6 bg-content2/50 backdrop-blur-sm p-6 rounded-xl">
           <div className="space-y-3">
             <label
               htmlFor="file"
@@ -616,7 +619,7 @@ const BookForm: FC<Props> = ({
           </div>
 
           {/* Price Section */}
-          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-6">
+          <div className="bg-content2/50 backdrop-blur-sm rounded-xl p-6">
             <p
               className={clsx(
                 "text-sm font-medium mb-4",
@@ -672,7 +675,8 @@ const BookForm: FC<Props> = ({
           isLoading={busy}
           type="submit"
           size="lg"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-600 dark:hover:bg-blue-700"
+          className="w-full bg-gradient-to-r from-primary to-danger text-white shadow-lg
+            hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
         >
           {submitBtnTitle}
         </Button>

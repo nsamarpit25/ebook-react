@@ -22,7 +22,7 @@ const ProfileOptions: FC = () => {
         to="sign-up"
         radius="full"
         className="bg-gradient-to-r from-primary to-danger text-white shadow-lg
-        hover:shadow-danger/25 hover:scale-105 font-medium
+  return <ProfileMenu profile={profile} signOut={handleSignOut} />;
         transition-all duration-300 relative group"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />

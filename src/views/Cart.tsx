@@ -48,14 +48,17 @@ const Cart: FC<Props> = () => {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="text-center p-8">
-          <h1 className="text-2xl font-bold mb-4">Your Cart is Empty</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold mb-4 bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+            Your Cart is Empty
+          </h1>
+          <p className="text-foreground-500 mb-6">
             Add some items to start shopping!
           </p>
           <Button
             as={Link}
             to="/"
-            color="primary"
+            className="bg-gradient-to-r from-primary to-danger text-white shadow-lg
+              hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
             size="lg"
             isLoading={pending || busy}
           >
@@ -75,11 +78,11 @@ const Cart: FC<Props> = () => {
         {/* Cart Items Section */}
         <div className="lg:w-3/5">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
               Shopping Cart ({totalCount} items)
             </h1>
             <Button
-              color="danger"
+              className="text-danger hover:bg-danger/10 transition-colors"
               variant="light"
               startContent={<FaRegTrashCan />}
               onClick={clearCart}
@@ -91,36 +94,41 @@ const Cart: FC<Props> = () => {
 
           <div className="space-y-6">
             {items.map(({ product, quantity }) => (
-              <Card key={product.id} className="p-4">
-                <div className="flex gap-4">
-                  <img
-                    src={product.cover}
-                    alt={product.title}
-                    className="w-24 h-32 object-cover rounded"
-                  />
+              <Card
+                key={product.id}
+                className="bg-content1/50 backdrop-blur-lg border-none shadow-sm group/card hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex gap-4 p-4">
+                  <div className="relative group/image">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-danger/20 rounded-xl opacity-0 group-hover/image:opacity-100 blur-lg transition-opacity duration-300" />
+                    <img
+                      src={product.cover}
+                      alt={product.title}
+                      className="w-24 h-32 object-cover rounded-xl relative transform transition-all duration-300 group-hover/image:scale-105"
+                    />
+                    {/* Discount Badge */}
+                    {calculateDiscount(product.price) > 0 && (
+                      <Chip
+                        color="danger"
+                        size="sm"
+                        className="absolute -top-2 -right-2 shadow-lg border border-white/20
+                          transform transition-all duration-300 group-hover/image:scale-110 z-10"
+                        variant="shadow"
+                      >
+                        {calculateDiscount(product.price)}% OFF
+                      </Chip>
+                    )}
+                  </div>
+
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{product.title}</h3>
+                    <h3 className="font-semibold text-lg hover:text-primary transition-colors">
+                      {product.title}
+                    </h3>
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="text-lg font-semibold">
-                        <span className="mr-2">
-                          {formatPrice(Number(product.price.sale))}
-                        </span>
-                        {calculateDiscount(product.price) > 0 && (
-                          <Chip
-                            color="success"
-                            size="sm"
-                            style={{
-                              fontSize: "10px",
-                              height: "18px",
-                              padding: "0px 4px",
-                              borderRadius: "8px",
-                            }}
-                          >
-                            {calculateDiscount(product.price)}% OFF
-                          </Chip>
-                        )}
-                      </div>
-                      <span className="text-sm font-medium line-through">
+                      <span className="text-lg font-semibold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                        {formatPrice(Number(product.price.sale))}
+                      </span>
+                      <span className="text-sm font-medium text-foreground/50 line-through">
                         {formatPrice(Number(product.price.mrp))}
                       </span>
                     </div>
@@ -131,30 +139,35 @@ const Cart: FC<Props> = () => {
                         size="sm"
                         isLoading={pending || busy}
                         variant="bordered"
+                        className="hover:border-primary hover:bg-primary/10 transition-all duration-300"
                         onClick={() => updateCart({ product, quantity: -1 })}
                       >
-                        <FaMinus />
+                        <FaMinus className="text-xs" />
                       </Button>
-                      <span className="font-semibold">{quantity}</span>
+                      <span className="font-semibold min-w-[2rem] text-center">
+                        {quantity}
+                      </span>
                       <Button
                         isIconOnly
                         isLoading={pending || busy}
                         size="sm"
                         variant="bordered"
+                        className="hover:border-primary hover:bg-primary/10 transition-all duration-300"
                         onClick={() => updateCart({ product, quantity: 1 })}
                       >
-                        <FaPlus />
+                        <FaPlus className="text-xs" />
                       </Button>
                       <Button
                         isIconOnly
                         size="sm"
                         isLoading={pending || busy}
                         variant="bordered"
+                        className="hover:border-danger hover:bg-danger/10 transition-all duration-300"
                         onClick={() =>
                           updateCart({ product, quantity: -quantity })
                         }
                       >
-                        <FaRegTrashCan />
+                        <FaRegTrashCan className="text-danger" />
                       </Button>
                     </div>
                   </div>
@@ -166,8 +179,10 @@ const Cart: FC<Props> = () => {
 
         {/* Order Summary Section */}
         <div className="lg:w-2/5">
-          <Card className="p-6 sticky top-4">
-            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+          <Card className="bg-content1/50 backdrop-blur-lg border-none p-6 sticky top-4 hover:shadow-lg transition-all duration-300">
+            <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+              Order Summary
+            </h2>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
@@ -195,8 +210,8 @@ const Cart: FC<Props> = () => {
                 </Chip>
               </div>
               <Button
-                color="primary"
-                className="w-full mt-4"
+                className="w-full mt-4 bg-gradient-to-r from-primary to-danger text-white shadow-lg
+                hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
                 size="lg"
                 isLoading={pending || busy}
                 startContent={<MdOutlineShoppingCartCheckout />}

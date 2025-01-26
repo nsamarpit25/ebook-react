@@ -52,13 +52,23 @@ const UpdateBookForm: FC<Props> = () => {
 
   if (busy)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Spinner size="lg" label="Loading book details..." color="primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Spinner
+          size="lg"
+          // label={
+          //   <span className="bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+          //     Loading book details...
+          //   </span>
+          // }
+          classNames={{
+            wrapper: "before:border-primary after:border-danger",
+          }}
+        />
       </div>
     );
 
   return (
-    <div className="min-h-screen py-8 px-4 bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen py-8 px-4 bg-background">
       <BookForm
         title="Update Book"
         submitBtnTitle="Update"
