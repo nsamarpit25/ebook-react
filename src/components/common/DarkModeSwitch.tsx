@@ -1,6 +1,6 @@
 import { Switch } from "@nextui-org/react";
 import { FC, useCallback, useEffect, useState } from "react";
-import { IoMoon, IoSunnyOutline } from "react-icons/io5";
+import { HiOutlineSun, HiMoon } from "react-icons/hi2";
 
 interface Props {}
 
@@ -50,15 +50,21 @@ const DarkModeSwitch: FC<Props> = () => {
 
   return (
     <Switch
-      size="sm"
-      color="success"
-      startContent={<IoSunnyOutline />}
-      endContent={<IoMoon />}
+      size="lg"
+      color="warning"
+      startContent={<HiOutlineSun size={20} className="text-yellow-500" />}
+      endContent={<HiMoon size={18} className="text-blue-500" />}
       isSelected={darkMode}
       onChange={(e) => {
         const { checked } = e.target;
         if (checked) enableDarkMode();
         else disableDarkMode();
+      }}
+      classNames={{
+        wrapper:
+          "group-data-[selected=true]:bg-blue-500 group-data-[selected=false]:bg-yellow-500",
+        thumb:
+          "group-data-[selected=true]:text-blue-500 group-data-[selected=false]:text-yellow-500",
       }}
     />
   );

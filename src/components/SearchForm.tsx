@@ -1,8 +1,8 @@
 import { Input } from "@nextui-org/react";
 import { FC, FormEventHandler, useState } from "react";
-import toast from "react-hot-toast";
-import { IoMdSearch } from "react-icons/io";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 interface Props {}
 
@@ -24,28 +24,66 @@ const SearchForm: FC<Props> = () => {
   };
 
   return (
-    <form className="w-full min-w-0 relative group" onSubmit={handleSubmit}>
-      <div className="absolute -inset-[2px] bg-gradient-to-r from-primary/20 to-danger/20 rounded-xl opacity-70 blur-sm transition-all duration-500 group-hover:opacity-100 group-hover:blur" />
+    <form
+      className={`relative transition-all duration-300 ease-in-out ${
+        query ? "w-[280px]" : "w-[46px] focus-within:w-[280px]"
+      }`}
+      onSubmit={handleSubmit}
+    >
       <Input
-        isDisabled={isLoading}
-        variant="bordered"
-        placeholder="Search your book..."
-        endContent={
-          <button
-            className="focus:outline-none transition-transform duration-300 hover:scale-110 text-default-500 hover:text-primary"
-            type="submit"
-          >
-            <IoMdSearch size={24} />
-          </button>
-        }
-        className="w-full shadow-lg bg-background/60 backdrop-blur-md hover:shadow-danger/25 transition-shadow duration-300"
         classNames={{
-          input: "text-base",
-          inputWrapper:
-            "bg-transparent backdrop-blur-xl border-default-200/50 hover:border-primary/50 group-hover:border-primary transition-colors duration-300",
+          base: "h-[46px]",
+          mainWrapper: "h-[46px]",
+          input: [
+            "text-medium",
+            "placeholder:text-default-500/50",
+            "!pl-12", // Make room for the search icon
+            "transition-all",
+            "duration-300",
+            query ? "opacity-100" : "md:opacity-0 md:focus:opacity-100",
+          ],
+          inputWrapper: [
+            "h-[46px]",
+            "bg-default-100",
+            "hover:bg-default-200",
+            "group-data-[focused=true]:bg-default-100",
+            "!cursor-text",
+            "transition-colors",
+            "duration-300",
+            "rounded-full",
+            "px-4",
+            "border-none",
+          ],
         }}
+        placeholder="Search books..."
         value={query}
         onChange={({ target }) => setQuery(target.value)}
+        startContent={
+          <button
+            type="submit"
+            className={`absolute left-3 transition-transform duration-300 ${
+              query ? "" : "md:scale-125 md:hover:scale-150"
+            }`}
+          >
+            <HiMagnifyingGlass
+              size={20}
+              className="text-default-400 hover:text-primary transition-colors duration-300"
+            />
+          </button>
+        }
+        endContent={
+          query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="text-default-400 hover:text-danger transition-colors duration-300 p-1 rounded-full hover:bg-default-100"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          )
+        }
       />
     </form>
   );
