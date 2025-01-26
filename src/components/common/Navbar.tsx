@@ -1,5 +1,6 @@
 import {
   Badge,
+  NavbarBrand,
   NavbarContent,
   NavbarItem,
   Navbar as NextUINav,
@@ -34,32 +35,64 @@ const Navbar: FC<Props> = () => {
 
   return (
     <>
-      <NextUINav maxWidth="xl" position="sticky">
-        <NavbarContent className="w-full" justify="center">
-          <div className="flex items-center gap-4 w-full max-w-[800px]">
-            <Link
-              to="/"
-              className="flex items-center justify-center space-x-2 shrink-0"
-              aria-label="Store Home"
-            >
-              <FaBookReader size={24} />
-              <p className="font-bold text-inherit hidden md:block">Store</p>
-            </Link>
-            <SearchForm />
-          </div>
+      <NextUINav
+        maxWidth="xl"
+        position="sticky"
+        className="h-[70px] bg-background/60 backdrop-blur-xl border-b border-default-200/50 shadow-lg z-50"
+      >
+        <NavbarBrand className="h-full items-center basis-1/4">
+          <Link
+            to="/"
+            className="flex items-center gap-3 shrink-0 transition-all duration-300 hover:scale-105 group"
+            aria-label="Store Home"
+          >
+            <div className="relative">
+              <div className="absolute -inset-2 bg-gradient-to-r from-primary to-danger rounded-full opacity-25 blur-sm group-hover:opacity-75 transition-opacity duration-300" />
+              <FaBookReader
+                size={24}
+                className="text-primary relative transition-transform duration-300 group-hover:scale-110"
+              />
+            </div>
+            <p className="font-bold text-xl bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent hidden md:block">
+              Store
+            </p>
+          </Link>
+        </NavbarBrand>
+
+        <NavbarContent
+          justify="center"
+          className="h-full items-center basis-2/4"
+        >
+          <SearchForm />
         </NavbarContent>
 
-        <NavbarContent justify="end">
+        <NavbarContent
+          justify="end"
+          className="h-full items-center gap-4 basis-1/4"
+        >
           <NavbarItem className="md:flex hidden">
-            <DarkModeSwitch />
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />
+              <DarkModeSwitch />
+            </div>
           </NavbarItem>
           <NavbarItem className="md:flex hidden">
             <Link
               to="/cart"
+              className="flex items-center relative group"
               aria-label={`Shopping cart with ${totalCount} items`}
             >
-              <Badge content={totalCount} color="danger" shape="circle">
-                <FaCartShopping size={24} />
+              <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />
+              <Badge
+                content={totalCount}
+                color="danger"
+                shape="circle"
+                className="transition-transform duration-300 group-hover:scale-110"
+              >
+                <FaCartShopping
+                  size={24}
+                  className="transition-transform duration-300 group-hover:scale-110"
+                />
               </Badge>
             </Link>
           </NavbarItem>
