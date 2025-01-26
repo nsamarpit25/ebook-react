@@ -10,6 +10,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "375px",
+      },
       backgroundColor: {
         "book-dark": "2B2B2B",
       },

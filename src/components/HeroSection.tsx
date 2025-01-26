@@ -1,6 +1,10 @@
 import { Button } from "@nextui-org/react";
 import React, { FC } from "react";
-import { FaArrowRightLong, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import {
+  FaArrowRightLong,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 
@@ -41,19 +45,25 @@ const books = [
   },
 ];
 
-const CustomArrow = ({ direction, onClick }: { direction: 'left' | 'right', onClick?: () => void }) => (
+const CustomArrow = ({
+  direction,
+  onClick,
+}: {
+  direction: "left" | "right";
+  onClick?: () => void;
+}) => (
   <button
     onClick={onClick}
     className={`absolute z-10 top-1/2 -translate-y-1/2 ${
-      direction === 'left' ? 'left-4' : 'right-4'
+      direction === "left" ? "left-4" : "right-4"
     } bg-white/80 dark:bg-gray-800/80 p-3 rounded-full shadow-lg hover:scale-110 transition-transform duration-300`}
   >
-    {direction === 'left' ? <FaChevronLeft /> : <FaChevronRight />}
+    {direction === "left" ? <FaChevronLeft /> : <FaChevronRight />}
   </button>
 );
 
 const settings = {
-  dots: true,
+  dots: false,
   infinite: true,
   speed: 1000,
   fade: true,
@@ -64,8 +74,22 @@ const settings = {
   prevArrow: <CustomArrow direction="left" />,
   nextArrow: <CustomArrow direction="right" />,
   dotsClass: "slick-dots !bottom-5",
+  responsive: [
+    {
+      breakpoint: 9999,
+      settings: {
+        dots: true,
+      },
+    },
+    {
+      breakpoint: 768,
+      settings: {
+        dots: false,
+      },
+    },
+  ],
   appendDots: (dots: React.ReactNode) => (
-    <div>
+    <div className="hidden md:block">
       <ul className="flex justify-center gap-2"> {dots} </ul>
     </div>
   ),
@@ -76,17 +100,17 @@ const settings = {
 
 const HeroSection: FC<Props> = () => {
   return (
-    <div className="md:min-h-[500px] rounded-xl overflow-hidden bg-gradient-to-r from-[#faf7f2] to-[#f8f4ed] dark:from-gray-900 dark:to-gray-800 relative">
+    <div className="min-h-[400px] md:min-h-[500px] rounded-xl overflow-hidden bg-gradient-to-r from-[#faf7f2] to-[#f8f4ed] dark:from-gray-900 dark:to-gray-800 relative">
       <Slider {...settings}>
         {books.map((item) => (
           <div key={item.slug}>
-            <div className="md:flex items-center justify-between max-w-7xl mx-auto">
-              <div className="flex-1 flex flex-col justify-center p-6 md:p-12 space-y-6">
-                <div className="space-y-4">
-                  <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white">
+            <div className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto">
+              <div className="flex-1 flex flex-col justify-center p-4 md:p-12 space-y-4 md:space-y-6 text-center md:text-left">
+                <div className="space-y-3 md:space-y-4">
+                  <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-white leading-tight">
                     {item.slogan}
                   </h1>
-                  <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 italic">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 italic">
                     {item.subtitle}
                   </p>
                 </div>
@@ -98,19 +122,23 @@ const HeroSection: FC<Props> = () => {
                   endContent={<FaArrowRightLong />}
                   as={Link}
                   to={`/book/${item.slug}`}
-                  className="w-fit hover:scale-105 transition-transform duration-300"
+                  className="w-fit mx-auto md:mx-0 hover:scale-105 transition-transform duration-300"
                 >
                   Learn More
                 </Button>
               </div>
 
-              <div className="p-6 md:p-12 flex-1 flex items-center justify-center">
-                <div className="relative group transition-transform duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-r from-danger/10 to-primary/10 dark:from-danger/20 dark:to-primary/20 rounded-lg transform rotate-12 group-hover:scale-105" />
+              <div className="w-full md:w-auto p-4 pt-8 md:p-12 flex-1 flex items-center justify-center">
+                <div className="relative group w-48 sm:w-56 md:w-64">
+                  <div className="absolute inset-0 bg-gradient-to-r from-danger/20 to-primary/20 dark:from-danger/30 dark:to-primary/30 rounded-lg transform md:rotate-6 scale-105 transition-transform duration-500 ease-out shadow-[0_0_15px_rgba(0,0,0,0.2)]" />
                   <img
                     src={item.cover}
                     alt={item.title}
-                    className="relative md:w-64 md:h-96 w-40 h-56 object-cover rounded-lg shadow-xl transform rotate-12 group-hover:rotate-[14deg] transition-all duration-300"
+                    className="relative w-full h-64 sm:h-72 md:h-96 object-cover rounded-lg shadow-[0_10px_20px_rgba(0,0,0,0.15)] transform md:rotate-6 group-hover:scale-105 md:group-hover:rotate-8 transition-all duration-500 ease-out"
+                    style={{
+                      transformStyle: "preserve-3d",
+                      backfaceVisibility: "hidden",
+                    }}
                   />
                 </div>
               </div>

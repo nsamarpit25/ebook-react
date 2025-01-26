@@ -77,3 +77,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 14px;
+    @screen sm {
+      font-size: 16px;
+    }
+  }
+}

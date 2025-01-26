@@ -74,8 +74,8 @@ const NewUserForm: FC<Props> = ({
   };
 
   return (
-    <div className="min-h-[80vh] flex justify-center items-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+    <div className="min-h-[80vh] flex justify-center items-center p-4 sm:p-6 lg:p-8">
+      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-8">
           {title}
         </h1>

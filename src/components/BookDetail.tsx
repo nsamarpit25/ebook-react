@@ -104,7 +104,7 @@ const BookDetail: FC<Props> = ({ book }) => {
     <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm sm:shadow-md p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col md:flex-row gap-6 md:gap-12">
         {/* Book Cover */}
-        <div className="flex-shrink-0 mx-auto md:mx-0 w-48 sm:w-56 md:w-64">
+        <div className="flex-shrink-0 mx-auto md:mx-0 w-36 xs:w-48 sm:w-56 md:w-64">
           <img
             src={cover}
             alt={title}

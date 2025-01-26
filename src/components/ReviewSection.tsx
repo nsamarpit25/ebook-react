@@ -29,7 +29,7 @@ const ReviewSection: FC<Props> = ({ id, reviews }) => {
 
   const alreadyPurchased = (id && profile?.books?.includes(id)) || false;
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-6 lg:p-8">
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
           Reviews
@@ -53,7 +53,7 @@ const ReviewSection: FC<Props> = ({ id, reviews }) => {
           </p>
         </div>
       ) : (
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-6">
           {reviews.map((review) => (
             <div
               key={review.id}
