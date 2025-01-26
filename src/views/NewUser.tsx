@@ -11,7 +11,7 @@ interface Props {}
 const NewUser: FC<Props> = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {profile} = useAuth();
+  const { profile } = useAuth();
 
   const handleSubmit = async (formData: FormData) => {
     try {
@@ -23,14 +23,34 @@ const NewUser: FC<Props> = () => {
     }
   };
 
-  if(profile?.signedUp) return <Navigate to="/" />
+  if (profile?.signedUp) return <Navigate to="/" />;
 
   return (
-    <NewUserForm
-      onSubmit={handleSubmit}
-      title="You are almost there, Please fill out the form below"
-      btnTitle="Sign Me Up"
-    ></NewUserForm>
+    <div className=" bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-xl">
+        <div className="bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg relative group overflow-hidden">
+          {/* Animated gradient border */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+          <div className="relative p-6">
+            <div className="text-center space-y-2 mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                You're almost there!
+              </h1>
+              <p className="text-foreground/80">
+                Complete your profile to get started
+              </p>
+            </div>
+
+            <NewUserForm
+              onSubmit={handleSubmit}
+              title="Complete Your Profile"
+              btnTitle="Complete Setup"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

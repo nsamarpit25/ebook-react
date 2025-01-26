@@ -41,29 +41,34 @@ const UpdateAuthor: FC<Props> = () => {
 
   if (busy)
     return (
-      <div className="min-h-screen  p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br  p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">
-              Update Author Profile
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-center mt-2">
-              Modify your author information and preferences
-            </p>
-          </div>
+        <div className="bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg p-8 relative group">
+          {/* Decorative gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-danger/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          <AuthorForm
-            btnTitle="Update Profile"
-            initialState={authorInfo}
-            onSubmit={handleSubmit}
-          />
+          <div className="relative">
+            <div className="mb-8 text-center">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                Update Author Profile
+              </h1>
+              <p className="text-foreground-500 mt-2">
+                Modify your author information and preferences
+              </p>
+            </div>
+
+            <AuthorForm
+              btnTitle="Update Profile"
+              initialState={authorInfo}
+              onSubmit={handleSubmit}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -117,46 +117,61 @@ const AuthorForm: FC<Props> = ({ initialState, btnTitle, onSubmit }) => {
   }, [initialState]);
 
   return (
-    <div className="p-4 space-y-6">
-      <p>
-        Name: <span className="font-semibold text-lg">{profile?.name}</span>
-      </p>
+    <div className="space-y-8">
+      <div className="relative group">
+        <div className="absolute -inset-2 bg-gradient-to-r from-primary/10 to-danger/10 rounded-xl opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
+        <p className="relative p-4 bg-content2/50 backdrop-blur-sm rounded-xl">
+          Name:{" "}
+          <span className="font-semibold text-lg bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+            {profile?.name}
+          </span>
+        </p>
+      </div>
 
-      <RichEditor
-        onChange={(value) => {
-          setAbout(value);
-          if (about.length > 100) {
-            setErrors({ ...errors, about: undefined });
-            // console.log(about);
-          }
-        }}
-        value={about}
-        editable
-        placeholder="About yourself..."
-        isInvalid={errors?.about ? true : false}
-        errorMessage={<ErrorList errors={errors?.about} />}
-      />
+      <div className="space-y-2">
+        <RichEditor
+          onChange={(value) => {
+            setAbout(value);
+            if (about.length > 100) {
+              setErrors({ ...errors, about: undefined });
+            }
+          }}
+          value={about}
+          editable
+          placeholder="About yourself..."
+          isInvalid={errors?.about ? true : false}
+          errorMessage={<ErrorList errors={errors?.about} />}
+        />
+      </div>
 
       <div className="space-y-4">
-        <p className="text-sm font-semibold">Social Links:</p>
+        <p className="text-sm font-semibold text-foreground-600">
+          Social Links:
+        </p>
 
         <ErrorList errors={errors?.socialLinks} />
 
         {socialLinks.map((_, index) => {
           return (
-            <div key={index} className="flex items-center space-x-4">
+            <div key={index} className="flex items-center gap-4">
               <Input
                 onChange={({ target }) =>
                   updateSocialLinks(index, target.value)
                 }
                 value={socialLinks[index]}
                 placeholder="eg: https://github.com/username"
+                classNames={{
+                  input: "bg-content2/50 backdrop-blur-sm",
+                  inputWrapper:
+                    "bg-content2/50 backdrop-blur-sm hover:bg-content2/70 transition-colors",
+                }}
               />
               {socialLinks.length > 1 && (
                 <Button
+                  isIconOnly
                   size="sm"
                   onClick={() => removeLinkField(index)}
-                  isIconOnly
+                  className="bg-danger/10 text-danger hover:bg-danger/20 transition-colors"
                 >
                   <MdClose />
                 </Button>
@@ -166,13 +181,24 @@ const AuthorForm: FC<Props> = ({ initialState, btnTitle, onSubmit }) => {
         })}
 
         <div className="flex justify-end">
-          <Button size="sm" onClick={addLinkFields} isIconOnly>
+          <Button
+            isIconOnly
+            size="sm"
+            onClick={addLinkFields}
+            className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+          >
             <MdOutlineAdd />
           </Button>
         </div>
       </div>
 
-      <Button isLoading={busy} onClick={handleSubmit}>
+      <Button
+        isLoading={busy}
+        onClick={handleSubmit}
+        size="lg"
+        className="w-full bg-gradient-to-r from-primary to-danger text-white shadow-lg
+          hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
+      >
         {btnTitle}
       </Button>
     </div>

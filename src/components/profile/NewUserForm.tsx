@@ -74,9 +74,9 @@ const NewUserForm: FC<Props> = ({
   };
 
   return (
-    <div className="min-h-[80vh] flex justify-center items-center p-4 sm:p-6 lg:p-8">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-8">
+    <div className=" flex justify-center items-center p-4 sm:p-6 lg:p-8">
+      <div className="max-w-md w-full bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg p-6 sm:p-8 border border-default-200/50">
+        <h1 className="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
           {title}
         </h1>
 
@@ -89,13 +89,15 @@ const NewUserForm: FC<Props> = ({
                 size="lg"
                 name={name || "User"}
                 src={localAvatar || avatar}
-                className="w-24 h-24 transition-transform hover:scale-105"
+                className="w-24 h-24 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg"
                 classNames={{
-                  base: "border-2 border-gray-200 dark:border-gray-700",
+                  base: "border-2 border-default-200/50 shadow-md",
                 }}
               />
-              <div className="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="text-white text-sm">Change Photo</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/60 to-danger/60 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                <span className="text-white text-sm font-medium">
+                  Change Photo
+                </span>
               </div>
               <input
                 accept="image/*"
@@ -119,16 +121,19 @@ const NewUserForm: FC<Props> = ({
             isInvalid={invalidFormState}
             errorMessage={errorMessage}
             classNames={{
-              input: "dark:text-gray-100",
-              label: "dark:text-gray-400",
+              input: "backdrop-blur-sm",
+              inputWrapper:
+                "backdrop-blur-sm bg-content1/20 hover:bg-content1/30 transition-all duration-300",
+              label: "text-foreground/80",
+              errorMessage: "text-danger font-medium",
             }}
           />
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
+            className="w-full bg-gradient-to-r from-primary to-danger text-white shadow-lg hover:opacity-90 transition-all duration-300"
             size="lg"
-            radius="full"
+            radius="lg"
             isLoading={busy}
           >
             {btnTitle}

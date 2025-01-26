@@ -46,24 +46,28 @@ const SignUp: FC<Props> = () => {
   if (showSuccessResponse)
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 max-w-md mx-auto">
-        <RiMailCheckLine
-          size={80}
-          className="animate-bounce text-blue-500 dark:text-blue-400 mb-6"
-        />
-        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">
+        <div className="relative mx-auto mb-6">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary to-danger rounded-full opacity-25 blur-xl animate-pulse" />
+          <RiMailCheckLine
+            size={80}
+            className="animate-bounce text-primary relative"
+          />
+        </div>
+
+        <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent mb-4 text-center">
           Please check your email for the magic link
         </h2>
 
         {/* Development Preview Box */}
-        <div className="w-full mt-8 bg-gray-50 dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="w-full mt-8 bg-content1/50 backdrop-blur-lg rounded-2xl p-6 border border-content2">
           <div className="flex items-center mb-3">
-            <span className="bg-yellow-500 rounded-full w-2 h-2 mr-2"></span>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <span className="bg-warning rounded-full w-2 h-2 mr-2"></span>
+            <p className="text-sm font-medium text-foreground-500">
               Development Preview
             </p>
           </div>
 
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-sm text-foreground-500 mb-4">
             For demo purposes, use the authentication link below:
           </p>
 
@@ -71,10 +75,9 @@ const SignUp: FC<Props> = () => {
             <Link
               to={link}
               className="flex items-center justify-center gap-2 w-full p-4
-               bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700
-               rounded-lg border border-transparent hover:border-blue-400
-               transition-all duration-300 ease-in-out transform hover:-translate-y-0.5
-               text-white font-medium tracking-wide text-sm"
+                bg-gradient-to-r from-primary to-danger text-white rounded-xl
+                shadow-lg hover:shadow-primary/25 hover:opacity-90
+                transition-all duration-300 font-medium"
             >
               <span>Verify Email</span>
               <svg
@@ -97,64 +100,72 @@ const SignUp: FC<Props> = () => {
     );
 
   return (
-    <div className="flex-1 flex items-center justify-center ">
-      <div className="flex flex-col items-center justify-center w-96 border-2 dark:border-gray-700 p-5 rounded-md bg-white dark:bg-gray-800">
-        <Book className="w-44 h-44 text-blue-500 dark:text-blue-400" />
-        <h1 className="text-center text-xl font-semibold text-gray-800 dark:text-gray-100">
-          Books are the keys to countless doors. Sign up and unlock your
-          potential.
-        </h1>
+    <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center w-96 bg-content1/50 backdrop-blur-lg rounded-2xl shadow-lg p-8 relative group">
+        {/* Decorative gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-danger/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* Demo Message */}
-        <div className="w-full mt-4 mb-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <div className="flex items-center gap-2">
-            <svg
-              className="w-5 h-5 text-blue-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                Demo Mode Active
-              </p>
-              <p className="text-xs text-blue-600 dark:text-blue-400">
-                Enter any email address to receive an instant magic link here
-                for testing purposes.
-              </p>
+        <div className="relative">
+          <Book className="w-44 h-44 mb-6" />
+          <h1 className="text-center text-xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent mb-6">
+            Books are the keys to countless doors. Sign up and unlock your
+            potential.
+          </h1>
+
+          {/* Demo Message */}
+          <div className="w-full mb-6 p-4 bg-content2/50 backdrop-blur-sm rounded-xl border border-content3">
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">
+                  Demo Mode Active
+                </p>
+                <p className="text-xs text-foreground-500">
+                  Enter any email address to receive an instant magic link here
+                  for testing purposes.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <form onSubmit={handleSubmit} className="w-full space-y-6 mt-6">
-          <Input
-            label="Email"
-            placeholder="john@email.com"
-            variant="bordered"
-            isInvalid={invalidForm}
-            errorMessage="Invalid email!"
-            value={email}
-            onChange={({ target }) => setEmail(target.value)}
-            classNames={{
-              input: "dark:text-white",
-              label: "dark:text-gray-300",
-            }}
-          />
-          <Button
-            isLoading={busy}
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
-          >
-            Send Me The Link
-          </Button>
-        </form>
+          <form onSubmit={handleSubmit} className="w-full space-y-6">
+            <Input
+              label="Email"
+              placeholder="john@email.com"
+              variant="bordered"
+              isInvalid={invalidForm}
+              errorMessage="Invalid email!"
+              value={email}
+              onChange={({ target }) => setEmail(target.value)}
+              classNames={{
+                input: "bg-content2/50 backdrop-blur-sm",
+                inputWrapper:
+                  "bg-content2/50 backdrop-blur-sm hover:bg-content2/70 transition-colors",
+              }}
+            />
+            <Button
+              isLoading={busy}
+              type="submit"
+              size="lg"
+              className="w-full bg-gradient-to-r from-primary to-danger text-white shadow-lg
+                hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
+            >
+              Send Me The Link
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );
