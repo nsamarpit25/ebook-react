@@ -7,6 +7,7 @@ if (import.meta.env.MODE === "development") {
 
 const client = axios.create({
   baseURL,
+  withCredentials: true,
 });
 
 client.interceptors.request.use(function (config) {
