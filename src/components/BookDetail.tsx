@@ -1,5 +1,6 @@
 import { Button, Chip } from "@nextui-org/react";
 import { FC, useState } from "react";
+import toast from "react-hot-toast";
 import {
   FaEarthAfrica,
   FaMasksTheater,
@@ -8,7 +9,7 @@ import {
   FaStar,
 } from "react-icons/fa6";
 import { TbShoppingCartPlus } from "react-icons/tb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import client from "../api/client";
 import useAuth from "../hooks/useAuth";
 import useCart from "../hooks/useCart";
@@ -49,6 +50,7 @@ const BookDetail: FC<Props> = ({ book }) => {
   const { updateCart, pending } = useCart();
   const [busy, setBusy] = useState(false);
   const { profile } = useAuth();
+  const navigate = useNavigate();
 
   if (!book) return null;
 
@@ -76,6 +78,14 @@ const BookDetail: FC<Props> = ({ book }) => {
 
   const handleBuyNow = async () => {
     try {
+      if (!profile) {
+        handleCartUpdate();
+        toast.success(
+          "Book added to cart. Please sign up to complete the purchase",
+          { position: "top-right", duration: 5000 }
+        );
+        return navigate("/sign-up");
+      }
       setBusy(true);
       const { data } = await client.post("/checkout/instant", {
         productId: id,
