@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 let baseURL = "https://ebook-server-9sh3.onrender.com";
 if (import.meta.env.MODE === "development") {
@@ -14,8 +15,10 @@ client.interceptors.request.use(function (config) {
   config.withCredentials = true;
   // console.log(document.cookie);
 
-  config.headers["React-Token"] = JSON.stringify(document.cookie);
+  config.headers.token = Cookies.get("authToken");
   // console.log(config.headers);
+
+  // config.body.tokennn = Cookies.get("authToken");
 
   return config;
 });
