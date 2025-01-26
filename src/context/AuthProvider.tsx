@@ -20,6 +20,7 @@ export interface IAuthContext {
   status: AuthState["status"];
   signOut(): void;
   dbConnectionStatus: boolean;
+  serverConnectionStatus: boolean;
 }
 
 // export const AuthContext = createContext<IAuthContext>({
@@ -32,6 +33,7 @@ const AuthProvider: FC<Props> = ({ children }) => {
   const { profile, status } = useSelector(getAuthState);
   const dispatch = useDispatch();
   const [dbConnectionStatus, setDbConnectionStatus] = useState(true);
+  const [serverConnectionStatus, setServerConnectionStatus] = useState(true);
 
   const signOut = async () => {
     try {
@@ -56,10 +58,14 @@ const AuthProvider: FC<Props> = ({ children }) => {
         // console.log(profile)
       })
       .catch((data) => {
+        // console.log(data.code);
         if (data instanceof AxiosError) {
           if (data.status === 503) {
             // console.log("error");
             setDbConnectionStatus(false);
+          }
+          if (data.code === "ERR_NETWORK") {
+            setServerConnectionStatus(false);
           }
         }
 
@@ -72,7 +78,13 @@ const AuthProvider: FC<Props> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ profile, status, signOut, dbConnectionStatus }}
+      value={{
+        profile,
+        status,
+        signOut,
+        dbConnectionStatus,
+        serverConnectionStatus,
+      }}
     >
       {children}
     </AuthContext.Provider>

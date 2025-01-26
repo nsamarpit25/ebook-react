@@ -1,8 +1,8 @@
 import { FC, ReactNode } from "react";
-import Navbar from "./Navbar";
 import { useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import NoConnection from "./NoConnection";
+import Navbar from "./Navbar";
+import ConnectionError from "./ConnectionError";
 
 interface Props {
   children: ReactNode;
@@ -11,10 +11,14 @@ interface Props {
 const Container: FC<Props> = ({ children }) => {
   const location = useLocation();
   const readingMode = location.pathname.startsWith("/read/");
-  const { dbConnectionStatus } = useAuth();
+  const { dbConnectionStatus, serverConnectionStatus } = useAuth();
+
+  if (!serverConnectionStatus) {
+    return <ConnectionError type="server" />;
+  }
 
   if (!dbConnectionStatus) {
-    return <NoConnection />;
+    return <ConnectionError type="database" />;
   }
 
   if (readingMode) return children;
