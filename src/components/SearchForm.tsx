@@ -1,7 +1,6 @@
 import { Input } from "@nextui-org/react";
 import { FC, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
 
 interface Props {}
 
