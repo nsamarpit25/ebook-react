@@ -46,11 +46,9 @@ const Library: FC<Props> = () => {
       const fetchCreatedBooks = async () => {
         const { data } = await client.get(`/author/${profile.authorId}`);
         setCreatedBooks(data.books);
-
       };
-      fetchCreatedBooks()
+      fetchCreatedBooks();
     }
-    
   }, [profile?.authorId]);
 
   if (fetching) {
@@ -103,7 +101,9 @@ const Library: FC<Props> = () => {
                   </div>
 
                   <div className="flex-grow min-w-0">
-                    <h2 className="text-lg font-semibold truncate">{book.title}</h2>
+                    <h2 className="text-lg font-semibold truncate">
+                      {book.title}
+                    </h2>
 
                     <Link
                       to={`/author/${book.author.id}`}
@@ -144,7 +144,7 @@ const Library: FC<Props> = () => {
                   Create New Book
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {createdBooks.map((book) => (
                   <Card key={book.id} className="w-full">
@@ -171,7 +171,7 @@ const Library: FC<Props> = () => {
                         <div className="mt-3 flex gap-2">
                           <Button
                             as={Link}
-                            to={`/book/${book.slug}`}
+                            to={`/read/${book.slug}?title=${book.title}&id=${book.id}`}
                             color="primary"
                             size="sm"
                           >

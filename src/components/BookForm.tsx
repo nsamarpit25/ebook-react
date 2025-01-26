@@ -145,6 +145,15 @@ const BookForm: FC<Props> = ({
     [key: string]: string[] | undefined;
   }>();
 
+  // console.log(bookInfo.genre);
+  const selectedGenre = genres.find(
+    (item) =>
+      item.name ===
+      `${bookInfo.genre.charAt(0).toUpperCase()}${bookInfo.genre.slice(1)}`
+  );
+
+  // console.log(selectedGenre?.name);
+
   const handleTextChange: ChangeEventHandler<HTMLInputElement> = ({
     target,
   }) => {
@@ -311,7 +320,7 @@ const BookForm: FC<Props> = ({
       const bookToSend: BookToSubmit = {
         title: bookInfo.title,
         description: bookInfo.description,
-        genre: bookInfo.genre,
+        genre: selectedGenre?.name || bookInfo.genre,
         language: bookInfo.language,
         publicationName: bookInfo.publicationName,
         uploadMethod: "aws",
@@ -578,10 +587,8 @@ const BookForm: FC<Props> = ({
               errorMessage={<ErrorList errors={errors?.genre} />}
               label="Genre"
               placeholder="Select a Genre"
-              defaultSelectedKey={bookInfo.genre}
-              selectedKey={`${bookInfo.genre
-                .charAt(0)
-                .toUpperCase()}${bookInfo.genre.slice(1)}`}
+              defaultSelectedKey={selectedGenre?.name}
+              selectedKey={selectedGenre?.name}
               onSelectionChange={(key = "") => {
                 setBookInfo({ ...bookInfo, genre: key as string });
               }}
