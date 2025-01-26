@@ -1,11 +1,9 @@
 import { Button, Input } from "@nextui-org/react";
 import { FC, FormEventHandler, useState } from "react";
-import Book from "../svg/Book";
-import client from "../api/client";
 import { RiMailCheckLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import toast from "react-hot-toast";
+import client from "../api/client";
+import Book from "../svg/Book";
 
 interface Props {}
 
@@ -18,7 +16,6 @@ const SignUp: FC<Props> = () => {
   const [busy, setBusy] = useState(false);
   const [invalidForm, setInvalidForm] = useState(false);
   const [showSuccessResponse, setShowSuccessResponse] = useState(false);
-  const { dbConnectionStatus } = useAuth();
 
   // for development....
   const [link, setLink] = useState("");
@@ -32,9 +29,6 @@ const SignUp: FC<Props> = () => {
 
     setBusy(true);
     try {
-      if (!dbConnectionStatus) {
-        toast.error("Connection to database failed. Please try again later.");
-      }
       const { data } = await client.post("/auth/generate-link", {
         email,
       });

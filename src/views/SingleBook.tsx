@@ -1,14 +1,12 @@
 import { FC, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import client from "../api/client";
-import { ParseError } from "../utils/helper";
 import BookDetail, { Book } from "../components/BookDetail";
+import { ParseError } from "../utils/helper";
 
+import RecommendedSection from "../components/RecommendedSection";
 import ReviewSection, { Review } from "../components/ReviewSection";
 import Skeletons from "../components/Skeletons";
-import RecommendedSection from "../components/RecommendedSection";
-import toast from "react-hot-toast";
-import useAuth from "../hooks/useAuth";
 
 interface Props {}
 
@@ -22,14 +20,10 @@ const SingleBook: FC<Props> = () => {
   const [busy, setBusy] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
   const { slug } = useParams();
-  const { dbConnectionStatus } = useAuth();
 
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
-        if (!dbConnectionStatus) {
-          toast.error("Connection to database failed. Please try again later.");
-        }
         const { data } = await client.get("/book/details/" + slug);
         setBookDetails(data.book);
         const reviews = await fetchBookReviews(data.book.id);

@@ -14,7 +14,6 @@ import useAuth from "../hooks/useAuth";
 import useCart from "../hooks/useCart";
 import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
 import RichEditor from "./rich-editor";
-import toast from "react-hot-toast";
 
 export interface Book {
   id: string;
@@ -50,7 +49,6 @@ const BookDetail: FC<Props> = ({ book }) => {
   const { updateCart, pending } = useCart();
   const [busy, setBusy] = useState(false);
   const { profile } = useAuth();
-  const { dbConnectionStatus } = useAuth();
 
   if (!book) return null;
 
@@ -77,10 +75,6 @@ const BookDetail: FC<Props> = ({ book }) => {
   const alreadyPurchased = profile?.books?.includes(id) || false;
 
   const handleBuyNow = async () => {
-    if (!dbConnectionStatus) {
-      toast.error("Connection to database failed. Please try again later.");
-      return;
-    }
     try {
       setBusy(true);
       const { data } = await client.post("/checkout/instant", {

@@ -5,8 +5,6 @@ import client from "../api/client";
 import { formatPrice, ParseError } from "../utils/helper";
 import { Book } from "./BookList";
 import Skeletons from "./Skeletons";
-import useAuth from "../hooks/useAuth";
-import toast from "react-hot-toast";
 
 interface Props {
   id?: string;
@@ -15,16 +13,12 @@ interface Props {
 const RecommendedSection: FC<Props> = ({ id }) => {
   const [fetching, setFetching] = useState(true);
   const [books, setBooks] = useState<Book[]>([]);
-  const { dbConnectionStatus } = useAuth();
 
   useEffect(() => {
     if (!id) return;
 
     const fetchBooks = async () => {
       try {
-        if (!dbConnectionStatus) {
-          toast.error("Connection to database failed. Please try again later.");
-        }
         const { data } = await client.get("/book/recommended/" + id);
         setBooks(data);
       } catch (error) {
@@ -35,7 +29,7 @@ const RecommendedSection: FC<Props> = ({ id }) => {
     };
 
     fetchBooks();
-  }, [id, dbConnectionStatus]);
+  }, [id]);
 
   if (!id) return null;
   if (fetching) return <Skeletons.BookList />;

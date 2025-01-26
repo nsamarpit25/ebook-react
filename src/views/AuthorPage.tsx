@@ -1,13 +1,12 @@
+import { Card, Divider, Link, Skeleton } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
+import { FaGlobe } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import client from "../api/client";
-import { ParseError } from "../utils/helper";
-import { Link, Card, Skeleton, Divider } from "@nextui-org/react";
-import RichEditor from "../components/rich-editor";
 import BookList, { Book } from "../components/BookList";
-import { FaGlobe } from "react-icons/fa";
+import RichEditor from "../components/rich-editor";
 import useAuth from "../hooks/useAuth";
-import toast from "react-hot-toast";
+import { ParseError } from "../utils/helper";
 
 interface Props {}
 
@@ -27,9 +26,6 @@ const AuthorPage: FC<Props> = () => {
   const { dbConnectionStatus } = useAuth();
 
   useEffect(() => {
-    if (!dbConnectionStatus) {
-      toast.error("Connection to database failed. Please try again later.");
-    }
     if (!id) return;
 
     const fetchAuthorInfo = async () => {

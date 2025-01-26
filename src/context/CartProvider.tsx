@@ -51,7 +51,6 @@ const CartProvider: FC<Props> = ({ children }) => {
   const { profile } = useAuth();
   const [pending, setPending] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const { dbConnectionStatus } = useAuth();
 
   const clearCart = () => {
     // update the UI
@@ -60,9 +59,7 @@ const CartProvider: FC<Props> = ({ children }) => {
     if (profile) {
       // update the server/database
       // if user is authenticated sending api request
-      if (!dbConnectionStatus) {
-        toast.error("Connection to database failed. Please try again later.");
-      }
+
       setPending(true);
       client
         .post("/cart/clear")

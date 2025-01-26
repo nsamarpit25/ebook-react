@@ -4,6 +4,7 @@ import { Navigate, useSearchParams } from "react-router-dom";
 import { updateProfile } from "../store/auth";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import Cookies from "js-cookie";
+import { ParseError } from "../utils/helper";
 
 const Verify: FC = () => {
   const [searchParams] = useSearchParams();
@@ -32,7 +33,8 @@ const Verify: FC = () => {
       dispatch(updateProfile(profile));
 
       return <Navigate to="/" />;
-    } catch (_err) {
+    } catch (err) {
+      ParseError(err);
       return <Navigate to={"/not-found"} />;
     }
   }
