@@ -1,7 +1,13 @@
 import { Button, Badge } from "@nextui-org/react";
 import { FC } from "react";
-import { FaBookReader, FaUser } from "react-icons/fa";
-import { FaCartShopping, FaBook, FaBoxOpen } from "react-icons/fa6";
+import { RiBookOpenLine } from "react-icons/ri";
+import {
+  HiOutlineShoppingBag,
+  HiUserCircle,
+  HiClipboard,
+  HiBookOpen,
+  HiPlusCircle,
+} from "react-icons/hi2";
 import { Link } from "react-router-dom";
 import DarkModeSwitch from "./common/DarkModeSwitch";
 
@@ -25,20 +31,37 @@ const MobileNav: FC<Props> = ({
   return (
     <>
       <div
-        className={`fixed inset-y-0 right-0 w-[250px] bg-background shadow-xl transform transition-transform duration-300 ease-in-out z-[100] ${
-          visible ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed inset-y-0 right-0 w-[250px] bg-background/95 backdrop-blur-sm shadow-xl
+          transform transition-transform duration-300 ease-in-out z-[100]
+          ${visible ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex items-center justify-between border-b border-divider">
-            <Link onClick={onClose} to="/" className="flex items-center gap-2">
-              <FaBookReader size={20} />
-              <span className="font-medium">Store</span>
+            <Link
+              onClick={onClose}
+              to="/"
+              className="flex items-center gap-2 group"
+            >
+              <div className="relative">
+                <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-sm transition-opacity" />
+                <Link to="/">
+                  <RiBookOpenLine size={24} className="text-primary relative" />
+                </Link>
+              </div>
+              <span className="font-medium bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                Store
+              </span>
             </Link>
-            <div className="flex items-center gap-3">
-              <Link onClick={onClose} to="/cart">
-                <Badge content={cartTotal} color="danger" size="sm">
-                  <FaCartShopping size={18} />
+            <div className="flex items-center gap-4">
+              <Link onClick={onClose} to="/cart" className="relative group">
+                <div className="absolute -inset-2 bg-gradient-to-r from-primary/10 to-danger/10 rounded-full opacity-0 group-hover:opacity-100 blur-sm transition-opacity" />
+                <Badge
+                  content={cartTotal}
+                  color="danger"
+                  size="sm"
+                  className="transition-transform duration-300 group-hover:scale-110"
+                >
+                  <HiOutlineShoppingBag size={24} className="stroke-[1.5]" />
                 </Badge>
               </Link>
               <DarkModeSwitch />
@@ -54,11 +77,11 @@ const MobileNav: FC<Props> = ({
                     to="/profile"
                     variant="light"
                     startContent={
-                      <FaUser className="text-default-500" size={16} />
+                      <HiUserCircle className="text-primary" size={20} />
                     }
                     onClick={onClose}
                     fullWidth
-                    className="justify-start h-11"
+                    className="justify-start h-11 hover:bg-primary/10 transition-colors"
                     radius="sm"
                   >
                     Profile
@@ -68,11 +91,11 @@ const MobileNav: FC<Props> = ({
                     to="/orders"
                     variant="light"
                     startContent={
-                      <FaBoxOpen className="text-default-500" size={16} />
+                      <HiClipboard className="text-primary" size={20} />
                     }
                     onClick={onClose}
                     fullWidth
-                    className="justify-start h-11"
+                    className="justify-start h-11 hover:bg-primary/10 transition-colors"
                     radius="sm"
                   >
                     Orders
@@ -82,11 +105,11 @@ const MobileNav: FC<Props> = ({
                     to="/library"
                     variant="light"
                     startContent={
-                      <FaBook className="text-default-500" size={16} />
+                      <HiBookOpen className="text-primary" size={20} />
                     }
                     onClick={onClose}
                     fullWidth
-                    className="justify-start h-11"
+                    className="justify-start h-11 hover:bg-primary/10 transition-colors"
                     radius="sm"
                   >
                     Library
@@ -97,11 +120,11 @@ const MobileNav: FC<Props> = ({
                       to="/create-new-book"
                       variant="light"
                       startContent={
-                        <FaBookReader className="text-default-500" size={16} />
+                        <HiPlusCircle className="text-primary" size={20} />
                       }
                       onClick={onClose}
                       fullWidth
-                      className="justify-start h-11"
+                      className="justify-start h-11 hover:bg-primary/10 transition-colors"
                       radius="sm"
                     >
                       Create New Book
@@ -118,7 +141,8 @@ const MobileNav: FC<Props> = ({
                       onClose();
                     }}
                     fullWidth
-                    className="h-11"
+                    className="h-11 bg-gradient-to-r from-primary to-danger text-white shadow-lg
+                      hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
                     radius="sm"
                   >
                     Logout
@@ -130,11 +154,11 @@ const MobileNav: FC<Props> = ({
                 <Button
                   as={Link}
                   to="sign-up"
-                  color="primary"
-                  onClick={onClose}
                   fullWidth
-                  className="h-11"
+                  className="h-11 bg-gradient-to-r from-primary to-danger text-white shadow-lg
+                    hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
                   radius="sm"
+                  onClick={onClose}
                 >
                   Sign Up / In
                 </Button>
@@ -147,9 +171,8 @@ const MobileNav: FC<Props> = ({
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className={`fixed inset-0 bg-black/50 transition-opacity duration-300 ${
-          visible ? "opacity-100 visible" : "opacity-0 invisible"
-        } z-[99]`}
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300
+          ${visible ? "opacity-100 visible" : "opacity-0 invisible"} z-[99]`}
       />
     </>
   );

@@ -51,9 +51,6 @@ const DarkModeSwitch: FC<Props> = () => {
   return (
     <Switch
       size="lg"
-      color="warning"
-      startContent={<HiOutlineSun size={20} className="text-yellow-500" />}
-      endContent={<HiMoon size={18} className="text-blue-500" />}
       isSelected={darkMode}
       onChange={(e) => {
         const { checked } = e.target;
@@ -61,11 +58,34 @@ const DarkModeSwitch: FC<Props> = () => {
         else disableDarkMode();
       }}
       classNames={{
-        wrapper:
-          "group-data-[selected=true]:bg-blue-500 group-data-[selected=false]:bg-yellow-500",
-        thumb:
-          "group-data-[selected=true]:text-blue-500 group-data-[selected=false]:text-yellow-500",
+        wrapper: `group-data-[selected=true]:bg-gradient-to-r from-primary to-danger
+          group-data-[selected=false]:bg-gradient-to-r from-warning to-danger/50
+          transition-all duration-300`,
+        thumb: `group-data-[selected=true]:bg-background
+          group-data-[selected=false]:bg-background
+          shadow-lg backdrop-blur-sm
+          transition-transform duration-300
+          group-hover:scale-110`,
+        base: "hover:opacity-90 cursor-pointer",
       }}
+      startContent={
+        <div className="relative">
+          <div className="absolute inset-0 bg-yellow-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+          <HiOutlineSun
+            size={20}
+            className="relative text-yellow-500 transition-transform group-hover:scale-110"
+          />
+        </div>
+      }
+      endContent={
+        <div className="relative">
+          <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
+          <HiMoon
+            size={18}
+            className="relative text-blue-500 transition-transform group-hover:scale-110"
+          />
+        </div>
+      }
     />
   );
 };

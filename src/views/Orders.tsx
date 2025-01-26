@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import client from "../api/client";
 import { formatPrice, ParseError } from "../utils/helper";
 
-import { Chip } from "@nextui-org/react";
+import { Card, Chip } from "@nextui-org/react";
 import { Link, useNavigate } from "react-router-dom";
 import Skeletons from "../components/Skeletons";
 
@@ -53,58 +53,70 @@ const Orders: FC<Props> = () => {
 
   if (!orders?.length)
     return (
-      <div className="p-5 lg:p-0">
-        <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent mb-8">
           Your Orders
         </h1>
-        <div className="text-center pt-10 font-bold text-3xl text-gray-400 dark:text-gray-500">
-          <p>{"You don't have any orders!"}</p>
-        </div>
+        <Card className="py-16 bg-background/60 backdrop-blur-sm">
+          <div className="text-center font-bold text-3xl text-foreground/40">
+            <p>{"You don't have any orders!"}</p>
+          </div>
+        </Card>
       </div>
     );
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-8">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent mb-8">
         Your Orders
       </h1>
       {orders?.map((order) => {
         return (
-          <div
+          <Card
             key={order.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-6 border border-gray-200 dark:border-gray-700"
+            className="mb-6 bg-background/60 backdrop-blur-sm border-none shadow-sm"
           >
-            <div className="border-b border-gray-200 dark:border-gray-700 py-4 px-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+            <div className="border-b border-divider py-4 px-6">
+              <p className="text-sm text-foreground/70 font-medium">
                 Order Date: {dateFormat(order.date, "mmmm d yyyy")}
               </p>
             </div>
 
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="divide-y divide-divider">
               {order.orderItem.map((product) => {
                 return (
                   <div key={product.id} className="group">
-                    <div className="flex p-6 items-start hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                      <img
-                        onClick={() => navigate(`/book/${product.slug}`)}
-                        src={product.cover}
-                        alt={product.title}
-                        className="w-20 h-28 object-cover rounded-md shadow-sm transition-transform duration-200 hover:scale-110 cursor-pointer"
-                      />
+                    <div className="flex p-6 items-start hover:bg-default-100/50 transition-colors">
+                      <div className="relative group">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-danger/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300" />
+                        <img
+                          onClick={() => navigate(`/book/${product.slug}`)}
+                          src={product.cover}
+                          alt={product.title}
+                          className="relative w-20 h-28 object-cover rounded-md shadow-sm
+                            transform transition-all duration-300
+                            hover:scale-105 hover:shadow-lg cursor-pointer"
+                        />
+                      </div>
 
                       <div className="ml-6 flex-1">
                         <Link
                           to={`/book/${product.slug}`}
-                          className="text-lg font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                          className="text-lg font-semibold text-foreground hover:text-primary transition-colors"
                         >
                           {product.title}
                         </Link>
 
-                        <div className="mt-2 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="mt-2 flex items-center gap-4 text-sm text-foreground/70">
                           <span>{formatPrice(Number(product.price))}</span>
                           <span>·</span>
                           <span>{product.qty} items</span>
-                          <Chip color="danger" size="sm" className="ml-auto">
+                          <Chip
+                            className="ml-auto font-medium"
+                            color="danger"
+                            size="sm"
+                            variant="flat"
+                          >
                             {formatPrice(Number(product.totalPrice))}
                           </Chip>
                         </div>
@@ -115,24 +127,27 @@ const Orders: FC<Props> = () => {
               })}
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 flex justify-between items-center">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="bg-default-100/50 px-6 py-4 rounded-b-lg flex justify-between items-center">
+              <div className="text-sm text-foreground/70">
                 Status:{" "}
-                <span
-                  className={`font-medium ${
+                <Chip
+                  size="sm"
+                  color={
                     order.paymentStatus?.toLowerCase() === "paid"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
+                      ? "success"
+                      : "danger"
+                  }
+                  variant="flat"
+                  className="ml-2"
                 >
                   {order.paymentStatus?.toUpperCase()}
-                </span>
+                </Chip>
               </div>
-              <p className="font-semibold text-lg">
+              <p className="font-semibold text-lg bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
                 Total: {formatPrice(Number(order.totalAmount))}
               </p>
             </div>
-          </div>
+          </Card>
         );
       })}
     </div>

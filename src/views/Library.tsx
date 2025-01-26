@@ -3,7 +3,7 @@ import client from "../api/client";
 import { ParseError } from "../utils/helper";
 import { Link } from "react-router-dom";
 import { Button, Card, Skeleton, Divider } from "@nextui-org/react";
-import { FaBook, FaEdit } from "react-icons/fa";
+import { FaBook, FaEdit, FaPlus } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 
 interface Props {}
@@ -53,136 +53,180 @@ const Library: FC<Props> = () => {
 
   if (fetching) {
     return (
-      <div className="container mx-auto max-w-5xl p-6">
-        <Skeleton className="w-full h-[200px] rounded-lg mb-4" />
-        <Skeleton className="w-full h-[200px] rounded-lg mb-4" />
-        <Skeleton className="w-full h-[200px] rounded-lg" />
+      <div className="container mx-auto max-w-7xl py-12 px-6 space-y-8">
+        {[1, 2, 3].map((i) => (
+          <Skeleton
+            key={i}
+            className="w-full h-[280px] rounded-2xl bg-background/60 backdrop-blur-sm"
+          />
+        ))}
       </div>
     );
   }
 
   if (!books.length) {
     return (
-      <div className="container mx-auto max-w-5xl p-6 text-center">
-        <div className="flex flex-col items-center gap-4 p-12">
-          <FaBook className="w-16 h-16 text-default-300" />
-          <h2 className="text-2xl font-bold text-default-600">
-            Your library is empty
-          </h2>
-          <p className="text-default-500">
-            Books you add to your library will appear here
-          </p>
-        </div>
+      <div className="container mx-auto max-w-7xl py-16 px-6">
+        <Card className="bg-background/60 backdrop-blur-sm border-none">
+          <div className="flex flex-col items-center gap-8 py-16 px-4">
+            <div className="relative">
+              <div className="absolute -inset-6 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full blur-lg animate-pulse" />
+              <FaBook className="w-24 h-24 text-foreground/40 relative" />
+            </div>
+            <div className="text-center space-y-4 max-w-lg">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                Your library is empty
+              </h2>
+              <p className="text-foreground/60 text-xl leading-relaxed">
+                Start your reading journey by adding books to your library
+              </p>
+            </div>
+            <Button
+              as={Link}
+              to="/"
+              color="primary"
+              size="lg"
+              className="font-semibold text-lg px-8 bg-gradient-to-r from-primary to-danger shadow-lg hover:shadow-primary/25"
+            >
+              Explore Books
+            </Button>
+          </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-5xl p-6">
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-2xl font-bold mb-8">My Library</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="container mx-auto max-w-7xl py-12 px-6">
+      <div className="space-y-16">
+        <section>
+          <h1 className="text-4xl font-bold mb-12 bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+            My Library
+          </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {books.map((book) => (
-              <Card key={book.id} className="w-full">
-                <div className="flex p-3 items-start gap-4">
-                  <div className="w-24 h-32 flex-shrink-0">
+              <Card
+                key={book.id}
+                className="group hover:shadow-xl transition-all duration-300 border-none bg-background/60 backdrop-blur-sm"
+              >
+                <div className="flex p-6 items-start gap-8">
+                  <div className="relative w-40 h-56 flex-shrink-0 group">
+                    <div className="absolute -inset-3 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-xl opacity-75 blur transform group-hover:rotate-2 transition-transform duration-300" />
                     {book.cover ? (
                       <img
                         src={book.cover}
                         alt={book.title}
-                        className="w-full h-full object-cover rounded-md shadow-sm transition-transform duration-200 hover:scale-105"
+                        className="w-full h-full object-cover rounded-xl shadow-lg
+                          transform transition-all duration-300
+                          group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/25"
                       />
                     ) : (
-                      <div className="w-full h-full bg-default-100 rounded-md flex items-center justify-center">
-                        <FaBook className="w-8 h-8 text-default-300" />
+                      <div
+                        className="w-full h-full bg-default-100 rounded-xl flex items-center justify-center
+                        transform transition-all duration-300 group-hover:scale-105"
+                      >
+                        <FaBook className="w-12 h-12 text-foreground/30" />
                       </div>
                     )}
                   </div>
 
-                  <div className="flex-grow min-w-0">
-                    <h2 className="text-lg font-semibold truncate">
-                      {book.title}
-                    </h2>
-
-                    <Link
-                      to={`/author/${book.author.id}`}
-                      className="text-primary hover:opacity-80 text-sm mt-1 block"
-                    >
-                      By {book.author.name}
-                    </Link>
-
-                    <div className="mt-3">
-                      <Button
-                        as={Link}
-                        to={`/read/${book.slug}?title=${book.title}&id=${book.id}`}
-                        color="primary"
-                        size="sm"
+                  <div className="flex-grow min-w-0 space-y-4 py-2">
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-semibold line-clamp-2 text-foreground/90">
+                        {book.title}
+                      </h2>
+                      <Link
+                        to={`/author/${book.author.id}`}
+                        className="text-primary hover:text-danger transition-colors text-lg"
                       >
-                        Read Now
-                      </Button>
+                        By {book.author.name}
+                      </Link>
                     </div>
+
+                    <Button
+                      as={Link}
+                      to={`/read/${book.slug}?title=${book.title}&id=${book.id}`}
+                      className="w-full font-semibold text-lg bg-gradient-to-r from-primary to-danger shadow-lg
+                        hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
+                    >
+                      Read Now
+                    </Button>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
-        </div>
+        </section>
 
         {createdBooks?.length > 0 && (
-          <>
-            <Divider className="my-8" />
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Books Created By You</h2>
+          <section>
+            <Divider className="my-12 opacity-50" />
+            <div className="space-y-8">
+              <div className="flex justify-between items-center mb-12">
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                  Your Created Books
+                </h2>
                 <Button
                   as={Link}
                   to="/create-new-book"
-                  color="primary"
-                  variant="flat"
+                  className="font-semibold text-lg px-8 bg-gradient-to-r from-primary to-danger
+                    shadow-lg hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
+                  startContent={<FaPlus className="text-xl" />}
                 >
                   Create New Book
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {createdBooks.map((book) => (
-                  <Card key={book.id} className="w-full">
-                    <div className="flex p-3 items-start gap-4">
-                      <div className="w-24 h-32 flex-shrink-0">
+                  <Card
+                    key={book.id}
+                    className="group hover:shadow-xl transition-all duration-300 border-none bg-background/60 backdrop-blur-sm"
+                  >
+                    {/* Same card content structure as above but with edit button */}
+                    <div className="flex p-6 items-start gap-8">
+                      <div className="relative w-40 h-56 flex-shrink-0 group">
+                        {/* Same image section as above */}
+                        <div className="absolute -inset-3 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-xl opacity-75 blur transform group-hover:rotate-2 transition-transform duration-300" />
                         {book.cover ? (
                           <img
                             src={book.cover}
                             alt={book.title}
-                            className="w-full h-full object-cover rounded-md shadow-sm transition-transform duration-200 hover:scale-105"
+                            className="w-full h-full object-cover rounded-xl shadow-lg
+                              transform transition-all duration-300
+                              group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/25"
                           />
                         ) : (
-                          <div className="w-full h-full bg-default-100 rounded-md flex items-center justify-center">
-                            <FaBook className="w-8 h-8 text-default-300" />
+                          <div
+                            className="w-full h-full bg-default-100 rounded-xl flex items-center justify-center
+                            transform transition-all duration-300 group-hover:scale-105"
+                          >
+                            <FaBook className="w-12 h-12 text-foreground/30" />
                           </div>
                         )}
                       </div>
 
-                      <div className="flex-grow min-w-0">
-                        <h2 className="text-lg font-semibold truncate">
+                      <div className="flex-grow min-w-0 space-y-4 py-2">
+                        <h2 className="text-2xl font-semibold line-clamp-2 text-foreground/90">
                           {book.title}
                         </h2>
 
-                        <div className="mt-3 flex gap-2">
+                        <div className="flex gap-4">
                           <Button
                             as={Link}
                             to={`/read/${book.slug}?title=${book.title}&id=${book.id}`}
-                            color="primary"
-                            size="sm"
+                            className="flex-1 font-semibold text-lg bg-gradient-to-r from-primary to-danger
+                              shadow-lg hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
                           >
-                            Read Now
+                            Read
                           </Button>
                           <Button
                             as={Link}
                             to={`/update-book/${book.slug}`}
                             variant="flat"
-                            size="sm"
-                            startContent={<FaEdit />}
+                            className="font-semibold text-lg px-8 bg-gradient-to-r from-secondary to-secondary/50
+                              shadow-lg hover:shadow-secondary/25 hover:opacity-90 transition-all duration-300"
+                            startContent={<FaEdit className="text-xl" />}
                           >
                             Edit
                           </Button>
@@ -193,7 +237,7 @@ const Library: FC<Props> = () => {
                 ))}
               </div>
             </div>
-          </>
+          </section>
         )}
       </div>
     </div>
