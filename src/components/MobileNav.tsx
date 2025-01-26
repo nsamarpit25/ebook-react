@@ -1,8 +1,7 @@
-import { Badge, Button } from "@nextui-org/react";
-import clsx from "clsx";
+import { Button, Badge } from "@nextui-org/react";
 import { FC } from "react";
-import { FaBookReader } from "react-icons/fa";
-import { FaCartShopping } from "react-icons/fa6";
+import { FaBookReader, FaUser } from "react-icons/fa";
+import { FaCartShopping, FaBook, FaBoxOpen } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import DarkModeSwitch from "./common/DarkModeSwitch";
 
@@ -24,100 +23,135 @@ const MobileNav: FC<Props> = ({
   onLogout,
 }) => {
   return (
-    <div role="dialog" aria-modal="true">
+    <>
       <div
-        className={clsx(
-          visible ? "left-0" : "-left-full",
-          "transition-all duration-300 ease-in-out fixed bottom-0 top-0 w-3/4 z-[100] bg-white dark:bg-black"
-        )}
+        className={`fixed inset-y-0 right-0 w-[250px] bg-background shadow-xl transform transition-transform duration-300 ease-in-out z-[100] ${
+          visible ? "translate-x-0" : "translate-x-full"
+        }`}
       >
-        <div className="pt-10 px-5 space-y-3">
-          <div className="flex justify-between items-center">
-            <Link
-              onClick={onClose}
-              to="/"
-              className="flex items-center justify-center space-x-2"
-            >
-              <FaBookReader size={24} />
-              <p className="font-bold text-inherit">Store</p>
+        <div className="flex flex-col h-full">
+          <div className="p-4 flex items-center justify-between border-b border-divider">
+            <Link onClick={onClose} to="/" className="flex items-center gap-2">
+              <FaBookReader size={20} />
+              <span className="font-medium">Store</span>
             </Link>
-
-            <div className="flex space-x-2 items-center">
-              <div className="px-4 py-2">
-                <Link onClick={onClose} to="/cart">
-                  <Badge content={cartTotal} color="danger" shape="circle">
-                    <FaCartShopping size={24} />
-                  </Badge>
-                </Link>
-              </div>
-              <div className="px-4 py-2">
-                <DarkModeSwitch />
-              </div>
+            <div className="flex items-center gap-3">
+              <Link onClick={onClose} to="/cart">
+                <Badge content={cartTotal} color="danger" size="sm">
+                  <FaCartShopping size={18} />
+                </Badge>
+              </Link>
+              <DarkModeSwitch />
             </div>
           </div>
 
-          <hr />
+          <nav className="flex-1 overflow-y-auto py-4">
+            {isLoggedIn ? (
+              <div className="space-y-4">
+                <div className="px-3 space-y-1">
+                  <Button
+                    as={Link}
+                    to="/profile"
+                    variant="light"
+                    startContent={
+                      <FaUser className="text-default-500" size={16} />
+                    }
+                    onClick={onClose}
+                    fullWidth
+                    className="justify-start h-11"
+                    radius="sm"
+                  >
+                    Profile
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/orders"
+                    variant="light"
+                    startContent={
+                      <FaBoxOpen className="text-default-500" size={16} />
+                    }
+                    onClick={onClose}
+                    fullWidth
+                    className="justify-start h-11"
+                    radius="sm"
+                  >
+                    Orders
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/library"
+                    variant="light"
+                    startContent={
+                      <FaBook className="text-default-500" size={16} />
+                    }
+                    onClick={onClose}
+                    fullWidth
+                    className="justify-start h-11"
+                    radius="sm"
+                  >
+                    Library
+                  </Button>
+                  {isAuthor && (
+                    <Button
+                      as={Link}
+                      to="/create-new-book"
+                      variant="light"
+                      startContent={
+                        <FaBookReader className="text-default-500" size={16} />
+                      }
+                      onClick={onClose}
+                      fullWidth
+                      className="justify-start h-11"
+                      radius="sm"
+                    >
+                      Create New Book
+                    </Button>
+                  )}
+                </div>
 
-          {isLoggedIn && (
-            <ul className="p-4 space-y-4">
-              <li>
-                <Link onClick={onClose} to="/profile">
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <Link onClick={onClose} to="/orders">
-                  Orders
-                </Link>
-              </li>
-              <li>
-                <Link onClick={onClose} to="/library">
-                  Library
-                </Link>
-              </li>
-              {isAuthor && (
-                <li>
-                  <Link onClick={onClose} to="/create-new-book">
-                    Create New Book
-                  </Link>
-                </li>
-              )}
-            </ul>
-          )}
-
-          {isLoggedIn && (
-            <div>
-              <Button onClick={onLogout} radius="sm" className="w-full">
-                Logout
-              </Button>
-            </div>
-          )}
-
-          {!isLoggedIn && (
-            <div>
-              <Button
-                onClick={onClose}
-                className="w-full"
-                as={Link}
-                to="sign-up"
-                variant="bordered"
-              >
-                Sign Up / In
-              </Button>
-            </div>
-          )}
+                <div className="px-3 pt-4 border-t border-divider">
+                  <Button
+                    color="danger"
+                    variant="flat"
+                    onPress={() => {
+                      onLogout();
+                      onClose();
+                    }}
+                    fullWidth
+                    className="h-11"
+                    radius="sm"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="px-3">
+                <Button
+                  as={Link}
+                  to="sign-up"
+                  color="primary"
+                  onClick={onClose}
+                  fullWidth
+                  className="h-11"
+                  radius="sm"
+                >
+                  Sign Up / In
+                </Button>
+              </div>
+            )}
+          </nav>
         </div>
       </div>
 
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className={clsx(
-          visible ? "fixed" : "hidden",
-          "inset-0 z-50 dark:bg-white dark:bg-opacity-50 bg-black bg-opacity-50 backdrop-blur"
-        )}
+        className={`fixed inset-0 bg-black/50 transition-opacity duration-300 ${
+          visible ? "opacity-100 visible" : "opacity-0 invisible"
+        } z-[99]`}
       />
-    </div>
+    </>
   );
 };
 
