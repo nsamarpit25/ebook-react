@@ -1,34 +1,35 @@
 import { Input } from "@nextui-org/react";
-import { FC, FormEventHandler, useState } from "react";
+import { FC, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
 interface Props {}
 
 const SearchForm: FC<Props> = () => {
   const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  // const [isLoading, setIsLoading] = useState(false);
+  // const navigate = useNavigate();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (evt) => {
-    evt.preventDefault();
-    if (query.trim().length >= 3) {
-      setIsLoading(true);
-      try {
-        await navigate("/search?title=" + query);
-      } finally {
-        setIsLoading(false);
-      }
-    } else toast.error("Invalid search query!");
-  };
+  // const handleSubmit: FormEventHandler<HTMLFormElement> = async (evt) => {
+  //   evt.preventDefault();
+  //   if (query.trim().length >= 3) {
+  //     setIsLoading(true);
+  //     try {
+  //       await navigate("/search?title=" + query);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   } else toast.error("Invalid search query!");
+  // };
 
   return (
     <form
       className={`relative transition-all duration-300 ease-in-out ${
         query ? "w-[280px]" : "w-[46px] focus-within:w-[280px]"
       }`}
-      onSubmit={handleSubmit}
+      onSubmit={() => {
+        console.log("search");
+      }}
     >
       <Input
         classNames={{

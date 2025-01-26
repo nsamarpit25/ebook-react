@@ -1,13 +1,8 @@
-import {
-  Badge,
-  NavbarContent,
-  NavbarItem,
-  Navbar as NextUINav,
-} from "@nextui-org/react";
+import { Badge, Navbar as NextUINav } from "@nextui-org/react";
 import { FC, useState } from "react";
-import { RiBookOpenLine } from "react-icons/ri";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { IoMenuOutline } from "react-icons/io5";
+import { RiBookOpenLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useCart from "../../hooks/useCart";
