@@ -111,13 +111,21 @@ const HeroSection: FC = () => {
       <Slider ref={sliderRef} {...settings}>
         {books.map((item) => (
           <div key={item.slug} className="relative">
-            <div className="min-h-[500px] md:min-h-[600px] flex items-center">
+            <div className="min-h-[550px] md:min-h-[650px] flex items-center">
               <Card className="w-full bg-background/60 backdrop-blur-sm border-none shadow-xl">
-                <div className="flex flex-col md:flex-row items-center gap-6 p-4 md:p-8 lg:p-12">
+                <div className="flex flex-col md:flex-row items-center gap-8 p-6 md:p-12 lg:p-16">
+                  {" "}
+                  {/* Increased padding */}
                   {/* Content div with order adjustment */}
-                  <div className="flex-1 space-y-4 md:space-y-6 text-center md:text-left order-2 md:order-1">
-                    <div className="space-y-4">
-                      <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                  <div className="flex-1 space-y-6 md:space-y-8 text-center md:text-left order-2 md:order-1 py-6">
+                    {" "}
+                    {/* Increased py-6 */}
+                    <div className="space-y-6 max-w-2xl">
+                      {" "}
+                      {/* Added max-width */}
+                      <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent leading-tight md:leading-tight lg:leading-tight pb-1">
+                        {" "}
+                        {/* Added leading-tight and pb-1 */}
                         {item.title}
                       </h1>
                       <p className="text-xl md:text-2xl text-foreground/80">
@@ -139,7 +147,6 @@ const HeroSection: FC = () => {
                       Explore Now
                     </Button>
                   </div>
-
                   {/* Image container with order adjustment */}
                   <div className="relative w-48 sm:w-56 md:w-72 lg:w-80 order-1 md:order-2">
                     <div className="absolute -inset-2 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-xl opacity-75 blur transform rotate-3 scale-105 transition-transform duration-500 group-hover:rotate-2" />
