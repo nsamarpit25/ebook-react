@@ -1,6 +1,7 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import HeroSection from "../components/HeroSection";
 import BookByGenre from "../components/BookByGenre";
+import { useLocation } from "react-router-dom";
 
 const Home: FC = () => {
   const genres = [
@@ -14,6 +15,12 @@ const Home: FC = () => {
     "Self-Help",
     "Fantasy",
   ];
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <div className="min-h-screen">

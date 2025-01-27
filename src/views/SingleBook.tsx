@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import client from "../api/client";
 import BookDetail, { Book } from "../components/BookDetail";
 import { ParseError } from "../utils/helper";
@@ -20,6 +20,12 @@ const SingleBook: FC<Props> = () => {
   const [busy, setBusy] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
   const { slug } = useParams();
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname, slug]);
 
   useEffect(() => {
     const fetchBookDetail = async () => {

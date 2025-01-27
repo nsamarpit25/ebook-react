@@ -1,6 +1,6 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { updateProfile } from "../store/auth";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import Cookies from "js-cookie";
@@ -10,6 +10,12 @@ const Verify: FC = () => {
   const [searchParams] = useSearchParams();
   const profileInfoString = searchParams.get("profile");
   const authToken = searchParams.get("authToken");
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   // console.log(authToken);
   const dispatch = useDispatch();

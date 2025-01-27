@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import useCart from "../hooks/useCart";
 import { Button, Chip, Divider, Card } from "@nextui-org/react";
 import { calculateDiscount, formatPrice, ParseError } from "../utils/helper";
@@ -6,7 +6,7 @@ import { FaMinus, FaPlus, FaRegTrashCan } from "react-icons/fa6";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import Skeletons from "../components/Skeletons";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import client from "../api/client";
 import useAuth from "../hooks/useAuth";
 
@@ -26,6 +26,12 @@ const Cart: FC<Props> = () => {
     updateCart,
     clearCart,
   } = useCart();
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   const handleCheckout = async () => {
     try {
