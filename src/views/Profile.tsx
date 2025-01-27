@@ -1,7 +1,7 @@
 import { Avatar, Button } from "@nextui-org/react";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { BsPencilSquare } from "react-icons/bs";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AuthorPublicationTable from "../components/AuthorPublicationTable";
 import useAuth from "../hooks/useAuth";
 
@@ -10,6 +10,11 @@ interface Props {}
 const Profile: FC<Props> = () => {
   const { profile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, [location]);
 
   if (!profile) return <Navigate to="/sign-up" />;
 
