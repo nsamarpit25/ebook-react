@@ -1,5 +1,5 @@
 import { Button, Card } from "@nextui-org/react";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   FaArrowRightLong,
   FaChevronLeft,
@@ -98,6 +98,13 @@ const HeroSection: FC = () => {
     }
   };
 
+  const trimmedContent = (html: string, maxLength: number) => {
+    const textContent = html?.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags
+    if (textContent.length <= maxLength) return textContent;
+    if (textContent.length > maxLength)
+      return textContent.slice(0, maxLength) + "...";
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -154,7 +161,7 @@ const HeroSection: FC = () => {
                         {item.title}
                       </h1>
                       <p className="text-xl md:text-2xl text-foreground/80">
-                        {/* {item.description} */}
+                        {trimmedContent(item.description || "", 100)}
                       </p>
                       <p className="text-lg text-foreground/60 italic">
                         {/* {item.subtitle} */}
