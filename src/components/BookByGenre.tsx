@@ -33,7 +33,9 @@ const BookByGenre: FC<Props> = ({ genre }) => {
       try {
         // console.log("reached here");
         const { data } = await client.get(`book/by-genre/${genre}`);
-        setBooks(data.books);
+        setBooks(
+          data.books.filter((book: Book) => book.status !== "unpublished")
+        );
       } catch (error) {
         ParseError(error);
       } finally {

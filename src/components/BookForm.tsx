@@ -681,7 +681,7 @@ const BookForm: FC<Props> = ({
           </div>
         </div>
 
-        <RadioGroup
+        {/* <RadioGroup
           label="Select Book Status"
           name="status"
           value={bookInfo.status}
@@ -690,7 +690,7 @@ const BookForm: FC<Props> = ({
         >
           <Radio value="published">Published</Radio>
           <Radio value="unpublished">Un Published</Radio>
-        </RadioGroup>
+        </RadioGroup> */}
 
         <Button
           isLoading={busy}
