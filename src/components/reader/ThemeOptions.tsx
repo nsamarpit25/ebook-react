@@ -6,9 +6,8 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { FC } from "react";
-import { HiColorSwatch } from "react-icons/hi";
+import { HiMoon, HiSun } from "react-icons/hi2";
 import { useAutoHide } from "../../hooks/useAutoHide";
-import { HiSun, HiMoon } from "react-icons/hi2";
 
 export type ThemeModes = "light" | "dark";
 

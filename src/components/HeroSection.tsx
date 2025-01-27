@@ -1,5 +1,5 @@
 import { Button, Card } from "@nextui-org/react";
-import { FC, useEffect, useRef, useState, type ReactNode } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import {
   FaArrowRightLong,
   FaChevronLeft,
