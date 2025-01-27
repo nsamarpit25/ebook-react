@@ -1,14 +1,39 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { Avatar, Button } from "@nextui-org/react";
+import { Avatar, Button, Card, Divider } from "@nextui-org/react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { BsPencilSquare } from "react-icons/bs";
+import client from "../api/client";
+import type { BookDetail } from "./Library";
+import { FaBook, FaPlus } from "react-icons/fa6";
+import { FaEdit } from "react-icons/fa";
+import { ParseError } from "../utils/helper";
 
 interface Props {}
 
 const Profile: FC<Props> = () => {
   const { profile } = useAuth();
   const navigate = useNavigate();
+  const [fetching, setFetching] = useState(true);
+  // const [books, setBooks] = useState<BookDetail[]>([]);
+  const [createdBooks, setCreatedBooks] = useState<BookDetail[]>([]);
+
+  useEffect(() => {
+    if (profile?.authorId) {
+      const fetchCreatedBooks = async () => {
+        try {
+          setFetching(true);
+          const { data } = await client.get(`/author/${profile.authorId}`);
+          setCreatedBooks(data.books);
+        } catch (error) {
+          ParseError(error);
+        } finally {
+          setFetching(false);
+        }
+      };
+      fetchCreatedBooks();
+    }
+  }, [profile?.authorId]);
 
   if (!profile) return <Navigate to="/sign-up" />;
 
@@ -81,6 +106,88 @@ const Profile: FC<Props> = () => {
           </div>
         </div>
       </div>
+
+      {createdBooks?.length > 0 && (
+        <section>
+          <Divider className="my-12 opacity-50" />
+          <div className="space-y-8">
+            <div className="flex justify-between items-center mb-12">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
+                Your Books
+              </h2>
+              <Button
+                as={Link}
+                to="/create-new-book"
+                className="font-semibold text-lg px-8 bg-gradient-to-r from-primary to-danger
+                    shadow-lg hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
+                startContent={<FaPlus className="text-xl" />}
+              >
+                Create New Book
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {createdBooks.map((book) => (
+                <Card
+                  key={book.id}
+                  className="group hover:shadow-xl transition-all duration-300 border-none bg-background/60 backdrop-blur-sm"
+                >
+                  {/* Same card content structure as above but with edit button */}
+                  <div className="flex p-6 items-start gap-8">
+                    <div className="relative w-40 h-56 flex-shrink-0 group">
+                      {/* Same image section as above */}
+                      <div className="absolute -inset-3 bg-gradient-to-tr from-primary/10 to-danger/10 rounded-xl opacity-75 blur transform group-hover:rotate-2 transition-transform duration-300" />
+                      {book.cover ? (
+                        <img
+                          src={book.cover}
+                          alt={book.title}
+                          className="w-full h-full object-cover rounded-xl shadow-lg
+                              transform transition-all duration-300
+                              group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-primary/25"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full bg-default-100 rounded-xl flex items-center justify-center
+                            transform transition-all duration-300 group-hover:scale-105"
+                        >
+                          <FaBook className="w-12 h-12 text-foreground/30" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-grow min-w-0 space-y-4 py-2">
+                      <h2 className="text-2xl font-semibold line-clamp-2 text-foreground/90">
+                        {book.title}
+                      </h2>
+
+                      <div className="flex gap-4">
+                        <Button
+                          as={Link}
+                          to={`/read/${book.slug}?title=${book.title}&id=${book.id}`}
+                          className="flex-1 font-semibold text-lg bg-gradient-to-r from-primary to-danger
+                              shadow-lg hover:shadow-primary/25 hover:opacity-90 transition-all duration-300"
+                        >
+                          Read
+                        </Button>
+                        <Button
+                          as={Link}
+                          to={`/update-book/${book.slug}`}
+                          variant="flat"
+                          className="font-semibold text-lg px-8 bg-gradient-to-r from-secondary to-secondary/50
+                              shadow-lg hover:shadow-secondary/25 hover:opacity-90 transition-all duration-300"
+                          startContent={<FaEdit className="text-xl" />}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
