@@ -35,8 +35,8 @@ const Cart: FC<Props> = () => {
 
   const handleCheckout = async () => {
     try {
-      if (!profile) return;
       setBusy(true);
+      if (!profile) return;
       const { data } = await client.post("/checkout", { cartId: id });
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
@@ -50,7 +50,7 @@ const Cart: FC<Props> = () => {
 
   if (fetching) return <Skeletons.Cart />;
 
-  if (!totalCount)
+  if (!totalCount && !busy)
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="text-center p-8">

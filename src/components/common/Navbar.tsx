@@ -56,25 +56,29 @@ const Navbar: FC<Props> = () => {
           </div>
 
           {/* Actions Section */}
-          <div className="flex items-center h-full">
-            <div className="flex items-center mr-4">
+          <div className="flex items-center gap-4 h-full">
+            <div className="flex items-center">
               <SearchForm />
             </div>
-            <div className="hidden md:flex items-center gap-4 h-full">
-              <div className="flex items-center">
-                <button className="relative group p-2 rounded-full hover:bg-default-100 transition-colors">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-danger/10 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-6 h-full">
+              {/* Theme Toggle */}
+              <div className="relative group">
+                <button className="p-3 rounded-full hover:bg-content2/50 backdrop-blur-sm transition-colors">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
                   <DarkModeSwitch />
                 </button>
               </div>
 
-              <div className="flex items-center">
+              {/* Cart */}
+              <div className="relative group">
                 <Link
                   to="/cart"
-                  className="relative group rounded-full hover:bg-default-100 transition-colors flex items-center"
+                  className="p-3 rounded-full hover:bg-content2/50 backdrop-blur-sm transition-colors flex items-center justify-center"
                   aria-label={`Shopping cart with ${totalCount} items`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-danger/10 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
                   <Badge
                     content={totalCount}
                     color="danger"
@@ -82,22 +86,25 @@ const Navbar: FC<Props> = () => {
                     size="lg"
                     className="transition-transform duration-300 group-hover:scale-110"
                   >
-                    <HiOutlineShoppingBag size={28} className="stroke-[1.5]" />
+                    <HiOutlineShoppingBag size={24} className="stroke-[1.5]" />
                   </Badge>
                 </Link>
               </div>
 
-              <div className="flex items-center">
+              {/* Profile */}
+              <div className="relative group">
                 <ProfileOptions />
               </div>
             </div>
 
-            <div className="flex items-center md:hidden">
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden">
               <button
                 onClick={openNav}
-                className="p-2 hover:bg-default-100 rounded-lg transition-colors"
+                className="p-3 hover:bg-content2/50 backdrop-blur-sm rounded-full transition-colors relative group"
               >
-                <IoMenuOutline size={28} />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
+                <IoMenuOutline size={24} />
               </button>
             </div>
           </div>
