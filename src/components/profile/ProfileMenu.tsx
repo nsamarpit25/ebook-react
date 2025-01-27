@@ -1,19 +1,18 @@
 import {
   Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
   DropdownItem,
-  User,
+  DropdownMenu,
   DropdownSection,
+  DropdownTrigger,
+  User,
 } from "@nextui-org/react";
 import { FC, type ReactNode } from "react";
+import { FiLogOut, FiUser } from "react-icons/fi";
+import { HiOutlineLibrary } from "react-icons/hi";
+import { MdOutlineCreateNewFolder } from "react-icons/md";
+import { RiShoppingBag3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { Profile } from "../../store/auth";
-import { HiOutlineLibrary } from "react-icons/hi";
-import { RiShoppingBag3Line } from "react-icons/ri";
-import { FiUser, FiHelpCircle, FiLogOut } from "react-icons/fi";
-import { IoAnalyticsOutline } from "react-icons/io5";
-import { MdOutlineCreateNewFolder } from "react-icons/md";
 
 interface Props {
   profile: Profile;
