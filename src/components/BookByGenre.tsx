@@ -11,6 +11,7 @@ interface Props {
 }
 
 interface Book {
+  status: string;
   id: string;
   title: string;
   genre: string;
@@ -55,83 +56,85 @@ const BookByGenre: FC<Props> = ({ genre }) => {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
-        {books.map((book) => (
-          <Card
-            key={book.id}
-            as={Link}
-            to={`/book/${book.slug}`}
-            isPressable
-            className="group border-none bg-background/60 backdrop-blur-sm hover:scale-105 transition-transform duration-300"
-            shadow="sm"
-          >
-            <CardBody className="p-0 overflow-hidden">
-              <div className="relative aspect-[2/3]">
-                {/* Gradient overlay - mobile always visible, desktop on hover */}
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent sm:from-black/60
+        {books
+          .filter((book) => book.status !== "published")
+          .map((book) => (
+            <Card
+              key={book.id}
+              as={Link}
+              to={`/book/${book.slug}`}
+              isPressable
+              className="group border-none bg-background/60 backdrop-blur-sm hover:scale-105 transition-transform duration-300"
+              shadow="sm"
+            >
+              <CardBody className="p-0 overflow-hidden">
+                <div className="relative aspect-[2/3]">
+                  {/* Gradient overlay - mobile always visible, desktop on hover */}
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent sm:from-black/60
                     block sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 z-10"
-                />
+                  />
 
-                <img
-                  src={book.cover}
-                  alt={book.title}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                />
+                  <img
+                    src={book.cover}
+                    alt={book.title}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  />
 
-                {/* Discount chip */}
-                <div className="absolute top-2 right-2 z-20">
-                  <Chip
-                    className="border border-white/20 shadow-lg"
-                    color="danger"
-                    size="sm"
-                    variant="shadow"
-                  >
-                    {calculateDiscount(book.price)}% Off
-                  </Chip>
-                </div>
+                  {/* Discount chip */}
+                  <div className="absolute top-2 right-2 z-20">
+                    <Chip
+                      className="border border-white/20 shadow-lg"
+                      color="danger"
+                      size="sm"
+                      variant="shadow"
+                    >
+                      {calculateDiscount(book.price)}% Off
+                    </Chip>
+                  </div>
 
-                {/* Price and rating - mobile always visible, desktop on hover */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 p-3 text-white
+                  {/* Price and rating - mobile always visible, desktop on hover */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 p-3 text-white
                     block sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 z-20"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-white/70 line-through">
-                        {formatPrice(Number(book.price.mrp))}
-                      </span>
-                      <span className="font-bold text-sm text-danger-400">
-                        {formatPrice(Number(book.price.sale))}
-                      </span>
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-white/70 line-through">
+                          {formatPrice(Number(book.price.mrp))}
+                        </span>
+                        <span className="font-bold text-sm text-danger-400">
+                          {formatPrice(Number(book.price.sale))}
+                        </span>
+                      </div>
+                      {book.rating && (
+                        <Chip
+                          size="sm"
+                          color="warning"
+                          variant="shadow"
+                          classNames={{
+                            base: "border border-white/20",
+                            content: "font-bold",
+                          }}
+                          startContent={<FaStar size={12} />}
+                        >
+                          {book.rating}
+                        </Chip>
+                      )}
                     </div>
-                    {book.rating && (
-                      <Chip
-                        size="sm"
-                        color="warning"
-                        variant="shadow"
-                        classNames={{
-                          base: "border border-white/20",
-                          content: "font-bold",
-                        }}
-                        startContent={<FaStar size={12} />}
-                      >
-                        {book.rating}
-                      </Chip>
-                    )}
                   </div>
                 </div>
-              </div>
-            </CardBody>
+              </CardBody>
 
-            <CardFooter className="px-3 py-2 bg-content1/5 backdrop-blur-md">
-              <div className="w-full">
-                <h3 className="font-medium text-sm line-clamp-2">
-                  {book.title}
-                </h3>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
+              <CardFooter className="px-3 py-2 bg-content1/5 backdrop-blur-md">
+                <div className="w-full">
+                  <h3 className="font-medium text-sm line-clamp-2">
+                    {book.title}
+                  </h3>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
       </div>
     </div>
   );

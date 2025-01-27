@@ -27,7 +27,7 @@ const NewBookForm: FC<Props> = () => {
         "Book published successfully! It may take some time to reflect on the site.",
         { duration: 5000 }
       );
-      navigate("/dashboard/my-books");
+      navigate("/profile");
     } catch (error) {
       ParseError(error);
     }

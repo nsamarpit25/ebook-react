@@ -1,10 +1,9 @@
+import { Button, Card, Skeleton } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
+import { FaBook } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import client from "../api/client";
 import { ParseError } from "../utils/helper";
-import { Link } from "react-router-dom";
-import { Button, Card, Skeleton, Divider } from "@nextui-org/react";
-import { FaBook, FaEdit, FaPlus } from "react-icons/fa";
-import useAuth from "../hooks/useAuth";
 
 interface Props {}
 
@@ -18,13 +17,13 @@ export interface BookDetail {
     name: string;
     slug: string;
   };
+
+  status: string;
 }
 
 const Library: FC<Props> = () => {
   const [fetching, setFetching] = useState(true);
   const [books, setBooks] = useState<BookDetail[]>([]);
-  const [createdBooks, setCreatedBooks] = useState<BookDetail[]>([]);
-  const { profile } = useAuth();
 
   useEffect(() => {
     const fetchAllBooks = async () => {
@@ -40,16 +39,6 @@ const Library: FC<Props> = () => {
 
     fetchAllBooks();
   }, []);
-
-  useEffect(() => {
-    if (profile?.authorId) {
-      const fetchCreatedBooks = async () => {
-        const { data } = await client.get(`/author/${profile.authorId}`);
-        setCreatedBooks(data.books);
-      };
-      fetchCreatedBooks();
-    }
-  }, [profile?.authorId]);
 
   if (fetching) {
     return (

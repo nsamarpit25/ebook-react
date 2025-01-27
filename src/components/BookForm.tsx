@@ -4,6 +4,8 @@ import {
   Button,
   DatePicker,
   Input,
+  Radio,
+  RadioGroup,
 } from "@nextui-org/react";
 import {
   ChangeEventHandler,
@@ -20,7 +22,7 @@ import { z } from "zod";
 import ErrorList from "./common/ErrorList";
 import clsx from "clsx";
 import { ParseError } from "../utils/helper";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 export interface InitialBookToUpdate {
   id: string;
@@ -33,6 +35,7 @@ export interface InitialBookToUpdate {
   price: { mrp: string; sale: string };
   publicationName: string;
   publishedAt: string;
+  status: string;
 }
 
 interface Props {
@@ -53,6 +56,7 @@ interface DefaultForm {
   language: string;
   mrp: string;
   sale: string;
+  status: string;
 }
 
 const defaultBookInfo = {
@@ -63,6 +67,7 @@ const defaultBookInfo = {
   mrp: "",
   publicationName: "",
   sale: "",
+  status: "published",
 };
 
 interface BookToSubmit {
@@ -78,6 +83,7 @@ interface BookToSubmit {
     mrp: number;
     sale: number;
   };
+  status: string;
   fileInfo?: {
     type: string;
     name: string;
@@ -229,6 +235,7 @@ const BookForm: FC<Props> = ({
         publicationName: bookInfo.publicationName,
         uploadMethod: "aws",
         publishedAt: bookInfo.publishedAt,
+        status: bookInfo.status,
         price: {
           mrp: Number(bookInfo.mrp),
           sale: Number(bookInfo.sale),
@@ -266,10 +273,10 @@ const BookForm: FC<Props> = ({
       await onSubmit(formData, file);
       setBookInfo({ ...defaultBookInfo, file: null });
       setCover("");
-      toast.success("Congratulations!! Your book have been published.", {
-        position: "top-right",
-        duration: 5000,
-      });
+      // toast.success("Congratulations!! Your book have been published.", {
+      //   position: "top-right",
+      //   duration: 5000,
+      // });
 
       // console.log(result.data);
     } catch (error) {
@@ -323,6 +330,7 @@ const BookForm: FC<Props> = ({
         genre: selectedGenre?.name || bookInfo.genre,
         language: bookInfo.language,
         publicationName: bookInfo.publicationName,
+        status: bookInfo.status,
         uploadMethod: "aws",
         publishedAt: bookInfo.publishedAt,
         slug: initialState?.slug,
@@ -368,10 +376,10 @@ const BookForm: FC<Props> = ({
       // console.log(file);
       await onSubmit(formData, file);
       setCover("");
-      toast.success("Congratulations!! Your changes have been published.", {
-        position: "top-right",
-        duration: 5000,
-      });
+      // toast.success("Congratulations!! Your changes have been published.", {
+      //   position: "top-right",
+      //   duration: 5000,
+      // });
 
       // console.log(result.data);
     } catch (error) {
@@ -399,6 +407,7 @@ const BookForm: FC<Props> = ({
         publishedAt,
         price,
         cover,
+        status,
       } = initialState;
 
       if (cover) setCover(cover);
@@ -412,6 +421,7 @@ const BookForm: FC<Props> = ({
         publishedAt,
         mrp: price.mrp,
         sale: price.sale,
+        status,
       });
     }
 
@@ -670,6 +680,17 @@ const BookForm: FC<Props> = ({
             <ErrorList errors={errors?.price} />
           </div>
         </div>
+
+        <RadioGroup
+          label="Select Book Status"
+          name="status"
+          value={bookInfo.status}
+          onValueChange={(status) => setBookInfo({ ...bookInfo, status })}
+          orientation="horizontal"
+        >
+          <Radio value="published">Published</Radio>
+          <Radio value="unpublished">Un Published</Radio>
+        </RadioGroup>
 
         <Button
           isLoading={busy}
