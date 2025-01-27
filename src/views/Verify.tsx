@@ -31,7 +31,7 @@ const Verify: FC = () => {
   if (profileInfoString) {
     try {
       const profile = JSON.parse(profileInfoString);
-      console.log(profile);
+      // console.log(profile);
       if (!profile.signedUp) {
         return <Navigate to={"/new-user"} />;
       }

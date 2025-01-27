@@ -12,7 +12,7 @@ const emailRegex = new RegExp(
 );
 
 const SignUp: FC<Props> = () => {
-  const [email, setEmail] = useState("kakashi@naruto.com");
+  const [email, setEmail] = useState("amelia.adams@example.com");
   const [busy, setBusy] = useState(false);
   const [invalidForm, setInvalidForm] = useState(false);
   const [showSuccessResponse, setShowSuccessResponse] = useState(false);
