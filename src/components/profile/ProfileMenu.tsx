@@ -101,11 +101,11 @@ const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
                 className="p-0"
                 textValue="analytics"
               >
-                <DropdownLink
+                {/* <DropdownLink
                   title="Analytics"
                   to="/analytics"
                   icon={<IoAnalyticsOutline />}
-                />
+                /> */}
               </DropdownItem>
               <DropdownItem
                 key="create_new_book"
@@ -127,7 +127,7 @@ const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
             <DropdownItem key="profile" className="p-0" textValue="profile">
               <DropdownLink title="Profile" to="/profile" icon={<FiUser />} />
             </DropdownItem>
-            <DropdownItem
+            {/* <DropdownItem
               key="help"
               className="p-0"
               textValue="Help & Feedback"
@@ -137,7 +137,7 @@ const ProfileMenu: FC<Props> = ({ profile, signOut }) => {
                 to="/help"
                 icon={<FiHelpCircle />}
               />
-            </DropdownItem>
+            </DropdownItem> */}
             <DropdownItem
               key="logout"
               className="text-danger flex items-center gap-2 group"

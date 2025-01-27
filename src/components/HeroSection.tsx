@@ -154,7 +154,7 @@ const HeroSection: FC = () => {
                         {item.title}
                       </h1>
                       <p className="text-xl md:text-2xl text-foreground/80">
-                        {/* {item.slogan} */}
+                        {/* {item.description} */}
                       </p>
                       <p className="text-lg text-foreground/60 italic">
                         {/* {item.subtitle} */}

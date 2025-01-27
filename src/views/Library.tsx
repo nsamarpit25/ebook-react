@@ -12,6 +12,7 @@ export interface BookDetail {
   title: string;
   cover?: string;
   slug: string;
+  description?: string;
   author: {
     id: string;
     name: string;

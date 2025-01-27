@@ -26,6 +26,7 @@ const Container: FC<Props> = ({ children }) => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="max-w-[1500px] w-full mx-auto">{children}</div>
+      {/* <Footer /> */}
     </div>
   );
 };
