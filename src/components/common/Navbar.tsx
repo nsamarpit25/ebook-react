@@ -57,11 +57,10 @@ const Navbar: FC<Props> = () => {
 
           {/* Actions Section */}
           <div className="flex items-center h-full">
-            <div className="hidden md:flex items-center gap-6 h-full">
-              <div className="flex items-center">
-                <SearchForm />
-              </div>
-
+            <div className="flex items-center mr-4">
+              <SearchForm />
+            </div>
+            <div className="hidden md:flex items-center gap-4 h-full">
               <div className="flex items-center">
                 <button className="relative group p-2 rounded-full hover:bg-default-100 transition-colors">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-danger/10 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />
@@ -72,7 +71,7 @@ const Navbar: FC<Props> = () => {
               <div className="flex items-center">
                 <Link
                   to="/cart"
-                  className="relative group p-2 rounded-full hover:bg-default-100 transition-colors"
+                  className="relative group rounded-full hover:bg-default-100 transition-colors flex items-center"
                   aria-label={`Shopping cart with ${totalCount} items`}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-danger/10 rounded-full opacity-0 blur-sm group-hover:opacity-100 transition-opacity duration-300" />

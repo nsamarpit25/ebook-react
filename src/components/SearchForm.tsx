@@ -21,7 +21,9 @@ const SearchForm: FC<Props> = () => {
       } finally {
         setIsLoading(false);
       }
-    } else toast.error("Invalid search query!");
+    } else {
+      // toast.error("Invalid search query!");
+    }
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -63,7 +65,7 @@ const SearchForm: FC<Props> = () => {
         onChange={({ target }) => setQuery(target.value)}
         startContent={
           <button
-            type="submit"
+            type={"submit"}
             className={`absolute left-3 transition-transform duration-300 ${
               query ? "" : "md:scale-125 md:hover:scale-150"
             }`}
