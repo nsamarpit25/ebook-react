@@ -43,9 +43,10 @@ const Container: FC<Props> = ({ children }) => {
           </svg>
           <p>
             Demo Project: Books are for demonstration only. Please don't upload
-            copyrighted material.
+            copyrighted material. For best ePub reading experience, view on
+            laptop/desktop.
             <a
-              href="https://github.com/yourusername/projectname"
+              href="https://github.com/nsamarpit25"
               className="ml-1 text-primary hover:underline"
               target="_blank"
               rel="noopener noreferrer"
