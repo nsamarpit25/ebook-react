@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
-import RichEditor from "../rich-editor";
 import { Button, Input } from "@nextui-org/react";
+import { FC, useEffect, useState } from "react";
 import { MdClose, MdOutlineAdd } from "react-icons/md";
 import { z } from "zod";
-import ErrorList from "./ErrorList";
+import useAuth from "../../hooks/useAuth";
 import { ParseError } from "../../utils/helper";
+import RichEditor from "../rich-editor";
+import ErrorList from "./ErrorList";
 
 export interface AuthorInfo {
   name: string;

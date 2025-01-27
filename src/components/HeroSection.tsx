@@ -1,5 +1,4 @@
 import { Button, Card } from "@nextui-org/react";
-import type { Book } from "epubjs";
 import { FC, useEffect, useRef, useState } from "react";
 import {
   FaArrowRightLong,
@@ -10,8 +9,8 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import client from "../api/client";
 import { ParseError } from "../utils/helper";
-import LoadingSpinner from "./common/LoadingSpinner";
 import type { BookDetail } from "../views/Library";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 // const books = [
 //   {
