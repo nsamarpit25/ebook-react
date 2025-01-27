@@ -1,5 +1,6 @@
 import { Button, Card } from "@nextui-org/react";
-import { FC, useRef } from "react";
+import type { Book } from "epubjs";
+import { FC, useEffect, useRef, useState } from "react";
 import {
   FaArrowRightLong,
   FaChevronLeft,
@@ -7,41 +8,45 @@ import {
 } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
+import client from "../api/client";
+import { ParseError } from "../utils/helper";
+import LoadingSpinner from "./common/LoadingSpinner";
+import type { BookDetail } from "../views/Library";
 
-const books = [
-  {
-    title: "The Girl with the Dragon Tattoo",
-    slogan: "A gripping thriller of mystery and suspense.",
-    subtitle: "A Thriller by Stieg Larsson",
-    cover:
-      "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943170/wiayfy2opfmbm5zztdut.png",
-    slug: "the-girl-with-the-dragon-tattoo-66d08b40ab9726b8a14859d9",
-  },
-  {
-    title: "The Road",
-    slogan: "A father and son journey through a desolate world.",
-    subtitle: "A Novel by Cormac McCarthy",
-    cover:
-      "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943172/bycfvhs8st7eosdimqwy.png",
-    slug: "the-road-66d08b40ab9726b8a14859d8",
-  },
-  {
-    title: "The Great Gatsby",
-    slogan: "A tale of love and ambition in the Jazz Age.",
-    subtitle: "A Classic by F. Scott Fitzgerald",
-    cover:
-      "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943178/nh5py32h7elbcawjpux5.png",
-    slug: "the-great-gatsby-66d08b40ab9726b8a14859d4",
-  },
-  {
-    title: "Pride and Prejudice",
-    slogan: "A timeless story of love and societal expectations.",
-    subtitle: "A Classic by Jane Austen",
-    cover:
-      "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943181/dszmpqruxweg5kpgxd3o.png",
-    slug: "the-girl-with-the-dragon-tattoo-66d08b40ab9726b8a14859d9",
-  },
-];
+// const books = [
+//   {
+//     title: "The Girl with the Dragon Tattoo",
+//     slogan: "A gripping thriller of mystery and suspense.",
+//     subtitle: "A Thriller by Stieg Larsson",
+//     cover:
+//       "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943170/wiayfy2opfmbm5zztdut.png",
+//     slug: "the-girl-with-the-dragon-tattoo-66d08b40ab9726b8a14859d9",
+//   },
+//   {
+//     title: "The Road",
+//     slogan: "A father and son journey through a desolate world.",
+//     subtitle: "A Novel by Cormac McCarthy",
+//     cover:
+//       "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943172/bycfvhs8st7eosdimqwy.png",
+//     slug: "the-road-66d08b40ab9726b8a14859d8",
+//   },
+//   {
+//     title: "The Great Gatsby",
+//     slogan: "A tale of love and ambition in the Jazz Age.",
+//     subtitle: "A Classic by F. Scott Fitzgerald",
+//     cover:
+//       "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943178/nh5py32h7elbcawjpux5.png",
+//     slug: "the-great-gatsby-66d08b40ab9726b8a14859d4",
+//   },
+//   {
+//     title: "Pride and Prejudice",
+//     slogan: "A timeless story of love and societal expectations.",
+//     subtitle: "A Classic by Jane Austen",
+//     cover:
+//       "https://res.cloudinary.com/dumq9n29v/image/upload/v1724943181/dszmpqruxweg5kpgxd3o.png",
+//     slug: "the-girl-with-the-dragon-tattoo-66d08b40ab9726b8a14859d9",
+//   },
+// ];
 
 const settings = {
   dots: true,
@@ -63,7 +68,24 @@ const settings = {
 };
 
 const HeroSection: FC = () => {
+  const [books, setBooks] = useState<BookDetail[]>([]);
   const sliderRef = useRef<Slider | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchRandomBooks = async () => {
+      try {
+        setLoading(true);
+        const { data } = await client.get("/book/random/4");
+        setBooks(data.books);
+      } catch (error) {
+        ParseError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRandomBooks();
+  }, []);
 
   const goToPrevious = () => {
     if (sliderRef.current) {
@@ -76,6 +98,10 @@ const HeroSection: FC = () => {
       sliderRef.current.slickNext();
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="relative overflow-hidden group">
@@ -129,10 +155,10 @@ const HeroSection: FC = () => {
                         {item.title}
                       </h1>
                       <p className="text-xl md:text-2xl text-foreground/80">
-                        {item.slogan}
+                        {/* {item.slogan} */}
                       </p>
                       <p className="text-lg text-foreground/60 italic">
-                        {item.subtitle}
+                        {/* {item.subtitle} */}
                       </p>
                     </div>
                     <Button
