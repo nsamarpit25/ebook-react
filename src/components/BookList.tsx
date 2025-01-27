@@ -3,7 +3,6 @@ import { FC } from "react";
 import { FaBook, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { calculateDiscount, formatPrice } from "../utils/helper";
-import DividerWithTitle from "./common/DividerWithTitle";
 
 export interface Book {
   id: string;

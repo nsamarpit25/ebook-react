@@ -1,7 +1,7 @@
 import { Button, Input } from "@nextui-org/react";
-import { FC, FormEventHandler, useState } from "react";
+import { FC, FormEventHandler, useEffect, useState } from "react";
 import { RiMailCheckLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import client from "../api/client";
 import Book from "../svg/Book";
 
@@ -16,6 +16,12 @@ const SignUp: FC<Props> = () => {
   const [busy, setBusy] = useState(false);
   const [invalidForm, setInvalidForm] = useState(false);
   const [showSuccessResponse, setShowSuccessResponse] = useState(false);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname, showSuccessResponse]);
 
   // for development....
   const [link, setLink] = useState("");
