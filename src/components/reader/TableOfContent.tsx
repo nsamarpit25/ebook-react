@@ -35,51 +35,40 @@ const TableOfContent: FC<Props> = ({
       role="navigation"
       aria-label="Table of Contents"
       style={{ right: visible ? "0" : "-100%" }}
-      className="
-        dark:bg-gray-900 dark:text-gray-100
-        transition-all duration-300 ease-in-out
-        md:w-96 w-3/4 bg-white/95 backdrop-blur-sm
-        h-screen overflow-y-auto fixed z-50 top-0 right-0
-        flex flex-col p-4 shadow-xl
-        border-l dark:border-gray-800
-      "
+      className={clsx(
+        "transition-all duration-300 ease-in-out",
+        "md:w-96 w-3/4 bg-background/95 backdrop-blur-xl",
+        "h-screen overflow-y-auto fixed z-50 top-0 right-0",
+        "flex flex-col p-4 shadow-2xl",
+        "border-l border-default-200"
+      )}
     >
-      <h2 className="text-2xl font-serif font-semibold mb-6 px-2 text-center border-b pb-2 dark:border-gray-700 dark:text-gray-100">
+      <h2 className="text-2xl font-serif font-semibold mb-6 px-2 text-center border-b pb-2 text-foreground">
         Contents
       </h2>
       <div className="space-y-1">
         {data.map(({ label, subItems }, index) => {
-          {
-            // console.log("currentLocation", currentLocation);
-          }
-          {
-            // if (String(label.href) === currentLocation)
-            // console.log("Label Location", label.href);
-          }
           if (!subItems.length)
             return (
               <div
                 key={label.href}
-                className="flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded"
+                className="flex items-start gap-3 hover:bg-default-100 rounded-lg transition-colors"
               >
-                <span className="text-gray-400 dark:text-gray-500 pt-2 pl-2 min-w-[2rem] font-serif">
+                <span className="text-default-400 pt-2 pl-2 min-w-[2rem] font-serif">
                   {index + 1}.
                 </span>
-                <p
-                  role="button"
-                  tabIndex={0}
+                <button
                   onClick={() => onClick(label.href)}
-                  onKeyPress={(e) => handleKeyPress(e, label.href)}
                   className={clsx(
-                    "py-2 pr-2 w-full cursor-pointer focus:outline-none font-medium dark:text-gray-100",
+                    "py-2 pr-2 w-full text-left focus:outline-none",
+                    "font-medium transition-colors",
                     String(label.href).includes(currentLocation)
-                      ? "text-blue-500 dark:text-blue-400"
-                      : ""
+                      ? "text-primary"
+                      : "text-foreground"
                   )}
-                  aria-label={`Navigate to ${label.title}`}
                 >
                   {label.title}
-                </p>
+                </button>
               </div>
             );
 

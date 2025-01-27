@@ -11,49 +11,35 @@ const LoadingIndicator: FC<Props> = ({ visible }) => {
     <div
       className={clsx(
         visible ? "opacity-100" : "opacity-0 pointer-events-none",
-        "fixed z-[100] inset-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm",
+        "fixed z-[100] inset-0 bg-background/95 backdrop-blur-xl",
         "transition-all duration-300",
         "flex flex-col items-center justify-center gap-6"
       )}
     >
       <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary to-danger rounded-full opacity-25 blur-lg animate-pulse" />
         <Spinner
           size="lg"
           classNames={{
+            wrapper: "w-16 h-16",
             circle1: "border-t-primary border-4",
-            circle2: "border-t-primary border-4",
+            circle2: "border-t-danger border-4",
           }}
         />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-primary animate-bounce"
-          >
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          </svg>
-        </div>
       </div>
 
-      <div className="text-center space-y-2">
-        <h3 className="text-xl font-medium dark:text-gray-200">
+      <div className="text-center space-y-2 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-xl opacity-25 blur-lg animate-pulse" />
+        <h3 className="text-xl font-medium text-default-600 relative">
           Loading your book
         </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 animate-pulse">
+        <p className="text-sm text-default-400 animate-pulse relative">
           Please wait while we prepare your reading experience
         </p>
       </div>
 
-      <div className="absolute bottom-8 text-center max-w-xs mx-auto text-sm text-gray-400 dark:text-gray-500">
-        <p className="animate-pulse">
+      <div className="absolute bottom-8 text-center max-w-xs mx-auto">
+        <p className="text-sm text-default-400 animate-pulse">
           Tip: You can customize text size and theme while reading
         </p>
       </div>

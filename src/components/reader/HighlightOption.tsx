@@ -13,7 +13,8 @@ interface Props {
 const colorOptions = [
   { color: "#ffd700", name: "Yellow" },
   { color: "#ff7f7f", name: "Red" },
-  { color: "#87ceeb", name: "Blue" },
+  { color: "#90EE90", name: "Green" },
+  { color: "#87CEEB", name: "Blue" },
 ];
 
 const HighlightOptions: FC<Props> = ({ visible, onSelect, onClear }) => {
@@ -22,20 +23,24 @@ const HighlightOptions: FC<Props> = ({ visible, onSelect, onClear }) => {
       className={clsx(
         visible ? "bottom-0" : "-bottom-20",
         "transition-all duration-300 h-16 fixed z-50 left-0 right-0",
-        "backdrop-blur-md bg-white/90 dark:bg-gray-900/90",
-        "border-t dark:border-gray-800 shadow-lg"
+        "bg-background/80 backdrop-blur-md",
+        "border-t border-default-200",
+        "shadow-large"
       )}
     >
       <div className="max-w-md mx-auto h-full flex items-center justify-center gap-4">
         {colorOptions.map(({ color, name }) => (
-          <Tooltip key={color} content={name}>
+          <Tooltip key={color} content={name} placement="top">
             <button
               onClick={() => onSelect(color)}
               className={clsx(
-                "w-8 h-8 rounded-full transition-transform",
-                "hover:scale-110 focus:scale-110 focus:outline-none",
-                "ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900",
-                "shadow-sm"
+                "w-8 h-8 rounded-full",
+                "transition-all duration-300",
+                "hover:scale-110 focus:scale-110",
+                "focus:outline-none",
+                "ring-2 ring-offset-2",
+                "shadow-sm hover:shadow-md",
+                "transform active:scale-95"
               )}
               style={{
                 backgroundColor: color,
@@ -44,12 +49,12 @@ const HighlightOptions: FC<Props> = ({ visible, onSelect, onClear }) => {
             />
           </Tooltip>
         ))}
-        <Tooltip content="Clear highlight">
+        <Tooltip content="Clear highlight" placement="top">
           <Button
             onClick={onClear}
             isIconOnly
             variant="light"
-            className="text-gray-700 dark:text-gray-300"
+            className="text-default-600 hover:text-danger"
           >
             <MdOutlineClear size={24} />
           </Button>

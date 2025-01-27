@@ -6,8 +6,8 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { FC } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa6";
-import { RiFontSize } from "react-icons/ri";
+import { IoMdText } from "react-icons/io";
+import { HiMiniMinus, HiMiniPlus } from "react-icons/hi2";
 import { useAutoHide } from "../../hooks/useAutoHide";
 
 interface Props {
@@ -30,32 +30,35 @@ const FontOptions: FC<Props> = ({ onFontDecrease, onFontIncrease }) => {
         <Button
           variant="light"
           isIconOnly
-          className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="relative group transition-all duration-300"
         >
-          <RiFontSize size={24} />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
+          <IoMdText size={24} className="text-default-600" />
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="p-2 bg-white dark:bg-gray-900 border dark:border-gray-800">
+      <PopoverContent className="p-2 bg-background/95 backdrop-blur-xl border border-default-200/50">
         <div className="flex items-center gap-4 px-2">
-          <Tooltip content="Decrease font size">
+          <Tooltip content="Decrease font size" placement="bottom">
             <Button
               isIconOnly
               variant="light"
-              className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="relative group transition-all duration-300"
               onClick={onFontDecrease}
             >
-              <FaMinus size={16} />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
+              <HiMiniMinus size={18} className="text-default-600" />
             </Button>
           </Tooltip>
-          <Tooltip content="Increase font size">
+          <Tooltip content="Increase font size" placement="bottom">
             <Button
               isIconOnly
               variant="light"
-              className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="relative group transition-all duration-300"
               onClick={onFontIncrease}
             >
-              <FaPlus size={16} />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-danger/20 rounded-full opacity-0 group-hover:opacity-100 blur-lg transition-opacity duration-300" />
+              <HiMiniPlus size={18} className="text-default-600" />
             </Button>
           </Tooltip>
         </div>

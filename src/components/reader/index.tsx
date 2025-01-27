@@ -340,7 +340,6 @@ const EpubReader: FC<Props> = ({
         } else {
           await rendition.display("epubcfi(/6/2[chapter1]!/4/2/2)");
           await rendition.next();
-          await rendition.next();
         }
         await rendition.display(lastLocation);
         const toc = await loadTableOfContent(book);

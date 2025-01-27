@@ -56,7 +56,9 @@ const Container: FC<Props> = ({ children }) => {
           </p>
         </div>
       </div>
-      <div className="max-w-[1500px] w-full mx-auto">{children}</div>
+      <div className="max-w-[1500px] w-full mx-auto inset-full min-h-[80vh]">
+        {children}
+      </div>
       <Footer />
     </div>
   );
