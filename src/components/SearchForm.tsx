@@ -3,7 +3,6 @@ import { FC, useState, type FormEventHandler } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "./common/LoadingSpinner";
-import toast from "react-hot-toast";
 
 interface Props {}
 
