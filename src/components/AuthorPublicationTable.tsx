@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   Skeleton,
   Table,
   TableBody,
@@ -7,10 +8,15 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Chip,
-  divider,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { FaBook, FaPlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
@@ -18,7 +24,6 @@ import client from "../api/client";
 import useAuth from "../hooks/useAuth";
 import { ParseError } from "../utils/helper";
 import type { BookDetail } from "../views/Library";
-import toast from "react-hot-toast";
 
 interface Props {}
 
@@ -26,36 +31,38 @@ const AuthorPublicationTable: FC<Props> = () => {
   const { profile } = useAuth();
   const [fetching, setFetching] = useState(false);
   const [createdBooks, setCreatedBooks] = useState<BookDetail[]>([]);
-  const [removeRequestId, setRemoveRequestId] = useState("");
   const [removingId, setRemovingId] = useState("");
+  const [bookToDelete, setBookToDelete] = useState<BookDetail | null>(null);
+  const [deleteError, setDeleteError] = useState<string>("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleOnConfirmRemove = async () => {
+  const handleDeleteClick = (book: BookDetail) => {
+    setBookToDelete(book);
+    onOpen();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!bookToDelete) return;
+
     try {
-      setRemovingId(removeRequestId);
-      const { data } = await client.delete(`/book/${removeRequestId}`);
+      setRemovingId(bookToDelete.id);
+      const { data } = await client.delete(`/book/${bookToDelete.id}`);
+
       if (data.success) {
         toast.success("Book removed successfully");
         setCreatedBooks((prev) =>
-          prev.filter((book) => book.id !== removeRequestId)
+          prev.filter((book) => book.id !== bookToDelete.id)
         );
+        onClose();
       } else {
-        toast.error(
-          (t) => (
-            <div className="space-y-2">
-              <span>We could not remove your book</span>
-              <li>Possible reasons:</li>
-              <li>- Book is purchased by someone</li>
-              <li>- Your content does not support this feautre</li>
-              <button onClick={() => toast.dismiss(t.id)}>Dismiss</button>{" "}
-            </div>
-          ),
-          { duration: 10000 }
+        setDeleteError(
+          "Unable to delete book. It may be purchased or have other dependencies."
         );
       }
     } catch (error) {
       ParseError(error);
+      setDeleteError("An error occurred while deleting the book.");
     } finally {
-      setRemoveRequestId("");
       setRemovingId("");
     }
   };
@@ -164,35 +171,22 @@ const AuthorPublicationTable: FC<Props> = () => {
                 </Chip>
               </TableCell>
               <TableCell>
-                <div className="flex justify-end gap-2 relative">
-                  {removeRequestId === book.id && (
-                    <div className="absolute inset-0 bg-white z-50 flex items-center justify-center">
-                      <button
-                        onMouseDown={() => {
-                          handleOnConfirmRemove();
-                        }}
-                        onBlur={() => setRemoveRequestId("")}
-                        className="underline"
-                      >
-                        Please confirm before removing
-                      </button>
-                    </div>
-                  )}
+                <div className="flex justify-end gap-2">
                   <Button
                     as={Link}
                     to={`/read/${book.slug}?title=${book.title}&id=${book.id}`}
                     size="sm"
                     color="primary"
                     variant="flat"
-                    isLoading={removingId === book.id}
+                    isDisabled={removingId === book.id}
                   >
-                    Check
+                    Read
                   </Button>
                   <Button
-                    onClick={() => setRemoveRequestId(book.id)}
+                    onClick={() => handleDeleteClick(book)}
                     size="sm"
-                    variant="bordered"
                     color="danger"
+                    variant="bordered"
                     startContent={<FaTrashAlt />}
                     isLoading={removingId === book.id}
                   >
@@ -203,7 +197,7 @@ const AuthorPublicationTable: FC<Props> = () => {
                     to={`/update-book/${book.slug}`}
                     size="sm"
                     variant="bordered"
-                    isLoading={removingId === book.id}
+                    isDisabled={removingId === book.id}
                     startContent={<FaEdit />}
                   >
                     Edit
@@ -214,6 +208,66 @@ const AuthorPublicationTable: FC<Props> = () => {
           ))}
         </TableBody>
       </Table>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        classNames={{
+          base: "border border-divider bg-content1",
+          header: "border-b border-divider",
+          body: "py-6",
+          footer: "border-t border-divider",
+        }}
+      >
+        <ModalContent>
+          <ModalHeader>
+            <h3 className="text-xl font-semibold">Confirm Delete</h3>
+          </ModalHeader>
+          <ModalBody>
+            {deleteError ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-danger/10 rounded-lg border border-danger/20">
+                  <p className="text-danger">{deleteError}</p>
+                </div>
+                <div className="text-sm text-foreground-500">
+                  <p>Possible reasons:</p>
+                  <ul className="list-disc ml-4 mt-2 space-y-1">
+                    <li>Book has been purchased by users</li>
+                    <li>Book was created before this feature was introduced</li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <p className="text-foreground-600">
+                Are you sure you want to delete "{bookToDelete?.title}"? This
+                action cannot be undone.
+              </p>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="light"
+              onPress={() => {
+                onClose();
+                setDeleteError("");
+              }}
+            >
+              Cancel
+            </Button>
+            {!deleteError && (
+              <Button
+                color="danger"
+                variant="flat"
+                onPress={handleDeleteConfirm}
+                isLoading={!!removingId}
+              >
+                Delete Book
+              </Button>
+            )}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
