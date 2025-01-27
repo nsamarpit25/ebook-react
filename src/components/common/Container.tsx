@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Navbar from "./Navbar";
 import ConnectionError from "./ConnectionError";
+import Footer from "../Footer";
 
 interface Props {
   children: ReactNode;
@@ -26,7 +27,7 @@ const Container: FC<Props> = ({ children }) => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="max-w-[1500px] w-full mx-auto">{children}</div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };
