@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth";
 import client from "../api/client";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 interface Props {}
 
@@ -14,6 +15,7 @@ const UpdateAuthor: FC<Props> = () => {
   const { profile } = useAuth();
   const [busy, setBusy] = useState(true);
   const [authorInfo, setAuthorInfo] = useState<InitialState>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAuthorInfo = async () => {
@@ -37,6 +39,7 @@ const UpdateAuthor: FC<Props> = () => {
     if (res.data) {
       toast.success(res.data.message);
     }
+    navigate("/profile");
   };
 
   if (busy)

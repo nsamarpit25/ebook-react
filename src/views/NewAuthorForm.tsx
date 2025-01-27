@@ -2,16 +2,31 @@ import { FC } from "react";
 import AuthorForm, { AuthorInfo } from "../components/common/AuthorForm";
 import client from "../api/client";
 import toast from "react-hot-toast";
+import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateProfile } from "../store/auth";
 
 interface Props {}
 
 const NewAuthorRegistration: FC<Props> = () => {
+  const { profile } = useAuth();
+  const isAuthor = profile?.role === "author";
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleSubmit = async (data: AuthorInfo) => {
     const res = await client.post("/author/register", data);
     if (res.data) {
+      dispatch(updateProfile(res.data.user));
       toast.success(res.data.message);
     }
+    navigate("/profile");
   };
+
+  if (isAuthor) {
+    navigate("/profile");
+  }
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
